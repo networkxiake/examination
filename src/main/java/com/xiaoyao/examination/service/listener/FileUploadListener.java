@@ -5,12 +5,14 @@ import com.xiaoyao.examination.service.event.FileChangedEvent;
 import com.xiaoyao.examination.service.event.FileConfirmedEvent;
 import com.xiaoyao.examination.service.event.FileUploadedEvent;
 import lombok.RequiredArgsConstructor;
+import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.context.event.EventListener;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
 import java.util.Set;
 
 /**
@@ -20,6 +22,7 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class FileUploadListener {
     private final String TEMP_FILE_KEY = "temp-file";
+    private final String LAST_REST_KEY = "last-reset";
 
     private final RedisTemplate<Object, Object> redisTemplate;
     private final RedissonClient redissonClient;
@@ -52,23 +55,25 @@ public class FileUploadListener {
      */
     @Scheduled(cron = "0 0 3 * * ?")
     public void clearTempFileOverOneDay() {
-
-//        RLock lock = redissonClient.getLock("clearTempFileOverOneDay");
-//        if (lock.tryLock()){
-//            try {
-//
-//            } finally {
-//                lock.unlock();
-//            }
-//        }
-
-
-        // TODO 解决并发问题
-        Set<Object> members = redisTemplate.opsForZSet().rangeByScore(TEMP_FILE_KEY,
-                0, System.currentTimeMillis() - 24 * 60 * 60 * 1000);
-        if (members != null && !members.isEmpty()) {
-            redisTemplate.opsForZSet().remove(TEMP_FILE_KEY, members);
-            storageService.deleteFile(members.stream().map(Object::toString).toList());
+        String lastRest = (String) redisTemplate.opsForValue().get(LAST_REST_KEY);
+        if (lastRest == null || !lastRest.equals(LocalDate.now().toString())) {
+            RLock lock = redissonClient.getLock("clearTempFileOverOneDay");
+            if (lock.tryLock()) {
+                try {
+                    lastRest = (String) redisTemplate.opsForValue().get(LAST_REST_KEY);
+                    if (lastRest == null || !lastRest.equals(LocalDate.now().toString())) {
+                        Set<Object> members = redisTemplate.opsForZSet().rangeByScore(TEMP_FILE_KEY,
+                                0, System.currentTimeMillis() - 24 * 60 * 60 * 1000);
+                        if (members != null && !members.isEmpty()) {
+                            redisTemplate.opsForZSet().remove(TEMP_FILE_KEY, members);
+                            storageService.deleteFile(members.stream().map(Object::toString).toList());
+                        }
+                    }
+                    redisTemplate.opsForValue().set(LAST_REST_KEY, LocalDate.now().toString());
+                } finally {
+                    lock.unlock();
+                }
+            }
         }
     }
 }
