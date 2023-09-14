@@ -18,6 +18,10 @@ public class AdminStpUtil {
         adminStpLogic.logout();
     }
 
+    public static void logout(long id) {
+        adminStpLogic.logout(id);
+    }
+
     public static long getLoginId() {
         return adminStpLogic.getLoginIdAsLong();
     }

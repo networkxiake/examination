@@ -1,5 +1,6 @@
 package com.xiaoyao.examination.service.impl;
 
+import com.xiaoyao.examination.controller.dto.admin.SearchAdminDTO;
 import com.xiaoyao.examination.domain.entity.Admin;
 import com.xiaoyao.examination.domain.service.AdminDomainService;
 import com.xiaoyao.examination.exception.ErrorCode;
@@ -17,6 +18,9 @@ import org.springframework.context.event.ApplicationEventMulticaster;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -92,5 +96,34 @@ public class AdminServiceImpl implements AdminService {
         admin.setPhoto(path);
         adminDomainService.updateAdmin(admin);
         eventMulticaster.multicastEvent(new FileChangedEvent(oldPath, path));
+    }
+
+    @Override
+    public void createAdmin(String username, String password, String name) {
+        adminDomainService.createAdmin(username, password, name, storageService.getDefaultPhotoPath());
+    }
+
+    @Override
+    public void deleteAdmin(List<Long> ids) {
+        adminDomainService.deleteAdmin(ids);
+    }
+
+    @Override
+    public SearchAdminDTO searchAdmin(long page, long size, String name) {
+        long[] total = new long[1];
+        List<SearchAdminDTO.Admin> admins = new ArrayList<>();
+        adminDomainService.searchAdmin(page, size, name, total).forEach(item -> {
+            SearchAdminDTO.Admin admin = new SearchAdminDTO.Admin();
+            admin.setId(item.getId());
+            admin.setUsername(item.getUsername());
+            admin.setName(item.getName());
+            admin.setCreateTime(item.getCreateTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+            admins.add(admin);
+        });
+
+        SearchAdminDTO dto = new SearchAdminDTO();
+        dto.setTotal(total[0]);
+        dto.setResults(admins);
+        return dto;
     }
 }

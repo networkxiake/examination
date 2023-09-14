@@ -1,10 +1,10 @@
 package com.xiaoyao.examination.controller;
 
 import com.xiaoyao.examination.annotation.CheckLoginAdmin;
+import com.xiaoyao.examination.annotation.CheckLoginInitAdmin;
 import com.xiaoyao.examination.controller.dto.admin.AdminLoginDTO;
-import com.xiaoyao.examination.controller.form.admin.ChangePasswordForm;
-import com.xiaoyao.examination.controller.form.admin.ChangePhotoForm;
-import com.xiaoyao.examination.controller.form.admin.LoginForm;
+import com.xiaoyao.examination.controller.dto.admin.SearchAdminDTO;
+import com.xiaoyao.examination.controller.form.admin.*;
 import com.xiaoyao.examination.domain.entity.Admin;
 import com.xiaoyao.examination.response.ResponseBody;
 import com.xiaoyao.examination.response.ResponseBodyBuilder;
@@ -52,5 +52,26 @@ public class AdminController {
     public ResponseBody<Object> changePhoto(@Valid @RequestBody ChangePhotoForm form) {
         adminService.changePhoto(AdminStpUtil.getLoginId(), form.getPath());
         return ResponseBodyBuilder.build();
+    }
+
+    @CheckLoginInitAdmin
+    @PostMapping("/create")
+    public ResponseBody<Object> create(@Valid @RequestBody CreateForm form) {
+        adminService.createAdmin(form.getUsername(), form.getPassword(), form.getName());
+        return ResponseBodyBuilder.build();
+    }
+
+    @CheckLoginInitAdmin
+    @PostMapping("/delete")
+    public ResponseBody<Object> delete(@Valid @RequestBody DeleteForm form) {
+        adminService.deleteAdmin(form.getIds());
+        form.getIds().forEach(AdminStpUtil::logout);
+        return ResponseBodyBuilder.build();
+    }
+
+    @CheckLoginInitAdmin
+    @PostMapping("/search")
+    public ResponseBody<SearchAdminDTO> search(@Valid @RequestBody SearchForm form) {
+        return ResponseBodyBuilder.build(adminService.searchAdmin(form.getPage(), form.getSize(), form.getName()));
     }
 }
