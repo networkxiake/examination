@@ -1,0 +1,22 @@
+spring:
+  profiles:
+    active: prod
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+sa-token:
+  is-print: false
+  token-name: token
+  is-read-body: false
+  is-read-cookie: false
+  is-concurrent: false
+mybatis-plus:
+  global-config:
+    banner: false
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+minio:
+  bucket-name: examination
+examination:
+  init-admin-username: admin
+  init-admin-password: 123456
+  init-admin-name: 初始账户
