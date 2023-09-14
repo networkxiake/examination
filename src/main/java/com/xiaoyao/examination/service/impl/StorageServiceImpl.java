@@ -1,14 +1,21 @@
 package com.xiaoyao.examination.service.impl;
 
 import cn.hutool.core.util.StrUtil;
+import com.xiaoyao.examination.exception.ErrorCode;
+import com.xiaoyao.examination.exception.ExaminationException;
 import com.xiaoyao.examination.properties.MinIOProperties;
 import com.xiaoyao.examination.service.StorageService;
+import com.xiaoyao.examination.service.event.FileUploadedEvent;
 import io.minio.*;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
+import org.springframework.context.event.ApplicationEventMulticaster;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -18,6 +25,7 @@ public class StorageServiceImpl implements StorageService {
     private final MinIOProperties minIOProperties;
     private final MinioClient minioClient;
     private final RedissonClient redissonClient;
+    private final ApplicationEventMulticaster eventMulticaster;
 
     @PostConstruct
     public void init() throws Exception {
@@ -87,5 +95,28 @@ public class StorageServiceImpl implements StorageService {
     @Override
     public String getDefaultPhotoPath() {
         return minIOProperties.getBucketName() + "/" + DEFAULT_PHOTO;
+    }
+
+    @Override
+    public String uploadFile(MultipartFile file, String prefix) {
+        String filename = file.getOriginalFilename();
+        if (filename == null) {
+            throw new ExaminationException(ErrorCode.INVALID_PARAMS);
+        }
+        filename = prefix + UUID.randomUUID() + filename.lastIndexOf(".");
+
+        try {
+            minioClient.putObject(PutObjectArgs.builder()
+                    .bucket(minIOProperties.getBucketName()).object(filename)
+                    .stream(file.getInputStream(), -1, 5 * 1024 * 1024)
+                    .contentType(file.getContentType())
+                    .build());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        eventMulticaster.multicastEvent(new FileUploadedEvent(filename));
+
+        return minIOProperties.getBucketName() + "/" + filename;
     }
 }

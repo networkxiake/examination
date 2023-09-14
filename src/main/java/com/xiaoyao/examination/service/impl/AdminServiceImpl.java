@@ -7,11 +7,13 @@ import com.xiaoyao.examination.exception.ExaminationException;
 import com.xiaoyao.examination.properties.ExaminationProperties;
 import com.xiaoyao.examination.service.AdminService;
 import com.xiaoyao.examination.service.StorageService;
+import com.xiaoyao.examination.service.event.FileConfirmedEvent;
 import com.xiaoyao.examination.util.SaltUtil;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
+import org.springframework.context.event.ApplicationEventMulticaster;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -23,6 +25,7 @@ public class AdminServiceImpl implements AdminService {
     private final StorageService storageService;
     private final RedissonClient redissonClient;
     private final ExaminationProperties examinationProperties;
+    private final ApplicationEventMulticaster eventMulticaster;
 
     @PostConstruct
     public void init() {
@@ -78,5 +81,14 @@ public class AdminServiceImpl implements AdminService {
         admin.setSalt(salt);
         admin.setPassword(SaltUtil.encrypt(newPassword, salt));
         adminDomainService.updateAdmin(admin);
+    }
+
+    @Override
+    public void changePhoto(long userId, String path) {
+        Admin admin = new Admin();
+        admin.setId(userId);
+        admin.setPhoto(path);
+        adminDomainService.updateAdmin(admin);
+        eventMulticaster.multicastEvent(new FileConfirmedEvent(path));
     }
 }
