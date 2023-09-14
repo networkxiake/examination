@@ -88,7 +88,7 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    public void changePhoto(long userId, String path) {
+    public String changePhoto(long userId, String path) {
         String oldPath = adminDomainService.getPhotoById(userId);
 
         Admin admin = new Admin();
@@ -96,6 +96,7 @@ public class AdminServiceImpl implements AdminService {
         admin.setPhoto(path);
         adminDomainService.updateAdmin(admin);
         eventMulticaster.multicastEvent(new FileChangedEvent(oldPath, path));
+        return storageService.getPathUrl(path);
     }
 
     @Override

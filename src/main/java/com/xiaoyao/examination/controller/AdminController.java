@@ -50,8 +50,7 @@ public class AdminController {
     @CheckLoginAdmin
     @PostMapping("/change-photo")
     public ResponseBody<Object> changePhoto(@Valid @RequestBody ChangePhotoForm form) {
-        adminService.changePhoto(AdminStpUtil.getLoginId(), form.getPath());
-        return ResponseBodyBuilder.build();
+        return ResponseBodyBuilder.build(adminService.changePhoto(AdminStpUtil.getLoginId(), form.getPath()));
     }
 
     @CheckLoginInitAdmin
