@@ -107,7 +107,7 @@ public class StorageServiceImpl implements StorageService {
         if (filename == null) {
             throw new ExaminationException(ErrorCode.INVALID_PARAMS);
         }
-        filename = prefix + UUID.randomUUID() + filename.lastIndexOf(".");
+        filename = prefix + UUID.randomUUID() + filename.substring(filename.lastIndexOf("."));
 
         try {
             minioClient.putObject(PutObjectArgs.builder()
