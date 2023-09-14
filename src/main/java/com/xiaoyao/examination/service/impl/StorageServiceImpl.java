@@ -7,6 +7,7 @@ import com.xiaoyao.examination.properties.MinIOProperties;
 import com.xiaoyao.examination.service.StorageService;
 import com.xiaoyao.examination.service.event.FileUploadedEvent;
 import io.minio.*;
+import io.minio.messages.DeleteObject;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.redisson.api.RLock;
@@ -15,12 +16,15 @@ import org.springframework.context.event.ApplicationEventMulticaster;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
 public class StorageServiceImpl implements StorageService {
     private final String DEFAULT_PHOTO = "default-photo.jpg";
+    private final String PHOTO_PREFIX = "photo/";
 
     private final MinIOProperties minIOProperties;
     private final MinioClient minioClient;
@@ -114,9 +118,36 @@ public class StorageServiceImpl implements StorageService {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-
         eventMulticaster.multicastEvent(new FileUploadedEvent(filename));
-
         return minIOProperties.getBucketName() + "/" + filename;
+    }
+
+    @Override
+    public String getPhotoPrefix() {
+        return PHOTO_PREFIX;
+    }
+
+    @Override
+    public void deleteFile(String path) {
+        try {
+            minioClient.removeObject(RemoveObjectArgs.builder()
+                    .bucket(minIOProperties.getBucketName()).object(path)
+                    .build());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public void deleteFile(List<String> paths) {
+        try {
+            List<DeleteObject> objects = new ArrayList<>();
+            paths.forEach(path -> objects.add(new DeleteObject(path)));
+            minioClient.removeObjects(RemoveObjectsArgs.builder()
+                    .bucket(minIOProperties.getBucketName()).objects(objects)
+                    .build());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }

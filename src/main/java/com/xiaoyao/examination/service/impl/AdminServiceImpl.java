@@ -7,7 +7,7 @@ import com.xiaoyao.examination.exception.ExaminationException;
 import com.xiaoyao.examination.properties.ExaminationProperties;
 import com.xiaoyao.examination.service.AdminService;
 import com.xiaoyao.examination.service.StorageService;
-import com.xiaoyao.examination.service.event.FileConfirmedEvent;
+import com.xiaoyao.examination.service.event.FileChangedEvent;
 import com.xiaoyao.examination.util.SaltUtil;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
@@ -85,10 +85,12 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     public void changePhoto(long userId, String path) {
+        String oldPath = adminDomainService.getPhotoById(userId);
+
         Admin admin = new Admin();
         admin.setId(userId);
         admin.setPhoto(path);
         adminDomainService.updateAdmin(admin);
-        eventMulticaster.multicastEvent(new FileConfirmedEvent(path));
+        eventMulticaster.multicastEvent(new FileChangedEvent(oldPath, path));
     }
 }

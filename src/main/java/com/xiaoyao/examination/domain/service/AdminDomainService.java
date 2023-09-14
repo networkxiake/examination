@@ -12,4 +12,6 @@ public interface AdminDomainService {
     Admin getSaltAndPasswordById(long id);
 
     void updateAdmin(Admin admin);
+
+    String getPhotoById(long id);
 }
