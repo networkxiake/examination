@@ -46,4 +46,11 @@ public class AdminRepositoryImpl implements AdminRepository {
     public void updateAdmin(Admin admin) {
         adminMapper.updateById(admin);
     }
+
+    @Override
+    public String getPhotoById(long id) {
+        return adminMapper.selectOne(lambdaQuery(Admin.class)
+                .select(Admin::getPhoto)
+                .eq(Admin::getId, id)).getPhoto();
+    }
 }

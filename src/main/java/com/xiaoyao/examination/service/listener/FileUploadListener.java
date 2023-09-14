@@ -5,6 +5,7 @@ import com.xiaoyao.examination.service.event.FileChangedEvent;
 import com.xiaoyao.examination.service.event.FileConfirmedEvent;
 import com.xiaoyao.examination.service.event.FileUploadedEvent;
 import lombok.RequiredArgsConstructor;
+import org.redisson.api.RedissonClient;
 import org.springframework.context.event.EventListener;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -21,6 +22,7 @@ public class FileUploadListener {
     private final String TEMP_FILE_KEY = "temp-file";
 
     private final RedisTemplate<Object, Object> redisTemplate;
+    private final RedissonClient redissonClient;
     private final StorageService storageService;
 
     @EventListener(FileUploadedEvent.class)
@@ -50,6 +52,17 @@ public class FileUploadListener {
      */
     @Scheduled(cron = "0 0 3 * * ?")
     public void clearTempFileOverOneDay() {
+
+//        RLock lock = redissonClient.getLock("clearTempFileOverOneDay");
+//        if (lock.tryLock()){
+//            try {
+//
+//            } finally {
+//                lock.unlock();
+//            }
+//        }
+
+
         // TODO 解决并发问题
         Set<Object> members = redisTemplate.opsForZSet().rangeByScore(TEMP_FILE_KEY,
                 0, System.currentTimeMillis() - 24 * 60 * 60 * 1000);

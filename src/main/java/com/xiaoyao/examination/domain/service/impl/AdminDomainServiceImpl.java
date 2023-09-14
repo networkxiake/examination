@@ -35,4 +35,9 @@ public class AdminDomainServiceImpl implements AdminDomainService {
     public void updateAdmin(Admin admin) {
         adminRepository.updateAdmin(admin);
     }
+
+    @Override
+    public String getPhotoById(long id) {
+        return adminRepository.getPhotoById(id);
+    }
 }
