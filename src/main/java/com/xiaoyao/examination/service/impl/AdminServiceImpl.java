@@ -115,7 +115,7 @@ public class AdminServiceImpl implements AdminService {
         List<SearchAdminDTO.Admin> admins = new ArrayList<>();
         adminDomainService.searchAdmin(page, size, name, total).forEach(item -> {
             SearchAdminDTO.Admin admin = new SearchAdminDTO.Admin();
-            admin.setId(item.getId());
+            admin.setId(String.valueOf(item.getId()));
             admin.setUsername(item.getUsername());
             admin.setName(item.getName());
             admin.setCreateTime(item.getCreateTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));

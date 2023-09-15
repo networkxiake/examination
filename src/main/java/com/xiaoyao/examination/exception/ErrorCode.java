@@ -14,6 +14,9 @@ public enum ErrorCode {
     OLD_AND_NEW_PASSWORD_SAME(1005, "新密码不能和旧密码相同"),
     NEED_INIT_ADMIN(1006, "需要初始的管理员账户"),
     USERNAME_EXIST(1007, "用户名已存在"),
+    GOODS_TYPE_NOT_EXIST(1008, "套餐类型不存在"),
+    GOODS_STATUS_NOT_EXIST(1009, "套餐状态不存在"),
+    GOODS_NAME_EXIST(1010, "套餐名称已存在"),
     ;
 
     private final int code;

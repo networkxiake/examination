@@ -1,14 +1,17 @@
 package com.xiaoyao.examination.domain.entity;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler;
 import lombok.Data;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
-@TableName(value ="tb_goods")
+@TableName(value = "tb_goods", autoResultMap = true)
 public class Goods {
     /**
      * 主键
@@ -59,7 +62,8 @@ public class Goods {
     /**
      * 套餐标签
      */
-    private Object tag;
+    @TableField(typeHandler = JacksonTypeHandler.class)
+    private List<String> tag;
 
     /**
      * 套餐销量
@@ -74,22 +78,26 @@ public class Goods {
     /**
      * 科室检查
      */
-    private Object departmentCheckup;
+    @TableField(typeHandler = JacksonTypeHandler.class)
+    private List<Item> departmentCheckup;
 
     /**
      * 实验室检查
      */
-    private Object laboratoryCheckup;
+    @TableField(typeHandler = JacksonTypeHandler.class)
+    private List<Item> laboratoryCheckup;
 
     /**
      * 医技检查
      */
-    private Object medicalCheckup;
+    @TableField(typeHandler = JacksonTypeHandler.class)
+    private List<Item> medicalCheckup;
 
     /**
      * 其它检查
      */
-    private Object otherCheckup;
+    @TableField(typeHandler = JacksonTypeHandler.class)
+    private List<Item> otherCheckup;
 
     /**
      * 体检单项目
@@ -105,4 +113,17 @@ public class Goods {
      * 创建时间
      */
     private LocalDateTime createTime;
+
+    @Data
+    public static class Item {
+        /**
+         * 检查项目名称
+         */
+        private String name;
+
+        /**
+         * 检查项目描述
+         */
+        private String description;
+    }
 }

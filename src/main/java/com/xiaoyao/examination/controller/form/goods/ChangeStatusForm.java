@@ -1,18 +1,16 @@
-package com.xiaoyao.examination.controller.form.admin;
+package com.xiaoyao.examination.controller.form.goods;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 @Data
-public class SearchForm {
+public class ChangeStatusForm {
     @NotNull
     @Min(1)
-    private long page;
+    private long id;
 
     @NotNull
     @Min(1)
-    private long size;
-
-    private String name;
+    private int status;
 }

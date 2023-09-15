@@ -19,6 +19,7 @@
         <sa-token.version>1.35.0.RC</sa-token.version>
         <mybatis-plus.version>3.5.3.2</mybatis-plus.version>
         <redisson.version>3.23.4</redisson.version>
+        <qlexpress.version>3.3.2</qlexpress.version>
     </properties>
 
     <dependencies>
@@ -85,6 +86,11 @@
             <groupId>io.minio</groupId>
             <artifactId>minio</artifactId>
             <version>8.5.5</version>
+        </dependency>
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>QLExpress</artifactId>
+            <version>${qlexpress.version}</version>
         </dependency>
     </dependencies>
 </project>

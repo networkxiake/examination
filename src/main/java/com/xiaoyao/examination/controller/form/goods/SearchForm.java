@@ -1,4 +1,4 @@
-package com.xiaoyao.examination.controller.form.admin;
+package com.xiaoyao.examination.controller.form.goods;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
@@ -15,4 +15,12 @@ public class SearchForm {
     private long size;
 
     private String name;
+
+    private String code;
+
+    @Min(1)
+    private Integer type;
+
+    @Min(1)
+    private Integer status;
 }

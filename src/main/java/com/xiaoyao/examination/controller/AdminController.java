@@ -35,34 +35,34 @@ public class AdminController {
 
     @CheckLoginAdmin
     @PostMapping("/logout")
-    public ResponseBody<Object> logout() {
+    public ResponseBody<Void> logout() {
         AdminStpUtil.logout();
         return ResponseBodyBuilder.build();
     }
 
     @CheckLoginAdmin
     @PostMapping("/change-password")
-    public ResponseBody<Object> changePassword(@Valid @RequestBody ChangePasswordForm form) {
+    public ResponseBody<Void> changePassword(@Valid @RequestBody ChangePasswordForm form) {
         adminService.changePassword(AdminStpUtil.getLoginId(), form.getOldPassword(), form.getNewPassword());
         return ResponseBodyBuilder.build();
     }
 
     @CheckLoginAdmin
     @PostMapping("/change-photo")
-    public ResponseBody<Object> changePhoto(@Valid @RequestBody ChangePhotoForm form) {
+    public ResponseBody<String> changePhoto(@Valid @RequestBody ChangePhotoForm form) {
         return ResponseBodyBuilder.build(adminService.changePhoto(AdminStpUtil.getLoginId(), form.getPath()));
     }
 
     @CheckLoginInitAdmin
     @PostMapping("/create")
-    public ResponseBody<Object> create(@Valid @RequestBody CreateForm form) {
+    public ResponseBody<Void> create(@Valid @RequestBody CreateForm form) {
         adminService.createAdmin(form.getUsername(), form.getPassword(), form.getName());
         return ResponseBodyBuilder.build();
     }
 
     @CheckLoginInitAdmin
     @PostMapping("/delete")
-    public ResponseBody<Object> delete(@Valid @RequestBody DeleteForm form) {
+    public ResponseBody<Void> delete(@Valid @RequestBody DeleteForm form) {
         adminService.deleteAdmin(form.getIds());
         form.getIds().forEach(AdminStpUtil::logout);
         return ResponseBodyBuilder.build();

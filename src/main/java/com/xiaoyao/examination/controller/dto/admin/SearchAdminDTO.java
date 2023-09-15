@@ -11,7 +11,7 @@ public class SearchAdminDTO {
 
     @Data
     public static class Admin {
-        private long id;
+        private String id;
         private String username;
         private String name;
         private String createTime;
