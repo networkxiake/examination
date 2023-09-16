@@ -2,6 +2,7 @@ package com.xiaoyao.examination.domain.repository.impl;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.xiaoyao.examination.domain.entity.Goods;
+import com.xiaoyao.examination.domain.enums.GoodsStatus;
 import com.xiaoyao.examination.domain.mapper.GoodsMapper;
 import com.xiaoyao.examination.domain.repository.GoodsRepository;
 import lombok.RequiredArgsConstructor;
@@ -50,10 +51,11 @@ public class GoodsRepositoryImpl implements GoodsRepository {
     }
 
     @Override
-    public long countGoods(String name, String code) {
+    public long countGoodsByNameOrCode(String name, String code) {
         return goodsMapper.selectCount(lambdaQuery(Goods.class)
-                .eq(name != null, Goods::getName, name)
-                .eq(code != null, Goods::getCode, code));
+                .eq(Goods::getName, name)
+                .or()
+                .eq(Goods::getCode, code));
     }
 
     @Override
@@ -81,5 +83,19 @@ public class GoodsRepositoryImpl implements GoodsRepository {
                 .select(Goods::getImage,
                         Goods::getStatus)
                 .eq(Goods::getId, id));
+    }
+
+    @Override
+    public void deleteGoods(List<Long> ids) {
+        goodsMapper.deleteBatchIds(ids);
+    }
+
+    @Override
+    public long countDontDeletedGoods(List<Long> ids) {
+        return goodsMapper.selectCount(lambdaQuery(Goods.class)
+                .in(Goods::getId, ids)
+                .and(i -> i.eq(Goods::getStatus, GoodsStatus.ON.getStatus())
+                        .or()
+                        .ne(Goods::getSalesVolume, 0)));
     }
 }

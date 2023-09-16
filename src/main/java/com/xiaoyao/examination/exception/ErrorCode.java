@@ -20,6 +20,7 @@ public enum ErrorCode {
     DISCOUNT_NOT_EXIST(1011, "折扣类别不存在"),
     GOODS_NOT_EXIST(1012, "套餐不存在"),
     GOODS_STATUS_NOT_ALLOW_UPDATE(1013, "套餐状态不允许修改"),
+    GOODS_CAN_NOT_DELETE(1014, "只有销量为零和已下架的套餐才能删除"),
     ;
 
     private final int code;

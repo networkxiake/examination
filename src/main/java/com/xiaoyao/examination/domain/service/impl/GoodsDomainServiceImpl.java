@@ -34,7 +34,7 @@ public class GoodsDomainServiceImpl implements GoodsDomainService {
             throw new ExaminationException(ErrorCode.GOODS_TYPE_NOT_EXIST);
         }
         // 判断套餐名称或编号是否已存在
-        if (goodsRepository.countGoods(goods.getName(), goods.getCode()) == 1) {
+        if (goodsRepository.countGoodsByNameOrCode(goods.getName(), goods.getCode()) == 1) {
             throw new ExaminationException(ErrorCode.GOODS_NAME_OR_CODE_EXIST);
         }
 
@@ -112,7 +112,7 @@ public class GoodsDomainServiceImpl implements GoodsDomainService {
 
         // 判断套餐名称或编号是否已存在
         if (goods.getName() != null || goods.getCode() != null) {
-            if (goodsRepository.countGoods(goods.getName(), goods.getCode()) == 1) {
+            if (goodsRepository.countGoodsByNameOrCode(goods.getName(), goods.getCode()) == 1) {
                 throw new ExaminationException(ErrorCode.GOODS_NAME_OR_CODE_EXIST);
             }
         }
@@ -124,5 +124,14 @@ public class GoodsDomainServiceImpl implements GoodsDomainService {
     @Override
     public Goods getUpdateGoodsById(long id) {
         return goodsRepository.getUpdateGoodsById(id);
+    }
+
+    @Override
+    public void deleteGoods(List<Long> ids) {
+        // 只有销量为零和已下架的套餐才能删除
+        if (goodsRepository.countDontDeletedGoods(ids) > 0) {
+            throw new ExaminationException(ErrorCode.GOODS_CAN_NOT_DELETE);
+        }
+        goodsRepository.deleteGoods(ids);
     }
 }

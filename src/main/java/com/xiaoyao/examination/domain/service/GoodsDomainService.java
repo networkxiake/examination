@@ -23,4 +23,6 @@ public interface GoodsDomainService {
     void updateGoods(Goods goods);
 
     Goods getUpdateGoodsById(long id);
+
+    void deleteGoods(List<Long> ids);
 }

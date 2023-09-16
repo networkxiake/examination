@@ -172,4 +172,9 @@ public class GoodsServiceImpl implements GoodsService {
             eventMulticaster.multicastEvent(new FileChangedEvent(rawGoods.getImage(), form.getImage()));
         }
     }
+
+    @Override
+    public void deleteGoods(List<Long> ids) {
+        goodsDomainService.deleteGoods(ids);
+    }
 }

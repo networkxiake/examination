@@ -7,6 +7,8 @@ import com.xiaoyao.examination.controller.form.goods.CreateForm;
 import com.xiaoyao.examination.controller.form.goods.SearchForm;
 import com.xiaoyao.examination.controller.form.goods.UpdateForm;
 
+import java.util.List;
+
 public interface GoodsService {
     void createGoods(CreateForm form);
 
@@ -19,4 +21,6 @@ public interface GoodsService {
     QueryGoodsDTO queryGoods(long id);
 
     void updateGoods(UpdateForm form);
+
+    void deleteGoods(List<Long> ids);
 }

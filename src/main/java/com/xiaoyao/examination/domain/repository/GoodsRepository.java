@@ -13,9 +13,13 @@ public interface GoodsRepository {
                             String code, String name, Integer type, Integer status,
                             long[] total);
 
-    long countGoods(String name, String code);
+    long countGoodsByNameOrCode(String name, String code);
 
     Goods queryGoodsById(long id);
 
     Goods getUpdateGoodsById(long id);
+
+    void deleteGoods(List<Long> ids);
+
+    long countDontDeletedGoods(List<Long> ids);
 }
