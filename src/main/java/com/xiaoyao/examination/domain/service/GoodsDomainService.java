@@ -10,9 +10,13 @@ public interface GoodsDomainService {
 
     Map<Integer, String> getAllGoodsType();
 
+    String getGoodsTypeById(int id);
+
     void changeStatus(long id, int status);
 
     List<Goods> searchGoods(long page, long size,
-                     String code, String name, Integer type, Integer status,
-                     long[] total);
+                            String code, String name, Integer type, Integer status,
+                            long[] total);
+
+    Goods queryGoodsById(long id);
 }

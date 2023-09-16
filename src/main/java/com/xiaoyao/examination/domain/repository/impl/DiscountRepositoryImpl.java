@@ -27,4 +27,12 @@ public class DiscountRepositoryImpl implements DiscountRepository {
         return discountMapper.selectCount(lambdaQuery(Discount.class)
                 .eq(id != null, Discount::getId, id));
     }
+
+    @Override
+    public String getNameById(long id) {
+        return discountMapper.selectOne(lambdaQuery(Discount.class)
+                .select(Discount::getName)
+                .eq(Discount::getId, id))
+                .getName();
+    }
 }

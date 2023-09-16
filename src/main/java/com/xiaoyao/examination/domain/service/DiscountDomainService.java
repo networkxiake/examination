@@ -8,4 +8,6 @@ public interface DiscountDomainService {
     List<Discount> listIdAndName();
 
     boolean isIdExist(long id);
+
+    String getNameById(long id);
 }

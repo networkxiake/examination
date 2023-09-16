@@ -22,4 +22,9 @@ public class DiscountDomainServiceImpl implements DiscountDomainService {
     public boolean isIdExist(long id) {
         return discountRepository.countDiscount(id) == 1;
     }
+
+    @Override
+    public String getNameById(long id) {
+        return discountRepository.getNameById(id);
+    }
 }

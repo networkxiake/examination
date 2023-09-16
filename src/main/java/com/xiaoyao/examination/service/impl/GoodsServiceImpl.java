@@ -1,7 +1,9 @@
 package com.xiaoyao.examination.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.json.JSONUtil;
 import com.xiaoyao.examination.controller.dto.goods.GoodsTypeDTO;
+import com.xiaoyao.examination.controller.dto.goods.QueryGoodsDTO;
 import com.xiaoyao.examination.controller.dto.goods.SearchGoodsDTO;
 import com.xiaoyao.examination.controller.form.goods.CreateForm;
 import com.xiaoyao.examination.controller.form.goods.SearchForm;
@@ -11,6 +13,7 @@ import com.xiaoyao.examination.domain.service.GoodsDomainService;
 import com.xiaoyao.examination.exception.ErrorCode;
 import com.xiaoyao.examination.exception.ExaminationException;
 import com.xiaoyao.examination.service.GoodsService;
+import com.xiaoyao.examination.service.StorageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -24,14 +27,22 @@ import java.util.Map;
 public class GoodsServiceImpl implements GoodsService {
     private final GoodsDomainService goodsDomainService;
     private final DiscountDomainService discountDomainService;
+    private final StorageService storageService;
 
     @Override
     public void createGoods(CreateForm form) {
         // 判断折扣类别是否存在
-        if (!discountDomainService.isIdExist(form.getDiscountId())) {
+        if (form.getDiscountId() != null && !discountDomainService.isIdExist(form.getDiscountId())) {
             throw new ExaminationException(ErrorCode.DISCOUNT_NOT_EXIST);
         }
-        goodsDomainService.createGoods(BeanUtil.copyProperties(form, Goods.class));
+
+        Goods goods = BeanUtil.copyProperties(form, Goods.class);
+        goods.setTag(JSONUtil.toJsonPrettyStr(form.getTag()));
+        goods.setDepartmentCheckup(JSONUtil.toJsonPrettyStr(form.getDepartmentCheckup()));
+        goods.setLaboratoryCheckup(JSONUtil.toJsonPrettyStr(form.getLaboratoryCheckup()));
+        goods.setMedicalCheckup(JSONUtil.toJsonPrettyStr(form.getMedicalCheckup()));
+        goods.setOtherCheckup(JSONUtil.toJsonPrettyStr(form.getOtherCheckup()));
+        goodsDomainService.createGoods(goods);
     }
 
     @Override
@@ -79,6 +90,40 @@ public class GoodsServiceImpl implements GoodsService {
         SearchGoodsDTO dto = new SearchGoodsDTO();
         dto.setTotal(total[0]);
         dto.setResults(result);
+        return dto;
+    }
+
+    @Override
+    public QueryGoodsDTO queryGoods(long id) {
+        Goods goods = goodsDomainService.queryGoodsById(id);
+        if (goods == null) {
+            throw new ExaminationException(ErrorCode.GOODS_NOT_EXIST);
+        }
+
+        QueryGoodsDTO dto = new QueryGoodsDTO();
+        dto.setName(goods.getName());
+        dto.setCode(goods.getCode());
+        dto.setDescription(goods.getDescription());
+        dto.setOriginalPrice(goods.getOriginalPrice().toString());
+        dto.setCurrentPrice(goods.getCurrentPrice().toString());
+        if (goods.getDiscountId() != null) {
+            dto.setDiscount(discountDomainService.getNameById(goods.getDiscountId()));
+        }
+        dto.setImage(storageService.getPathUrl(goods.getImage()));
+        dto.setType(goodsDomainService.getGoodsTypeById(goods.getType()));
+        dto.setTag(JSONUtil.parseArray(goods.getTag()).toList(String.class));
+        if (goods.getDepartmentCheckup() != null) {
+            dto.setDepartmentCheckup(JSONUtil.parseArray(goods.getDepartmentCheckup()).toList(QueryGoodsDTO.Item.class));
+        }
+        if (goods.getLaboratoryCheckup() != null) {
+            dto.setLaboratoryCheckup(JSONUtil.parseArray(goods.getLaboratoryCheckup()).toList(QueryGoodsDTO.Item.class));
+        }
+        if (goods.getMedicalCheckup() != null) {
+            dto.setMedicalCheckup(JSONUtil.parseArray(goods.getMedicalCheckup()).toList(QueryGoodsDTO.Item.class));
+        }
+        if (goods.getOtherCheckup() != null) {
+            dto.setOtherCheckup(JSONUtil.parseArray(goods.getOtherCheckup()).toList(QueryGoodsDTO.Item.class));
+        }
         return dto;
     }
 }

@@ -1,17 +1,14 @@
 package com.xiaoyao.examination.domain.entity;
 
-import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler;
 import lombok.Data;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Data
-@TableName(value = "tb_goods", autoResultMap = true)
+@TableName(value = "tb_goods")
 public class Goods {
     /**
      * 主键
@@ -62,8 +59,7 @@ public class Goods {
     /**
      * 套餐标签
      */
-    @TableField(typeHandler = JacksonTypeHandler.class)
-    private List<String> tag;
+    private String tag;
 
     /**
      * 套餐销量
@@ -78,31 +74,27 @@ public class Goods {
     /**
      * 科室检查
      */
-    @TableField(typeHandler = JacksonTypeHandler.class)
-    private List<Item> departmentCheckup;
+    private String departmentCheckup;
 
     /**
      * 实验室检查
      */
-    @TableField(typeHandler = JacksonTypeHandler.class)
-    private List<Item> laboratoryCheckup;
+    private String laboratoryCheckup;
 
     /**
      * 医技检查
      */
-    @TableField(typeHandler = JacksonTypeHandler.class)
-    private List<Item> medicalCheckup;
+    private String medicalCheckup;
 
     /**
      * 其它检查
      */
-    @TableField(typeHandler = JacksonTypeHandler.class)
-    private List<Item> otherCheckup;
+    private String otherCheckup;
 
     /**
      * 体检单项目
      */
-    private Object formItem;
+    private String formItem;
 
     /**
      * 更新时间
@@ -113,17 +105,4 @@ public class Goods {
      * 创建时间
      */
     private LocalDateTime createTime;
-
-    @Data
-    public static class Item {
-        /**
-         * 检查项目名称
-         */
-        private String name;
-
-        /**
-         * 检查项目描述
-         */
-        private String description;
-    }
 }

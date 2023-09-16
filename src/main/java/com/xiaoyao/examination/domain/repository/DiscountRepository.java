@@ -8,4 +8,6 @@ public interface DiscountRepository {
     List<Discount> listIdAndName();
 
     long countDiscount(Long id);
+
+    String getNameById(long id);
 }

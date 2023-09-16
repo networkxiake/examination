@@ -33,9 +33,9 @@ public class GoodsDomainServiceImpl implements GoodsDomainService {
         if (!isTypeExist) {
             throw new ExaminationException(ErrorCode.GOODS_TYPE_NOT_EXIST);
         }
-        // 判断套餐名称是否已存在
-        if (goodsRepository.countGoods(goods.getName()) == 1) {
-            throw new ExaminationException(ErrorCode.GOODS_NAME_EXIST);
+        // 判断套餐名称或编号是否已存在
+        if (goodsRepository.countGoods(goods.getName(), goods.getCode()) == 1) {
+            throw new ExaminationException(ErrorCode.GOODS_NAME_OR_CODE_EXIST);
         }
 
         goods.setSalesVolume(0);
@@ -52,6 +52,16 @@ public class GoodsDomainServiceImpl implements GoodsDomainService {
             types.put(value.getType(), value.getName());
         }
         return types;
+    }
+
+    @Override
+    public String getGoodsTypeById(int id) {
+        for (GoodsType value : GoodsType.values()) {
+            if (value.getType() == id) {
+                return value.getName();
+            }
+        }
+        throw new ExaminationException(ErrorCode.GOODS_TYPE_NOT_EXIST);
     }
 
     @Override
@@ -77,5 +87,10 @@ public class GoodsDomainServiceImpl implements GoodsDomainService {
     @Override
     public List<Goods> searchGoods(long page, long size, String code, String name, Integer type, Integer status, long[] total) {
         return goodsRepository.searchGoods(page, size, code, name, type, status, total);
+    }
+
+    @Override
+    public Goods queryGoodsById(long id) {
+        return goodsRepository.queryGoodsById(id);
     }
 }

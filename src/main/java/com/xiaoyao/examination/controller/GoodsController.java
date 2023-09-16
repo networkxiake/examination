@@ -2,6 +2,7 @@ package com.xiaoyao.examination.controller;
 
 import com.xiaoyao.examination.annotation.CheckLoginAdmin;
 import com.xiaoyao.examination.controller.dto.goods.GoodsTypeDTO;
+import com.xiaoyao.examination.controller.dto.goods.QueryGoodsDTO;
 import com.xiaoyao.examination.controller.dto.goods.SearchGoodsDTO;
 import com.xiaoyao.examination.controller.form.goods.ChangeStatusForm;
 import com.xiaoyao.examination.controller.form.goods.CreateForm;
@@ -42,5 +43,11 @@ public class GoodsController {
     public ResponseBody<Void> changeStatus(@Valid @RequestBody ChangeStatusForm form) {
         goodsService.changeStatus(form.getId(), form.getStatus());
         return ResponseBodyBuilder.build();
+    }
+
+    @CheckLoginAdmin
+    @GetMapping("/{id}")
+    public ResponseBody<QueryGoodsDTO> query(@PathVariable("id") long id) {
+        return ResponseBodyBuilder.build(goodsService.queryGoods(id));
     }
 }

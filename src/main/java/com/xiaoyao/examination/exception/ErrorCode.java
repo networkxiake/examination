@@ -16,8 +16,9 @@ public enum ErrorCode {
     USERNAME_EXIST(1007, "用户名已存在"),
     GOODS_TYPE_NOT_EXIST(1008, "套餐类型不存在"),
     GOODS_STATUS_NOT_EXIST(1009, "套餐状态不存在"),
-    GOODS_NAME_EXIST(1010, "套餐名称已存在"),
+    GOODS_NAME_OR_CODE_EXIST(1010, "套餐名称或编号已存在"),
     DISCOUNT_NOT_EXIST(1011, "折扣类别不存在"),
+    GOODS_NOT_EXIST(1012, "套餐不存在"),
     ;
 
     private final int code;

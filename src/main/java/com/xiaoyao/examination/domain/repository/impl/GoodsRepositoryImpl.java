@@ -50,8 +50,28 @@ public class GoodsRepositoryImpl implements GoodsRepository {
     }
 
     @Override
-    public long countGoods(String name) {
+    public long countGoods(String name, String code) {
         return goodsMapper.selectCount(lambdaQuery(Goods.class)
-                .eq(name != null, Goods::getName, name));
+                .eq(name != null, Goods::getName, name)
+                .eq(code != null, Goods::getCode, code));
+    }
+
+    @Override
+    public Goods queryGoodsById(long id) {
+        return goodsMapper.selectOne(lambdaQuery(Goods.class)
+                .select(Goods::getName,
+                        Goods::getCode,
+                        Goods::getDescription,
+                        Goods::getOriginalPrice,
+                        Goods::getCurrentPrice,
+                        Goods::getDiscountId,
+                        Goods::getImage,
+                        Goods::getType,
+                        Goods::getTag,
+                        Goods::getDepartmentCheckup,
+                        Goods::getLaboratoryCheckup,
+                        Goods::getMedicalCheckup,
+                        Goods::getOtherCheckup)
+                .eq(Goods::getId, id));
     }
 }
