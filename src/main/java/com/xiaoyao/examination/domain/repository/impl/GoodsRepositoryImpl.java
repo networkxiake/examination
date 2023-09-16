@@ -76,10 +76,10 @@ public class GoodsRepositoryImpl implements GoodsRepository {
     }
 
     @Override
-    public String getImageById(long id) {
+    public Goods getUpdateGoodsById(long id) {
         return goodsMapper.selectOne(lambdaQuery(Goods.class)
-                        .select(Goods::getImage)
-                        .eq(Goods::getId, id))
-                .getImage();
+                .select(Goods::getImage,
+                        Goods::getStatus)
+                .eq(Goods::getId, id));
     }
 }

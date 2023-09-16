@@ -9,6 +9,7 @@ import com.xiaoyao.examination.controller.form.goods.CreateForm;
 import com.xiaoyao.examination.controller.form.goods.SearchForm;
 import com.xiaoyao.examination.controller.form.goods.UpdateForm;
 import com.xiaoyao.examination.domain.entity.Goods;
+import com.xiaoyao.examination.domain.enums.GoodsStatus;
 import com.xiaoyao.examination.domain.service.DiscountDomainService;
 import com.xiaoyao.examination.domain.service.GoodsDomainService;
 import com.xiaoyao.examination.exception.ErrorCode;
@@ -143,9 +144,10 @@ public class GoodsServiceImpl implements GoodsService {
             throw new ExaminationException(ErrorCode.DISCOUNT_NOT_EXIST);
         }
 
-        String oldImage = null;
-        if (form.getImage() != null) {
-            oldImage = goodsDomainService.getImageById(form.getId());
+        Goods rawGoods = goodsDomainService.getUpdateGoodsById(form.getId());
+        // 套餐已下架才可以修改
+        if (rawGoods.getStatus() == GoodsStatus.ON.getStatus()) {
+            throw new ExaminationException(ErrorCode.GOODS_STATUS_NOT_ALLOW_UPDATE);
         }
 
         Goods goods = BeanUtil.copyProperties(form, Goods.class);
@@ -167,7 +169,7 @@ public class GoodsServiceImpl implements GoodsService {
         goodsDomainService.updateGoods(goods);
 
         if (form.getImage() != null) {
-            eventMulticaster.multicastEvent(new FileChangedEvent(oldImage, form.getImage()));
+            eventMulticaster.multicastEvent(new FileChangedEvent(rawGoods.getImage(), form.getImage()));
         }
     }
 }

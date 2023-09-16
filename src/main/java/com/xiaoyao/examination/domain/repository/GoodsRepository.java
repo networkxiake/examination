@@ -17,5 +17,5 @@ public interface GoodsRepository {
 
     Goods queryGoodsById(long id);
 
-    String getImageById(long id);
+    Goods getUpdateGoodsById(long id);
 }

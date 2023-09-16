@@ -22,5 +22,5 @@ public interface GoodsDomainService {
 
     void updateGoods(Goods goods);
 
-    String getImageById(long id);
+    Goods getUpdateGoodsById(long id);
 }

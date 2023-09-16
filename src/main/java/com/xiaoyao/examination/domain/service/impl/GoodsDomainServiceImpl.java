@@ -122,7 +122,7 @@ public class GoodsDomainServiceImpl implements GoodsDomainService {
     }
 
     @Override
-    public String getImageById(long id) {
-        return goodsRepository.getImageById(id);
+    public Goods getUpdateGoodsById(long id) {
+        return goodsRepository.getUpdateGoodsById(id);
     }
 }
