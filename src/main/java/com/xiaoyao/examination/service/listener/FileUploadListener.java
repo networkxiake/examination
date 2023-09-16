@@ -5,6 +5,7 @@ import com.xiaoyao.examination.service.event.FileChangedEvent;
 import com.xiaoyao.examination.service.event.FileConfirmedEvent;
 import com.xiaoyao.examination.service.event.FileUploadedEvent;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.context.event.EventListener;
@@ -19,6 +20,7 @@ import java.util.Set;
  * 清除已使用或上传时间超过一天的临时文件。
  */
 @Component
+@Slf4j
 @RequiredArgsConstructor
 public class FileUploadListener {
     private final String TEMP_FILE_KEY = "temp-file";
@@ -67,6 +69,9 @@ public class FileUploadListener {
                         if (members != null && !members.isEmpty()) {
                             redisTemplate.opsForZSet().remove(TEMP_FILE_KEY, members);
                             storageService.deleteFile(members.stream().map(Object::toString).toList());
+                        }
+                        if (log.isInfoEnabled()) {
+                            log.info("清除一天前的临时文件");
                         }
                     }
                     redisTemplate.opsForValue().set(LAST_REST_KEY, LocalDate.now().toString());

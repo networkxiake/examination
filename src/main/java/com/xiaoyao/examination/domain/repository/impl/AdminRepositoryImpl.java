@@ -81,6 +81,7 @@ public class AdminRepositoryImpl implements AdminRepository {
                 .select(Admin::getId,
                         Admin::getUsername,
                         Admin::getName,
+                        Admin::getPhoto,
                         Admin::getCreateTime)
                 .eq(name != null, Admin::getName, name)
                 .ne(Admin::getUsername, initAdminUsername));

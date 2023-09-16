@@ -14,6 +14,7 @@ public class SearchAdminDTO {
         private String id;
         private String username;
         private String name;
+        private String photo;
         private String createTime;
     }
 }

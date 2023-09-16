@@ -118,6 +118,7 @@ public class AdminServiceImpl implements AdminService {
             admin.setId(String.valueOf(item.getId()));
             admin.setUsername(item.getUsername());
             admin.setName(item.getName());
+            admin.setPhoto(storageService.getPathUrl(item.getPhoto()));
             admin.setCreateTime(item.getCreateTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
             admins.add(admin);
         });
