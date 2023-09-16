@@ -7,6 +7,7 @@ import com.xiaoyao.examination.controller.dto.goods.QueryGoodsDTO;
 import com.xiaoyao.examination.controller.dto.goods.SearchGoodsDTO;
 import com.xiaoyao.examination.controller.form.goods.CreateForm;
 import com.xiaoyao.examination.controller.form.goods.SearchForm;
+import com.xiaoyao.examination.controller.form.goods.UpdateForm;
 import com.xiaoyao.examination.domain.entity.Goods;
 import com.xiaoyao.examination.domain.service.DiscountDomainService;
 import com.xiaoyao.examination.domain.service.GoodsDomainService;
@@ -14,7 +15,9 @@ import com.xiaoyao.examination.exception.ErrorCode;
 import com.xiaoyao.examination.exception.ExaminationException;
 import com.xiaoyao.examination.service.GoodsService;
 import com.xiaoyao.examination.service.StorageService;
+import com.xiaoyao.examination.service.event.FileChangedEvent;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.event.ApplicationEventMulticaster;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -28,6 +31,7 @@ public class GoodsServiceImpl implements GoodsService {
     private final GoodsDomainService goodsDomainService;
     private final DiscountDomainService discountDomainService;
     private final StorageService storageService;
+    private final ApplicationEventMulticaster eventMulticaster;
 
     @Override
     public void createGoods(CreateForm form) {
@@ -125,5 +129,45 @@ public class GoodsServiceImpl implements GoodsService {
             dto.setOtherCheckup(JSONUtil.parseArray(goods.getOtherCheckup()).toList(QueryGoodsDTO.Item.class));
         }
         return dto;
+    }
+
+    @Override
+    public void updateGoods(UpdateForm form) {
+        // 确保真的需要更新
+        if (BeanUtil.beanToMap(form, false, true).size() == 1) {
+            return;
+        }
+
+        // 判断折扣类别是否存在
+        if (form.getDiscountId() != null && !discountDomainService.isIdExist(form.getDiscountId())) {
+            throw new ExaminationException(ErrorCode.DISCOUNT_NOT_EXIST);
+        }
+
+        String oldImage = null;
+        if (form.getImage() != null) {
+            oldImage = goodsDomainService.getImageById(form.getId());
+        }
+
+        Goods goods = BeanUtil.copyProperties(form, Goods.class);
+        if (form.getTag() != null) {
+            goods.setTag(JSONUtil.toJsonPrettyStr(form.getTag()));
+        }
+        if (form.getDepartmentCheckup() != null) {
+            goods.setDepartmentCheckup(JSONUtil.toJsonPrettyStr(form.getDepartmentCheckup()));
+        }
+        if (form.getLaboratoryCheckup() != null) {
+            goods.setLaboratoryCheckup(JSONUtil.toJsonPrettyStr(form.getLaboratoryCheckup()));
+        }
+        if (form.getMedicalCheckup() != null) {
+            goods.setMedicalCheckup(JSONUtil.toJsonPrettyStr(form.getMedicalCheckup()));
+        }
+        if (form.getOtherCheckup() != null) {
+            goods.setOtherCheckup(JSONUtil.toJsonPrettyStr(form.getOtherCheckup()));
+        }
+        goodsDomainService.updateGoods(goods);
+
+        if (form.getImage() != null) {
+            eventMulticaster.multicastEvent(new FileChangedEvent(oldImage, form.getImage()));
+        }
     }
 }

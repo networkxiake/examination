@@ -7,6 +7,7 @@ import com.xiaoyao.examination.controller.dto.goods.SearchGoodsDTO;
 import com.xiaoyao.examination.controller.form.goods.ChangeStatusForm;
 import com.xiaoyao.examination.controller.form.goods.CreateForm;
 import com.xiaoyao.examination.controller.form.goods.SearchForm;
+import com.xiaoyao.examination.controller.form.goods.UpdateForm;
 import com.xiaoyao.examination.response.ResponseBody;
 import com.xiaoyao.examination.response.ResponseBodyBuilder;
 import com.xiaoyao.examination.service.GoodsService;
@@ -49,5 +50,12 @@ public class GoodsController {
     @GetMapping("/{id}")
     public ResponseBody<QueryGoodsDTO> query(@PathVariable("id") long id) {
         return ResponseBodyBuilder.build(goodsService.queryGoods(id));
+    }
+
+    @CheckLoginAdmin
+    @PostMapping("/update")
+    public ResponseBody<Void> update(@Valid @RequestBody UpdateForm form) {
+        goodsService.updateGoods(form);
+        return ResponseBodyBuilder.build();
     }
 }

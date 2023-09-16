@@ -19,4 +19,8 @@ public interface GoodsDomainService {
                             long[] total);
 
     Goods queryGoodsById(long id);
+
+    void updateGoods(Goods goods);
+
+    String getImageById(long id);
 }

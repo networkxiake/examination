@@ -74,4 +74,12 @@ public class GoodsRepositoryImpl implements GoodsRepository {
                         Goods::getOtherCheckup)
                 .eq(Goods::getId, id));
     }
+
+    @Override
+    public String getImageById(long id) {
+        return goodsMapper.selectOne(lambdaQuery(Goods.class)
+                        .select(Goods::getImage)
+                        .eq(Goods::getId, id))
+                .getImage();
+    }
 }

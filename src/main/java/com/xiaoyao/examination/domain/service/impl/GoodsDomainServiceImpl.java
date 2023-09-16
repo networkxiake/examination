@@ -93,4 +93,36 @@ public class GoodsDomainServiceImpl implements GoodsDomainService {
     public Goods queryGoodsById(long id) {
         return goodsRepository.queryGoodsById(id);
     }
+
+    @Override
+    public void updateGoods(Goods goods) {
+        // 判断套餐类别是否存在
+        if (goods.getType() != null) {
+            boolean isTypeExist = false;
+            for (GoodsType goodsType : GoodsType.values()) {
+                if (goodsType.getType() == goods.getType()) {
+                    isTypeExist = true;
+                    break;
+                }
+            }
+            if (!isTypeExist) {
+                throw new ExaminationException(ErrorCode.GOODS_TYPE_NOT_EXIST);
+            }
+        }
+
+        // 判断套餐名称或编号是否已存在
+        if (goods.getName() != null || goods.getCode() != null) {
+            if (goodsRepository.countGoods(goods.getName(), goods.getCode()) == 1) {
+                throw new ExaminationException(ErrorCode.GOODS_NAME_OR_CODE_EXIST);
+            }
+        }
+
+        goods.setUpdateTime(LocalDateTime.now());
+        goodsRepository.update(goods);
+    }
+
+    @Override
+    public String getImageById(long id) {
+        return goodsRepository.getImageById(id);
+    }
 }

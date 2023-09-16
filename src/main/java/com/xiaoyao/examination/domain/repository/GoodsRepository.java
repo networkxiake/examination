@@ -16,4 +16,6 @@ public interface GoodsRepository {
     long countGoods(String name, String code);
 
     Goods queryGoodsById(long id);
+
+    String getImageById(long id);
 }
