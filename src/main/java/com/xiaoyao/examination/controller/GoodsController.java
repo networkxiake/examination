@@ -11,6 +11,7 @@ import com.xiaoyao.examination.service.GoodsService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequiredArgsConstructor
@@ -61,5 +62,18 @@ public class GoodsController {
     public ResponseBody<Void> delete(@Valid @RequestBody DeleteForm form) {
         goodsService.deleteGoods(form.getIds());
         return ResponseBodyBuilder.build();
+    }
+
+    @CheckLoginAdmin
+    @PostMapping("/upload-excel")
+    public ResponseBody<Void> uploadExcel(long id, MultipartFile file) {
+        goodsService.uploadExcel(id, file);
+        return ResponseBodyBuilder.build();
+    }
+
+    @CheckLoginAdmin
+    @GetMapping("/excel-url/{id}")
+    public ResponseBody<String> getExcelUrl(@PathVariable long id) {
+        return ResponseBodyBuilder.build(goodsService.getExcelUrl(id));
     }
 }

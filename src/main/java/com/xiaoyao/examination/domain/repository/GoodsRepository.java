@@ -22,4 +22,6 @@ public interface GoodsRepository {
     void deleteGoods(List<Long> ids);
 
     long countDontDeletedGoods(List<Long> ids);
+
+    Goods getUpdateExcelGoodsById(long id);
 }

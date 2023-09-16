@@ -81,6 +81,7 @@ public class GoodsDomainServiceImpl implements GoodsDomainService {
         Goods goods = new Goods();
         goods.setId(id);
         goods.setStatus(status);
+        goods.setUpdateTime(LocalDateTime.now());
         goodsRepository.update(goods);
     }
 
@@ -133,5 +134,19 @@ public class GoodsDomainServiceImpl implements GoodsDomainService {
             throw new ExaminationException(ErrorCode.GOODS_CAN_NOT_DELETE);
         }
         goodsRepository.deleteGoods(ids);
+    }
+
+    @Override
+    public void changeFormItem(long id, String formItem) {
+        Goods goods = new Goods();
+        goods.setId(id);
+        goods.setFormItem(formItem);
+        goods.setUpdateTime(LocalDateTime.now());
+        goodsRepository.update(goods);
+    }
+
+    @Override
+    public Goods getUpdateExcelGoodsById(long id) {
+        return goodsRepository.getUpdateExcelGoodsById(id);
     }
 }

@@ -25,4 +25,8 @@ public interface GoodsDomainService {
     Goods getUpdateGoodsById(long id);
 
     void deleteGoods(List<Long> ids);
+
+    void changeFormItem(long id, String formItem);
+
+    Goods getUpdateExcelGoodsById(long id);
 }

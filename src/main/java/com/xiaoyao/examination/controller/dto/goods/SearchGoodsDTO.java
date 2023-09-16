@@ -20,5 +20,6 @@ public class SearchGoodsDTO {
         private int salesVolume;
         private String type;
         private int status;
+        private boolean hasExcel;
     }
 }

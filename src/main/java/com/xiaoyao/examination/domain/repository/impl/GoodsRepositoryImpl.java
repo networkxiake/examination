@@ -40,7 +40,8 @@ public class GoodsRepositoryImpl implements GoodsRepository {
                         Goods::getDiscountId,
                         Goods::getSalesVolume,
                         Goods::getType,
-                        Goods::getStatus)
+                        Goods::getStatus,
+                        Goods::getFormItem)
                 .eq(code != null, Goods::getCode, code)
                 .eq(name != null, Goods::getName, name)
                 .eq(type != null, Goods::getType, type)
@@ -97,5 +98,13 @@ public class GoodsRepositoryImpl implements GoodsRepository {
                 .and(i -> i.eq(Goods::getStatus, GoodsStatus.ON.getStatus())
                         .or()
                         .ne(Goods::getSalesVolume, 0)));
+    }
+
+    @Override
+    public Goods getUpdateExcelGoodsById(long id) {
+        return goodsMapper.selectOne(lambdaQuery(Goods.class)
+                .select(Goods::getStatus,
+                        Goods::getFormItem)
+                .eq(Goods::getId, id));
     }
 }

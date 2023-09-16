@@ -20,6 +20,7 @@ import com.xiaoyao.examination.service.event.FileChangedEvent;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.event.ApplicationEventMulticaster;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -89,6 +90,7 @@ public class GoodsServiceImpl implements GoodsService {
             goods.setSalesVolume(item.getSalesVolume());
             goods.setType(goodsType.get(item.getType()));
             goods.setStatus(item.getStatus());
+            goods.setHasExcel(item.getFormItem() != null);
             result.add(goods);
         });
 
@@ -176,5 +178,27 @@ public class GoodsServiceImpl implements GoodsService {
     @Override
     public void deleteGoods(List<Long> ids) {
         goodsDomainService.deleteGoods(ids);
+    }
+
+    @Override
+    public void uploadExcel(long id, MultipartFile file) {
+        // 套餐已下架才可以修改
+        Goods goods = goodsDomainService.getUpdateExcelGoodsById(id);
+        if (goods.getStatus() == GoodsStatus.ON.getStatus()) {
+            throw new ExaminationException(ErrorCode.GOODS_STATUS_NOT_ALLOW_UPDATE);
+        }
+
+        goodsDomainService.changeFormItem(id, parseExcel(file));
+        storageService.uploadFile(String.valueOf(id), file, storageService.getExcelPrefix());
+    }
+
+    private String parseExcel(MultipartFile file) {
+        // TODO 解析excel
+        return "[1,2,3]";
+    }
+
+    @Override
+    public String getExcelUrl(long id) {
+        return storageService.getExcelUrl(id);
     }
 }

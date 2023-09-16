@@ -11,7 +11,13 @@ public interface StorageService {
 
     String uploadFile(MultipartFile file, String prefix);
 
+    String uploadFile(String name, MultipartFile file, String prefix);
+
     String getPhotoPrefix();
+
+    String getExcelPrefix();
+
+    String getExcelUrl(long id);
 
     void deleteFile(String path);
 

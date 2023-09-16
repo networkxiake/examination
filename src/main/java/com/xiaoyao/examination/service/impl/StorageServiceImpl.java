@@ -18,13 +18,13 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
 public class StorageServiceImpl implements StorageService {
     private final String DEFAULT_PHOTO = "default-photo.jpg";
-    private final String PHOTO_PREFIX = "photo/";
 
     private final MinIOProperties minIOProperties;
     private final MinioClient minioClient;
@@ -103,11 +103,17 @@ public class StorageServiceImpl implements StorageService {
 
     @Override
     public String uploadFile(MultipartFile file, String prefix) {
+        return uploadFile(null, file, prefix);
+    }
+
+    @Override
+    public String uploadFile(String name, MultipartFile file, String prefix) {
         String filename = file.getOriginalFilename();
         if (filename == null) {
             throw new ExaminationException(ErrorCode.INVALID_PARAMS);
         }
-        filename = prefix + UUID.randomUUID() + filename.substring(filename.lastIndexOf("."));
+        filename = prefix + Objects.requireNonNullElseGet(name, UUID::randomUUID) +
+                filename.substring(filename.lastIndexOf("."));
 
         try {
             minioClient.putObject(PutObjectArgs.builder()
@@ -124,18 +130,22 @@ public class StorageServiceImpl implements StorageService {
 
     @Override
     public String getPhotoPrefix() {
-        return PHOTO_PREFIX;
+        return "photo/";
+    }
+
+    @Override
+    public String getExcelPrefix() {
+        return "excel/";
+    }
+
+    @Override
+    public String getExcelUrl(long id) {
+        return getPathUrl(minIOProperties.getBucketName() + "/" + getExcelPrefix() + id + ".xlsx");
     }
 
     @Override
     public void deleteFile(String path) {
-        try {
-            minioClient.removeObject(RemoveObjectArgs.builder()
-                    .bucket(minIOProperties.getBucketName()).object(path)
-                    .build());
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        deleteFile(List.of(path));
     }
 
     @Override

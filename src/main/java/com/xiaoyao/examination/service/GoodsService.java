@@ -6,6 +6,7 @@ import com.xiaoyao.examination.controller.dto.goods.SearchGoodsDTO;
 import com.xiaoyao.examination.controller.form.goods.CreateForm;
 import com.xiaoyao.examination.controller.form.goods.SearchForm;
 import com.xiaoyao.examination.controller.form.goods.UpdateForm;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -23,4 +24,8 @@ public interface GoodsService {
     void updateGoods(UpdateForm form);
 
     void deleteGoods(List<Long> ids);
+
+    void uploadExcel(long id, MultipartFile file);
+
+    String getExcelUrl(long id);
 }
