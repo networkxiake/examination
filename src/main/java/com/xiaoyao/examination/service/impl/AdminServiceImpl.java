@@ -10,13 +10,13 @@ import com.xiaoyao.examination.service.AdminService;
 import com.xiaoyao.examination.service.StorageService;
 import com.xiaoyao.examination.service.event.FileChangedEvent;
 import com.xiaoyao.examination.util.SaltUtil;
-import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.context.event.ApplicationEventMulticaster;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;

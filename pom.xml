@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.1.3</version>
+        <version>2.7.15</version>
     </parent>
     <groupId>com.xiaoyao</groupId>
     <artifactId>examination</artifactId>
@@ -20,6 +20,9 @@
         <mybatis-plus.version>3.5.3.2</mybatis-plus.version>
         <redisson.version>3.23.4</redisson.version>
         <qlexpress.version>3.3.2</qlexpress.version>
+        <hutool.version>5.8.22</hutool.version>
+        <minio.version>8.5.5</minio.version>
+        <wechatpay.version>0.2.11</wechatpay.version>
     </properties>
 
     <dependencies>
@@ -36,7 +39,7 @@
         <dependency>
             <groupId>cn.hutool</groupId>
             <artifactId>hutool-all</artifactId>
-            <version>5.8.22</version>
+            <version>${hutool.version}</version>
         </dependency>
 
         <dependency>
@@ -49,7 +52,7 @@
         </dependency>
         <dependency>
             <groupId>cn.dev33</groupId>
-            <artifactId>sa-token-spring-boot3-starter</artifactId>
+            <artifactId>sa-token-spring-boot-starter</artifactId>
             <version>${sa-token.version}</version>
         </dependency>
         <dependency>
@@ -85,12 +88,17 @@
         <dependency>
             <groupId>io.minio</groupId>
             <artifactId>minio</artifactId>
-            <version>8.5.5</version>
+            <version>${minio.version}</version>
         </dependency>
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>QLExpress</artifactId>
             <version>${qlexpress.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.wechatpay-apiv3</groupId>
+            <artifactId>wechatpay-java</artifactId>
+            <version>${wechatpay.version}</version>
         </dependency>
     </dependencies>
 </project>

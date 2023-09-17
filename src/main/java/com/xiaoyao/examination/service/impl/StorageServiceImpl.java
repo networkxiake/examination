@@ -8,7 +8,6 @@ import com.xiaoyao.examination.service.StorageService;
 import com.xiaoyao.examination.service.event.FileUploadedEvent;
 import io.minio.*;
 import io.minio.messages.DeleteObject;
-import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
@@ -16,6 +15,7 @@ import org.springframework.context.event.ApplicationEventMulticaster;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;

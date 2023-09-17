@@ -5,12 +5,11 @@ spring:
     url: jdbc:mysql://116.205.233.28:3306/examination?connectionTimeZone=Asia/Shanghai&forceConnectionTimeZoneToSession=true
     username: examination
     password: BySootNYdwVn3Jg6
-  data:
-    redis:
-      host: 116.205.233.28
-      port: 6379
-      username: default
-      password: YS8OYDtcLFAsQ5Xb
+  redis:
+    host: 116.205.233.28
+    port: 6379
+    username: default
+    password: YS8OYDtcLFAsQ5Xb
 minio:
   https: false
   host: 116.205.233.28

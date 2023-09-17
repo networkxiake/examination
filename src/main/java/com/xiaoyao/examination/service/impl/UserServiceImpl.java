@@ -8,12 +8,12 @@ import com.xiaoyao.examination.service.StorageService;
 import com.xiaoyao.examination.service.UserService;
 import com.xiaoyao.examination.service.event.FileChangedEvent;
 import com.xiaoyao.examination.util.VerificationCodeUtil;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.event.ApplicationEventMulticaster;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
