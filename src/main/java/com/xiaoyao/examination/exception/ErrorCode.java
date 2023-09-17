@@ -21,6 +21,10 @@ public enum ErrorCode {
     GOODS_NOT_EXIST(1012, "套餐不存在"),
     GOODS_STATUS_NOT_ALLOW_UPDATE(1013, "套餐状态不允许修改，请先下架套餐！"),
     GOODS_CAN_NOT_DELETE(1014, "只有销量为零和已下架的套餐才能删除"),
+    VERIFICATION_CODE_SEND_TOO_FREQUENTLY(1015, "验证码发送过于频繁"),
+    VERIFICATION_CODE_NOT_EXIST(1016, "验证码不存在"),
+    VERIFICATION_CODE_ERROR(1017, "验证码错误"),
+    USER_ALREADY_EXIST(1018, "用户已存在"),
     ;
 
     private final int code;

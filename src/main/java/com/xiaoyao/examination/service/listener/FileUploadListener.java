@@ -26,6 +26,7 @@ public class FileUploadListener {
     private final String TEMP_FILE_KEY = "temp-file";
     private final String LAST_REST_KEY = "last-reset";
 
+    // TODO 换成StringRedisTemplate
     private final RedisTemplate<Object, Object> redisTemplate;
     private final RedissonClient redissonClient;
     private final StorageService storageService;
