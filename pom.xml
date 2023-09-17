@@ -22,7 +22,7 @@
         <qlexpress.version>3.3.2</qlexpress.version>
         <hutool.version>5.8.22</hutool.version>
         <minio.version>8.5.5</minio.version>
-        <wechatpay.version>0.2.11</wechatpay.version>
+        <payment.version>1.0.19.RELEASE</payment.version>
     </properties>
 
     <dependencies>
@@ -96,9 +96,9 @@
             <version>${qlexpress.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.github.wechatpay-apiv3</groupId>
-            <artifactId>wechatpay-java</artifactId>
-            <version>${wechatpay.version}</version>
+            <groupId>cn.felord</groupId>
+            <artifactId>payment-spring-boot-starter</artifactId>
+            <version>${payment.version}</version>
         </dependency>
     </dependencies>
 </project>

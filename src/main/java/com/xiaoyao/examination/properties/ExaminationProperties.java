@@ -20,4 +20,9 @@ public class ExaminationProperties {
      * 初始运营账户的姓名。
      */
     private String initAdminName;
+
+    /**
+     * 支付回调地址。
+     */
+    private String payNotifyUrl;
 }

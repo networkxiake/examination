@@ -16,3 +16,12 @@ minio:
   port: 9000
   access-key: LsmHvWcnBql2ExK7uqyN
   secret-key: r33dUvhtk1k6z7zgCw3TzPDbO16A9z7rrUCOv0ws
+wechat:
+  pay:
+    v3:
+      pc:
+        app-id: wx4cb8e9621950da45
+        app-v3-secret: b693aee4bdfb4080b93832d90b41e270
+        mch-id: 1526972031
+        domain: https://473a91d0.r7.cpolar.top
+        cert-path: apiclient_cert.p12
