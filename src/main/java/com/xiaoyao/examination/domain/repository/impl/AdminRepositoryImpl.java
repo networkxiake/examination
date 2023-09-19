@@ -88,4 +88,12 @@ public class AdminRepositoryImpl implements AdminRepository {
         total[0] = adminPage.getTotal();
         return adminPage.getRecords();
     }
+
+    @Override
+    public List<String> getPhotoByAdminIds(List<Long> ids, String initAdminUsername) {
+        return adminMapper.selectList(lambdaQuery(Admin.class)
+                .select(Admin::getPhoto)
+                .in(Admin::getId, ids)
+                .ne(Admin::getUsername, initAdminUsername)).stream().map(Admin::getPhoto).toList();
+    }
 }

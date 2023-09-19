@@ -101,10 +101,9 @@ public class GoodsRepositoryImpl implements GoodsRepository {
     }
 
     @Override
-    public Goods getUpdateExcelGoodsById(long id) {
+    public int getGoodsStatusById(long id) {
         return goodsMapper.selectOne(lambdaQuery(Goods.class)
-                .select(Goods::getStatus,
-                        Goods::getFormItem)
-                .eq(Goods::getId, id));
+                .select(Goods::getStatus)
+                .eq(Goods::getId, id)).getStatus();
     }
 }

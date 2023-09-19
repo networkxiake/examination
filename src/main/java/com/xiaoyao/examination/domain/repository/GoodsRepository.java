@@ -23,5 +23,5 @@ public interface GoodsRepository {
 
     long countDontDeletedGoods(List<Long> ids);
 
-    Goods getUpdateExcelGoodsById(long id);
+    int getGoodsStatusById(long id);
 }

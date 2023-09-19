@@ -10,7 +10,7 @@ public interface AdminService {
 
     void changePassword(long userId, String oldPassword, String newPassword);
 
-    String changePhoto(long userId, String path);
+    String confirmPhoto(long userId, String path);
 
     void createAdmin(String username, String password, String name);
 

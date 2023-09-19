@@ -24,4 +24,6 @@ public interface AdminRepository {
     void deleteAdmin(List<Long> ids, String initAdminUsername);
 
     List<Admin> searchAdmin(long page, long size, String name, long[] total, String initAdminUsername);
+
+    List<String> getPhotoByAdminIds(List<Long> ids, String initAdminUsername);
 }

@@ -16,9 +16,7 @@ import com.xiaoyao.examination.exception.ErrorCode;
 import com.xiaoyao.examination.exception.ExaminationException;
 import com.xiaoyao.examination.service.GoodsService;
 import com.xiaoyao.examination.service.StorageService;
-import com.xiaoyao.examination.service.event.FileChangedEvent;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.event.ApplicationEventMulticaster;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -33,7 +31,6 @@ public class GoodsServiceImpl implements GoodsService {
     private final GoodsDomainService goodsDomainService;
     private final DiscountDomainService discountDomainService;
     private final StorageService storageService;
-    private final ApplicationEventMulticaster eventMulticaster;
 
     @Override
     public void createGoods(CreateForm form) {
@@ -49,6 +46,8 @@ public class GoodsServiceImpl implements GoodsService {
         goods.setMedicalCheckup(JSONUtil.toJsonPrettyStr(form.getMedicalCheckup()));
         goods.setOtherCheckup(JSONUtil.toJsonPrettyStr(form.getOtherCheckup()));
         goodsDomainService.createGoods(goods);
+
+        storageService.confirmTempFile(form.getImage());
     }
 
     @Override
@@ -116,7 +115,7 @@ public class GoodsServiceImpl implements GoodsService {
         if (goods.getDiscountId() != null) {
             dto.setDiscount(discountDomainService.getNameById(goods.getDiscountId()));
         }
-        dto.setImage(storageService.getPathUrl(goods.getImage()));
+        dto.setImage(storageService.getPathDownloadingUrl(goods.getImage()));
         dto.setType(goodsDomainService.getGoodsTypeById(goods.getType()));
         dto.setTag(JSONUtil.parseArray(goods.getTag()).toList(String.class));
         if (goods.getDepartmentCheckup() != null) {
@@ -169,27 +168,24 @@ public class GoodsServiceImpl implements GoodsService {
             goods.setOtherCheckup(JSONUtil.toJsonPrettyStr(form.getOtherCheckup()));
         }
         goodsDomainService.updateGoods(goods);
-
-        if (form.getImage() != null) {
-            eventMulticaster.multicastEvent(new FileChangedEvent(rawGoods.getImage(), form.getImage()));
-        }
     }
 
     @Override
     public void deleteGoods(List<Long> ids) {
         goodsDomainService.deleteGoods(ids);
+        // 删除体检套餐时不能删除封面图片，因为图片已经归档了，但可以删除Excel文件，因为Excel文件不需要归档。
+        storageService.deleteExcel(ids);
     }
 
     @Override
-    public void uploadExcel(long id, MultipartFile file) {
+    public void uploadExcel(long goodsId, MultipartFile file) {
         // 套餐已下架才可以修改
-        Goods goods = goodsDomainService.getUpdateExcelGoodsById(id);
-        if (goods.getStatus() == GoodsStatus.ON.getStatus()) {
+        if (goodsDomainService.getGoodsStatusById(goodsId) == GoodsStatus.ON.getStatus()) {
             throw new ExaminationException(ErrorCode.GOODS_STATUS_NOT_ALLOW_UPDATE);
         }
 
-        goodsDomainService.changeFormItem(id, parseExcel(file));
-        storageService.uploadFile(String.valueOf(id), file, storageService.getExcelPrefix());
+        goodsDomainService.changeFormItem(goodsId, parseExcel(file));
+        storageService.uploadExcel(goodsId, file);
     }
 
     private String parseExcel(MultipartFile file) {
@@ -198,7 +194,7 @@ public class GoodsServiceImpl implements GoodsService {
     }
 
     @Override
-    public String getExcelUrl(long id) {
-        return storageService.getExcelUrl(id);
+    public String getExcelUrl(long goodsId) {
+        return storageService.getExcelDownloadingUrl(goodsId);
     }
 }

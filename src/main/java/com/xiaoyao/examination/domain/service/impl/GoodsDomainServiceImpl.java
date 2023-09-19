@@ -146,7 +146,7 @@ public class GoodsDomainServiceImpl implements GoodsDomainService {
     }
 
     @Override
-    public Goods getUpdateExcelGoodsById(long id) {
-        return goodsRepository.getUpdateExcelGoodsById(id);
+    public int getGoodsStatusById(long id) {
+        return goodsRepository.getGoodsStatusById(id);
     }
 }

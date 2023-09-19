@@ -28,5 +28,5 @@ public interface GoodsDomainService {
 
     void changeFormItem(long id, String formItem);
 
-    Goods getUpdateExcelGoodsById(long id);
+    int getGoodsStatusById(long id);
 }

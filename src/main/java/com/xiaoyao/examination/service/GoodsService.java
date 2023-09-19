@@ -25,7 +25,13 @@ public interface GoodsService {
 
     void deleteGoods(List<Long> ids);
 
-    void uploadExcel(long id, MultipartFile file);
+    /**
+     * 上传指定体检套餐的Excel文件，如果已存在则覆盖。
+     */
+    void uploadExcel(long goodsId, MultipartFile file);
 
-    String getExcelUrl(long id);
+    /**
+     * 获取指定体检套餐的Excel文件的URL。
+     */
+    String getExcelUrl(long goodsId);
 }

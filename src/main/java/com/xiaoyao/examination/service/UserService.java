@@ -7,5 +7,5 @@ public interface UserService {
 
     User login(String phone, String code);
 
-    void changePhoto(long userId, String path);
+    String confirmPhoto(long userId, String path);
 }

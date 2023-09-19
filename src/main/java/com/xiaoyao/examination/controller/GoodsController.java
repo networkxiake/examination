@@ -8,6 +8,8 @@ import com.xiaoyao.examination.controller.form.goods.*;
 import com.xiaoyao.examination.response.ResponseBody;
 import com.xiaoyao.examination.response.ResponseBodyBuilder;
 import com.xiaoyao.examination.service.GoodsService;
+import com.xiaoyao.examination.service.StorageService;
+import com.xiaoyao.examination.util.AdminStpUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -19,6 +21,7 @@ import javax.validation.Valid;
 @RequestMapping("/goods")
 public class GoodsController {
     private final GoodsService goodsService;
+    private final StorageService storageService;
 
     @CheckLoginAdmin
     @PostMapping("/search")
@@ -29,6 +32,12 @@ public class GoodsController {
     @GetMapping("/type")
     public ResponseBody<GoodsTypeDTO> type() {
         return ResponseBodyBuilder.build(goodsService.getAllGoodsType());
+    }
+
+    @CheckLoginAdmin
+    @PostMapping("/upload-photo")
+    public ResponseBody<String> uploadPhoto(MultipartFile file) {
+        return ResponseBodyBuilder.build(storageService.uploadTempGoodsPhoto(AdminStpUtil.getLoginId(), file));
     }
 
     @CheckLoginAdmin

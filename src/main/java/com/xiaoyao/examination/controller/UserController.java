@@ -10,12 +10,14 @@ import com.xiaoyao.examination.response.ResponseBody;
 import com.xiaoyao.examination.response.ResponseBodyBuilder;
 import com.xiaoyao.examination.service.StorageService;
 import com.xiaoyao.examination.service.UserService;
+import com.xiaoyao.examination.util.AdminStpUtil;
 import com.xiaoyao.examination.util.UserStpUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 
@@ -37,7 +39,7 @@ public class UserController {
         User user = userService.login(form.getPhone(), form.getCode());
         UserLoginDTO dto = new UserLoginDTO();
         dto.setToken(UserStpUtil.login(user.getId()));
-        dto.setPhoto(storageService.getPathUrl(user.getPhoto()));
+        dto.setPhoto(storageService.getPathDownloadingUrl(user.getPhoto()));
         dto.setName(user.getName());
         return ResponseBodyBuilder.build(dto);
     }
@@ -50,9 +52,13 @@ public class UserController {
     }
 
     @CheckLoginUser
-    @PostMapping("/change-photo")
-    public ResponseBody<Void> changePhoto(@Valid @RequestBody ChangePhotoForm form) {
-        userService.changePhoto(UserStpUtil.getLoginId(), form.getPath());
-        return ResponseBodyBuilder.build();
+    @PostMapping("/upload-photo")
+    public ResponseBody<String> uploadPhoto(MultipartFile file) {
+        return ResponseBodyBuilder.build(storageService.uploadTempUserPhoto(AdminStpUtil.getLoginId(), file));
+    }
+
+    @PostMapping("/confirm-photo")
+    public ResponseBody<String > confirmPhoto(@Valid @RequestBody ChangePhotoForm form) {
+        return ResponseBodyBuilder.build(userService.confirmPhoto(UserStpUtil.getLoginId(), form.getPath()));
     }
 }

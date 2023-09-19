@@ -71,8 +71,10 @@ public class AdminDomainServiceImpl implements AdminDomainService {
     }
 
     @Override
-    public void deleteAdmin(List<Long> ids) {
+    public List<String> deleteAdmin(List<Long> ids) {
+        List<String> photos = adminRepository.getPhotoByAdminIds(ids, examinationProperties.getInitAdminUsername());
         adminRepository.deleteAdmin(ids, examinationProperties.getInitAdminUsername());
+        return photos;
     }
 
     @Override

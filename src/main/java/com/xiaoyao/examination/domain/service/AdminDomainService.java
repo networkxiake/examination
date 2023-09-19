@@ -21,7 +21,7 @@ public interface AdminDomainService {
 
     void createAdmin(String username, String password, String name, String photo);
 
-    void deleteAdmin(List<Long> ids);
+    List<String> deleteAdmin(List<Long> ids);
 
     List<Admin> searchAdmin(long page, long size, String name, long[] total);
 }

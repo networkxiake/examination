@@ -25,6 +25,7 @@ public enum ErrorCode {
     VERIFICATION_CODE_NOT_EXIST(1016, "验证码不存在"),
     VERIFICATION_CODE_ERROR(1017, "验证码错误"),
     USER_ALREADY_EXIST(1018, "用户已存在"),
+    PHOTO_TYPE_ERROR(1019, "图片的类型要为jpg、png或jpeg"),
     ;
 
     private final int code;

@@ -5,31 +5,35 @@ import com.xiaoyao.examination.exception.ErrorCode;
 import com.xiaoyao.examination.exception.ExaminationException;
 import com.xiaoyao.examination.properties.MinIOProperties;
 import com.xiaoyao.examination.service.StorageService;
-import com.xiaoyao.examination.service.event.FileUploadedEvent;
 import io.minio.*;
 import io.minio.messages.DeleteObject;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
-import org.springframework.context.event.ApplicationEventMulticaster;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.PostConstruct;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.Set;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class StorageServiceImpl implements StorageService {
     private final String DEFAULT_PHOTO = "default-photo.jpg";
+    private final String EXCEL_PREFIX = "excel/";
+    private final String TEMP_FILE_KEY = "temp-file";
 
     private final MinIOProperties minIOProperties;
     private final MinioClient minioClient;
     private final RedissonClient redissonClient;
-    private final ApplicationEventMulticaster eventMulticaster;
+    private final StringRedisTemplate redisTemplate;
 
     @PostConstruct
     public void init() throws Exception {
@@ -91,9 +95,14 @@ public class StorageServiceImpl implements StorageService {
     }
 
     @Override
-    public String getPathUrl(String path) {
+    public String getPathDownloadingUrl(String path) {
         return minIOProperties.isHttps() ? "https://" : "http://" +
                 minIOProperties.getHost() + ":" + minIOProperties.getPort() + "/" + path;
+    }
+
+    @Override
+    public void confirmTempFile(String path) {
+        redisTemplate.opsForZSet().remove(TEMP_FILE_KEY, path.substring(minIOProperties.getBucketName().length() + 1));
     }
 
     @Override
@@ -102,62 +111,122 @@ public class StorageServiceImpl implements StorageService {
     }
 
     @Override
-    public String uploadFile(MultipartFile file, String prefix) {
-        return uploadFile(null, file, prefix);
+    public String uploadTempUserPhoto(long userId, MultipartFile file) {
+        String filename = file.getOriginalFilename();
+        checkPhotoType(filename);
+
+        String path = "photo/user/" + userId + filename.substring(filename.lastIndexOf("."));
+        uploadTempFile(path, file);
+        return path;
     }
 
     @Override
-    public String uploadFile(String name, MultipartFile file, String prefix) {
+    public void deleteUserPhoto(List<String> paths) {
+        // 不能删除默认头像
+        String defaultPhotoPath = getDefaultPhotoPath();
+        paths.removeIf(path -> path.equals(defaultPhotoPath));
+        if (!paths.isEmpty()) {
+            deleteFile(paths);
+        }
+    }
+
+    @Override
+    public String uploadTempGoodsPhoto(long goodsId, MultipartFile file) {
         String filename = file.getOriginalFilename();
+        checkPhotoType(filename);
+
+        String path = "photo/goods/" + goodsId + filename.substring(filename.lastIndexOf("."));
+        uploadTempFile(path, file);
+        return path;
+    }
+
+    private void checkPhotoType(String filename) {
         if (filename == null) {
             throw new ExaminationException(ErrorCode.INVALID_PARAMS);
+        } else if (!(filename.endsWith(".jpg") || filename.endsWith(".png") || filename.endsWith(".jpeg"))) {
+            throw new ExaminationException(ErrorCode.PHOTO_TYPE_ERROR);
         }
-        filename = prefix + Objects.requireNonNullElseGet(name, UUID::randomUUID) +
-                filename.substring(filename.lastIndexOf("."));
+    }
 
+    @Override
+    public void uploadExcel(long goodsId, MultipartFile file) {
+        String filename = file.getOriginalFilename();
+        if (filename == null || !filename.endsWith(".xlsx")) {
+            throw new ExaminationException(ErrorCode.INVALID_PARAMS);
+        }
+        uploadFile(EXCEL_PREFIX + goodsId + ".xlsx", file);
+    }
+
+    @Override
+    public String getExcelDownloadingUrl(long goodsId) {
+        return getPathDownloadingUrl(minIOProperties.getBucketName() + "/" + EXCEL_PREFIX + goodsId + ".xlsx");
+    }
+
+    @Override
+    public void deleteExcel(List<Long> goodsIds) {
+        List<String> path = new ArrayList<>();
+        goodsIds.forEach(id -> path.add(EXCEL_PREFIX + id + ".xlsx"));
+        deleteFile(path);
+    }
+
+    private void uploadFile(String shortPath, MultipartFile file) {
         try {
             minioClient.putObject(PutObjectArgs.builder()
-                    .bucket(minIOProperties.getBucketName()).object(filename)
+                    .bucket(minIOProperties.getBucketName()).object(shortPath)
                     .stream(file.getInputStream(), -1, 5 * 1024 * 1024)
                     .contentType(file.getContentType())
                     .build());
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        eventMulticaster.multicastEvent(new FileUploadedEvent(filename));
-        return minIOProperties.getBucketName() + "/" + filename;
     }
 
-    @Override
-    public String getPhotoPrefix() {
-        return "photo/";
+    private void uploadTempFile(String shortPath, MultipartFile file) {
+        redisTemplate.opsForZSet().add(TEMP_FILE_KEY, shortPath, System.currentTimeMillis());
+        uploadFile(shortPath, file);
     }
 
-    @Override
-    public String getExcelPrefix() {
-        return "excel/";
-    }
-
-    @Override
-    public String getExcelUrl(long id) {
-        return getPathUrl(minIOProperties.getBucketName() + "/" + getExcelPrefix() + id + ".xlsx");
-    }
-
-    @Override
-    public void deleteFile(String path) {
-        deleteFile(List.of(path));
-    }
-
-    @Override
-    public void deleteFile(List<String> paths) {
+    private void deleteFile(List<String> shortPaths) {
         try {
             List<DeleteObject> objects = new ArrayList<>();
-            paths.forEach(path -> objects.add(new DeleteObject(path)));
+            shortPaths.forEach(path -> objects.add(new DeleteObject(path)));
             minioClient.removeObjects(RemoveObjectsArgs.builder()
                     .bucket(minIOProperties.getBucketName()).objects(objects)
                     .build());
         } catch (Exception e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * 每天凌晨3点自动清除一天前的临时文件。
+     */
+    @Scheduled(cron = "0 0 3 * * ?")
+    public void clearTempFile() {
+        String LAST_REST_DATE_KEY = "last-reset-date";
+
+        String lastRestDate = redisTemplate.opsForValue().get(LAST_REST_DATE_KEY);
+        if (!LocalDate.now().toString().equals(lastRestDate)) {
+            RLock lock = redissonClient.getLock("clearTempFile");
+            if (lock.tryLock()) {
+                try {
+                    lastRestDate = redisTemplate.opsForValue().get(LAST_REST_DATE_KEY);
+                    if (!LocalDate.now().toString().equals(lastRestDate)) {
+                        Set<String> members = redisTemplate.opsForZSet().rangeByScore(TEMP_FILE_KEY,
+                                0, System.currentTimeMillis() - 24 * 60 * 60 * 1000);
+                        if (members != null && !members.isEmpty()) {
+                            redisTemplate.opsForZSet().remove(TEMP_FILE_KEY, members);
+                            deleteFile(new ArrayList<>(members));
+                        }
+                        redisTemplate.opsForValue().set(LAST_REST_DATE_KEY, LocalDate.now().toString());
+                        if (log.isInfoEnabled()) {
+                            log.info("清除一天前的临时文件");
+                        }
+                    }
+                } finally {
+                    lock.unlock();
+                }
+            }
         }
     }
 }

@@ -9,12 +9,14 @@ import com.xiaoyao.examination.domain.entity.Admin;
 import com.xiaoyao.examination.response.ResponseBody;
 import com.xiaoyao.examination.response.ResponseBodyBuilder;
 import com.xiaoyao.examination.service.AdminService;
+import com.xiaoyao.examination.service.StorageService;
 import com.xiaoyao.examination.util.AdminStpUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 
@@ -23,6 +25,7 @@ import javax.validation.Valid;
 @RequestMapping("/admin")
 public class AdminController {
     private final AdminService adminService;
+    private final StorageService storageService;
 
     @PostMapping("/login")
     public ResponseBody<AdminLoginDTO> login(@Valid @RequestBody LoginForm form) {
@@ -49,9 +52,15 @@ public class AdminController {
     }
 
     @CheckLoginAdmin
-    @PostMapping("/change-photo")
-    public ResponseBody<String> changePhoto(@Valid @RequestBody ChangePhotoForm form) {
-        return ResponseBodyBuilder.build(adminService.changePhoto(AdminStpUtil.getLoginId(), form.getPath()));
+    @PostMapping("/upload-photo")
+    public ResponseBody<String> uploadPhoto(MultipartFile file) {
+        return ResponseBodyBuilder.build(storageService.uploadTempUserPhoto(AdminStpUtil.getLoginId(), file));
+    }
+
+    @CheckLoginAdmin
+    @PostMapping("/confirm-photo")
+    public ResponseBody<String> confirmPhoto(@Valid @RequestBody ChangePhotoForm form) {
+        return ResponseBodyBuilder.build(adminService.confirmPhoto(AdminStpUtil.getLoginId(), form.getPath()));
     }
 
     @CheckLoginInitAdmin

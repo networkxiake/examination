@@ -8,12 +8,10 @@ import com.xiaoyao.examination.exception.ExaminationException;
 import com.xiaoyao.examination.properties.ExaminationProperties;
 import com.xiaoyao.examination.service.AdminService;
 import com.xiaoyao.examination.service.StorageService;
-import com.xiaoyao.examination.service.event.FileChangedEvent;
 import com.xiaoyao.examination.util.SaltUtil;
 import lombok.RequiredArgsConstructor;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
-import org.springframework.context.event.ApplicationEventMulticaster;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
@@ -29,7 +27,6 @@ public class AdminServiceImpl implements AdminService {
     private final StorageService storageService;
     private final RedissonClient redissonClient;
     private final ExaminationProperties examinationProperties;
-    private final ApplicationEventMulticaster eventMulticaster;
 
     @PostConstruct
     public void init() {
@@ -65,7 +62,7 @@ public class AdminServiceImpl implements AdminService {
 
         admin.setSalt(null);
         admin.setPassword(null);
-        admin.setPhoto(storageService.getPathUrl(admin.getPhoto()));
+        admin.setPhoto(storageService.getPathDownloadingUrl(admin.getPhoto()));
         return admin;
     }
 
@@ -88,15 +85,15 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    public String changePhoto(long userId, String path) {
-        String oldPath = adminDomainService.getPhotoById(userId);
+    public String confirmPhoto(long userId, String path) {
+        storageService.deleteUserPhoto(adminDomainService.getPhotoById(userId));
 
         Admin admin = new Admin();
         admin.setId(userId);
         admin.setPhoto(path);
         adminDomainService.updateAdmin(admin);
-        eventMulticaster.multicastEvent(new FileChangedEvent(oldPath, path));
-        return storageService.getPathUrl(path);
+        storageService.confirmTempFile(path);
+        return storageService.getPathDownloadingUrl(path);
     }
 
     @Override
@@ -106,7 +103,8 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     public void deleteAdmin(List<Long> ids) {
-        adminDomainService.deleteAdmin(ids);
+        List<String> paths = adminDomainService.deleteAdmin(ids);
+        storageService.deleteUserPhoto(paths);
     }
 
     @Override
@@ -118,7 +116,7 @@ public class AdminServiceImpl implements AdminService {
             admin.setId(String.valueOf(item.getId()));
             admin.setUsername(item.getUsername());
             admin.setName(item.getName());
-            admin.setPhoto(storageService.getPathUrl(item.getPhoto()));
+            admin.setPhoto(storageService.getPathDownloadingUrl(item.getPhoto()));
             admin.setCreateTime(item.getCreateTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
             admins.add(admin);
         });

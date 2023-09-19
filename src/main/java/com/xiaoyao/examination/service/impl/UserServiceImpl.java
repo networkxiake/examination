@@ -6,10 +6,8 @@ import com.xiaoyao.examination.exception.ErrorCode;
 import com.xiaoyao.examination.exception.ExaminationException;
 import com.xiaoyao.examination.service.StorageService;
 import com.xiaoyao.examination.service.UserService;
-import com.xiaoyao.examination.service.event.FileChangedEvent;
 import com.xiaoyao.examination.util.VerificationCodeUtil;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.event.ApplicationEventMulticaster;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -30,7 +28,6 @@ public class UserServiceImpl implements UserService {
     private final VerificationCodeUtil verificationCodeUtil;
     private final StorageService storageService;
     private final HttpServletRequest request;
-    private final ApplicationEventMulticaster eventMulticaster;
 
     @Override
     public void sendVerificationCode(String phone) {
@@ -82,13 +79,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void changePhoto(long userId, String path) {
-        String oldPhoto = userDomainService.getPhoto(userId);
+    public String confirmPhoto(long userId, String path) {
+        storageService.deleteUserPhoto(userDomainService.getPhoto(userId));
+
         User user = new User();
         user.setId(userId);
         user.setPhoto(path);
         userDomainService.update(user);
-
-        eventMulticaster.multicastEvent(new FileChangedEvent(oldPhoto, path));
+        storageService.confirmTempFile(path);
+        return storageService.getPathDownloadingUrl(path);
     }
 }
