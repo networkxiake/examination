@@ -143,6 +143,12 @@ public class GoodsRepositoryImpl implements GoodsRepository {
                 .eq(Goods::getSort, sort)
                 .eq(Goods::getStatus, GoodsStatus.ON.getStatus())
                 .orderByDesc(Goods::getSalesVolume)
-                .last("limit " + count));
+                .last("LIMIT " + count));
+    }
+
+    @Override
+    public List<Goods> searchGoodsByPage(int pass, int size, String name, Integer type, String gender,
+                                         String bottomPrice, String topPrice, String order) {
+        return goodsMapper.searchGoodsByPage(pass, size, name, type, gender, bottomPrice, topPrice, order);
     }
 }

@@ -14,9 +14,9 @@ public interface GoodsDomainService {
 
     void changeStatus(long id, int status);
 
-    List<Goods> searchGoods(long page, long size,
-                            String code, String name, Integer type, Integer status, Integer sort,
-                            long[] total);
+    List<Goods> searchGoodsByAdmin(long page, long size,
+                                   String code, String name, Integer type, Integer status, Integer sort,
+                                   long[] total);
 
     Goods queryGoodsById(long id);
 
@@ -33,4 +33,7 @@ public interface GoodsDomainService {
     Map<Integer, String> getAllGoodsSort();
 
     List<Goods> getRecommendGoods(int sort, int count);
+
+    List<Goods> searchGoods(int pass, int size, String name, Integer type, String gender,
+                            String bottomPrice, String topPrice, String order);
 }

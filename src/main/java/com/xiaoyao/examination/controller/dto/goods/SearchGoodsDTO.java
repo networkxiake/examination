@@ -6,20 +6,17 @@ import java.util.List;
 
 @Data
 public class SearchGoodsDTO {
-    private long total;
-    private List<Goods> results;
+    List<Goods> goodsList;
 
     @Data
     public static class Goods {
         private String id;
         private String name;
-        private String code;
+        private String description;
+        private String image;
         private String originalPrice;
         private String currentPrice;
-        private String discount;
         private int salesVolume;
-        private String type;
-        private int status;
-        private boolean hasExcel;
+        private String discountId;
     }
 }

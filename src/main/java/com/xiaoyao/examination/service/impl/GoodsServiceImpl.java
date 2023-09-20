@@ -4,7 +4,8 @@ import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.json.JSONUtil;
 import com.xiaoyao.examination.controller.dto.goods.*;
 import com.xiaoyao.examination.controller.form.goods.CreateForm;
-import com.xiaoyao.examination.controller.form.goods.SearchForm;
+import com.xiaoyao.examination.controller.form.goods.AdminSearchForm;
+import com.xiaoyao.examination.controller.form.goods.SearchGoodsForm;
 import com.xiaoyao.examination.controller.form.goods.UpdateForm;
 import com.xiaoyao.examination.domain.entity.Goods;
 import com.xiaoyao.examination.domain.enums.GoodsStatus;
@@ -66,17 +67,17 @@ public class GoodsServiceImpl implements GoodsService {
     }
 
     @Override
-    public SearchGoodsDTO searchGoods(SearchForm form) {
+    public AdminSearchGoodsDTO searchGoodsByAdmin(AdminSearchForm form) {
         long[] total = new long[1];
-        List<SearchGoodsDTO.Goods> result = new ArrayList<>();
+        List<AdminSearchGoodsDTO.Goods> result = new ArrayList<>();
 
         Map<Integer, String> goodsType = goodsDomainService.getAllGoodsType();
         Map<Long, String> discounts = new HashMap<>();
         discountDomainService.listIdAndName().forEach(item -> discounts.put(item.getId(), item.getName()));
 
-        goodsDomainService.searchGoods(form.getPage(), form.getSize(),
+        goodsDomainService.searchGoodsByAdmin(form.getPage(), form.getSize(),
                 form.getCode(), form.getName(), form.getType(), form.getStatus(), form.getSort(), total).forEach(item -> {
-            SearchGoodsDTO.Goods goods = new SearchGoodsDTO.Goods();
+            AdminSearchGoodsDTO.Goods goods = new AdminSearchGoodsDTO.Goods();
             goods.setId(String.valueOf(item.getId()));
             goods.setName(item.getName());
             goods.setCode(item.getCode());
@@ -91,7 +92,7 @@ public class GoodsServiceImpl implements GoodsService {
             result.add(goods);
         });
 
-        SearchGoodsDTO dto = new SearchGoodsDTO();
+        AdminSearchGoodsDTO dto = new AdminSearchGoodsDTO();
         dto.setTotal(total[0]);
         dto.setResults(result);
         return dto;
@@ -204,11 +205,11 @@ public class GoodsServiceImpl implements GoodsService {
     }
 
     @Override
-    public GoodsRecommendDTO recommend(int sort, int count) {
+    public SearchGoodsDTO recommend(int sort, int count) {
         // TODO 添加缓存
-        List<GoodsRecommendDTO.Goods> goodsList = new ArrayList<>();
+        List<SearchGoodsDTO.Goods> goodsList = new ArrayList<>();
         goodsDomainService.getRecommendGoods(sort, count).forEach(item -> {
-            GoodsRecommendDTO.Goods goods = new GoodsRecommendDTO.Goods();
+            SearchGoodsDTO.Goods goods = new SearchGoodsDTO.Goods();
             goods.setId(String.valueOf(item.getId()));
             goods.setName(item.getName());
             goods.setDescription(item.getDescription());
@@ -220,7 +221,30 @@ public class GoodsServiceImpl implements GoodsService {
             goodsList.add(goods);
         });
 
-        GoodsRecommendDTO dto = new GoodsRecommendDTO();
+        SearchGoodsDTO dto = new SearchGoodsDTO();
+        dto.setGoodsList(goodsList);
+        return dto;
+    }
+
+    @Override
+    public SearchGoodsDTO searchGoods(SearchGoodsForm form) {
+        // TODO 添加缓存
+        List<SearchGoodsDTO.Goods> goodsList = new ArrayList<>();
+        goodsDomainService.searchGoods(form.getPass(), form.getSize(), form.getName(), form.getType(),
+                form.getGender(), form.getBottomPrice(), form.getTopPrice(), form.getOrder()).forEach(item -> {
+            SearchGoodsDTO.Goods goods = new SearchGoodsDTO.Goods();
+            goods.setId(String.valueOf(item.getId()));
+            goods.setName(item.getName());
+            goods.setDescription(item.getDescription());
+            goods.setImage(storageService.getPathDownloadingUrl(item.getImage()));
+            goods.setOriginalPrice(item.getOriginalPrice().toString());
+            goods.setCurrentPrice(item.getCurrentPrice().toString());
+            goods.setSalesVolume(item.getSalesVolume());
+            goods.setDiscountId(item.getDiscountId() != null ? String.valueOf(item.getDiscountId()) : null);
+            goodsList.add(goods);
+        });
+
+        SearchGoodsDTO dto = new SearchGoodsDTO();
         dto.setGoodsList(goodsList);
         return dto;
     }

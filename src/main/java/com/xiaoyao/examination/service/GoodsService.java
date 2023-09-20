@@ -2,7 +2,8 @@ package com.xiaoyao.examination.service;
 
 import com.xiaoyao.examination.controller.dto.goods.*;
 import com.xiaoyao.examination.controller.form.goods.CreateForm;
-import com.xiaoyao.examination.controller.form.goods.SearchForm;
+import com.xiaoyao.examination.controller.form.goods.AdminSearchForm;
+import com.xiaoyao.examination.controller.form.goods.SearchGoodsForm;
 import com.xiaoyao.examination.controller.form.goods.UpdateForm;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -15,7 +16,7 @@ public interface GoodsService {
 
     void changeStatus(long id, int status);
 
-    SearchGoodsDTO searchGoods(SearchForm form);
+    AdminSearchGoodsDTO searchGoodsByAdmin(AdminSearchForm form);
 
     QueryGoodsDTO queryGoods(long id);
 
@@ -35,5 +36,7 @@ public interface GoodsService {
 
     GoodsSortDTO sort();
 
-    GoodsRecommendDTO recommend(int sort, int count);
+    SearchGoodsDTO recommend(int sort, int count);
+
+    SearchGoodsDTO searchGoods(SearchGoodsForm form);
 }

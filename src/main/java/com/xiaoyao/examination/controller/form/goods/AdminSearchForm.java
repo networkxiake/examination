@@ -6,7 +6,7 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 @Data
-public class SearchForm {
+public class AdminSearchForm {
     @NotNull
     @Min(1)
     private long page;

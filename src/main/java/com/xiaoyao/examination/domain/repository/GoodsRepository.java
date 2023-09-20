@@ -26,4 +26,7 @@ public interface GoodsRepository {
     int getGoodsStatusById(long id);
 
     List<Goods> getRecommendGoods(int sort, int count);
+
+    List<Goods> searchGoodsByPage(int pass, int size, String name, Integer type, String gender,
+                                  String bottomPrice, String topPrice, String order);
 }

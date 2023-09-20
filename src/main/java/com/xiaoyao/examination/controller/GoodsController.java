@@ -22,9 +22,9 @@ public class GoodsController {
     private final StorageService storageService;
 
     @CheckLoginAdmin
-    @PostMapping("/search")
-    public ResponseBody<SearchGoodsDTO> search(@Valid @RequestBody SearchForm form) {
-        return ResponseBodyBuilder.build(goodsService.searchGoods(form));
+    @PostMapping("/admin/search")
+    public ResponseBody<AdminSearchGoodsDTO> search(@Valid @RequestBody AdminSearchForm form) {
+        return ResponseBodyBuilder.build(goodsService.searchGoodsByAdmin(form));
     }
 
     @GetMapping("/type")
@@ -91,10 +91,15 @@ public class GoodsController {
     }
 
     @GetMapping("/recommend/{sort}")
-    public ResponseBody<GoodsRecommendDTO> recommend(@PathVariable Integer sort, Integer count) {
+    public ResponseBody<SearchGoodsDTO> recommend(@PathVariable Integer sort, Integer count) {
         if (count == null) {
             count = 4;
         }
         return ResponseBodyBuilder.build(goodsService.recommend(sort, count));
+    }
+
+    @PostMapping("/search")
+    public ResponseBody<SearchGoodsDTO> search(@Valid @RequestBody SearchGoodsForm form) {
+        return ResponseBodyBuilder.build(goodsService.searchGoods(form));
     }
 }

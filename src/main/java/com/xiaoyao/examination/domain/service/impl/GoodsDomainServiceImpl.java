@@ -81,9 +81,9 @@ public class GoodsDomainServiceImpl implements GoodsDomainService {
     }
 
     @Override
-    public List<Goods> searchGoods(long page, long size,
-                                   String code, String name, Integer type, Integer status, Integer sort,
-                                   long[] total) {
+    public List<Goods> searchGoodsByAdmin(long page, long size,
+                                          String code, String name, Integer type, Integer status, Integer sort,
+                                          long[] total) {
         return goodsRepository.searchGoods(page, size, code, name, type, status, sort, total);
     }
 
@@ -181,5 +181,12 @@ public class GoodsDomainServiceImpl implements GoodsDomainService {
     public List<Goods> getRecommendGoods(int sort, int count) {
         checkGoodsSort(sort);
         return goodsRepository.getRecommendGoods(sort, count);
+    }
+
+    @Override
+    public List<Goods> searchGoods(int pass, int size, String name, Integer type, String gender,
+                                   String bottomPrice, String topPrice, String order) {
+        checkGoodsType(type);
+        return goodsRepository.searchGoodsByPage(pass, size, name, type, gender, bottomPrice, topPrice, order);
     }
 }
