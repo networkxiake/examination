@@ -81,8 +81,10 @@ public class GoodsDomainServiceImpl implements GoodsDomainService {
     }
 
     @Override
-    public List<Goods> searchGoods(long page, long size, String code, String name, Integer type, Integer status, long[] total) {
-        return goodsRepository.searchGoods(page, size, code, name, type, status, total);
+    public List<Goods> searchGoods(long page, long size,
+                                   String code, String name, Integer type, Integer status, Integer sort,
+                                   long[] total) {
+        return goodsRepository.searchGoods(page, size, code, name, type, status, sort, total);
     }
 
     @Override

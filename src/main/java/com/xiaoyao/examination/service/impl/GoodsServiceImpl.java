@@ -78,7 +78,7 @@ public class GoodsServiceImpl implements GoodsService {
         discountDomainService.listIdAndName().forEach(item -> discounts.put(item.getId(), item.getName()));
 
         goodsDomainService.searchGoods(form.getPage(), form.getSize(),
-                form.getCode(), form.getName(), form.getType(), form.getStatus(), total).forEach(item -> {
+                form.getCode(), form.getName(), form.getType(), form.getStatus(), form.getSort(), total).forEach(item -> {
             SearchGoodsDTO.Goods goods = new SearchGoodsDTO.Goods();
             goods.setId(String.valueOf(item.getId()));
             goods.setName(item.getName());

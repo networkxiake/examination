@@ -50,7 +50,7 @@ public class GoodsRepositoryImpl implements GoodsRepository {
 
     @Override
     public List<Goods> searchGoods(long page, long size,
-                                   String code, String name, Integer type, Integer status,
+                                   String code, String name, Integer type, Integer status, Integer sort,
                                    long[] total) {
         Page<Goods> goodsPage = goodsMapper.selectPage(Page.of(page, size), lambdaQuery(Goods.class)
                 .select(Goods::getId,
@@ -66,7 +66,8 @@ public class GoodsRepositoryImpl implements GoodsRepository {
                 .eq(code != null, Goods::getCode, code)
                 .eq(name != null, Goods::getName, name)
                 .eq(type != null, Goods::getType, type)
-                .eq(status != null, Goods::getStatus, status));
+                .eq(status != null, Goods::getStatus, status)
+                .eq(sort != null, Goods::getSort, sort));
 
         total[0] = goodsPage.getTotal();
         return goodsPage.getRecords();

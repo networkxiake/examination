@@ -10,7 +10,7 @@ public interface GoodsRepository {
     void update(Goods goods);
 
     List<Goods> searchGoods(long page, long size,
-                            String code, String name, Integer type, Integer status,
+                            String code, String name, Integer type, Integer status, Integer sort,
                             long[] total);
 
     long countGoodsByNameOrCode(String name, String code);

@@ -24,4 +24,7 @@ public class SearchForm {
 
     @Min(1)
     private Integer status;
+
+    @Min(1)
+    private Integer sort;
 }

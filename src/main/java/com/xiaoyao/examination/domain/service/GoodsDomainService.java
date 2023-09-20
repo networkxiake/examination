@@ -15,7 +15,7 @@ public interface GoodsDomainService {
     void changeStatus(long id, int status);
 
     List<Goods> searchGoods(long page, long size,
-                            String code, String name, Integer type, Integer status,
+                            String code, String name, Integer type, Integer status, Integer sort,
                             long[] total);
 
     Goods queryGoodsById(long id);
