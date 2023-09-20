@@ -8,14 +8,17 @@ import com.xiaoyao.examination.controller.form.goods.AdminSearchForm;
 import com.xiaoyao.examination.controller.form.goods.SearchGoodsForm;
 import com.xiaoyao.examination.controller.form.goods.UpdateForm;
 import com.xiaoyao.examination.domain.entity.Goods;
+import com.xiaoyao.examination.domain.entity.GoodsSnapshot;
 import com.xiaoyao.examination.domain.enums.GoodsStatus;
 import com.xiaoyao.examination.domain.service.DiscountDomainService;
 import com.xiaoyao.examination.domain.service.GoodsDomainService;
+import com.xiaoyao.examination.domain.service.GoodsSnapshotDomainService;
 import com.xiaoyao.examination.exception.ErrorCode;
 import com.xiaoyao.examination.exception.ExaminationException;
 import com.xiaoyao.examination.service.GoodsService;
 import com.xiaoyao.examination.service.StorageService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -30,6 +33,7 @@ public class GoodsServiceImpl implements GoodsService {
     private final GoodsDomainService goodsDomainService;
     private final DiscountDomainService discountDomainService;
     private final StorageService storageService;
+    private final GoodsSnapshotDomainService snapshotDomainService;
 
     @Override
     public void createGoods(CreateForm form) {
@@ -44,9 +48,32 @@ public class GoodsServiceImpl implements GoodsService {
         goods.setLaboratoryCheckup(JSONUtil.toJsonStr(form.getLaboratoryCheckup()));
         goods.setMedicalCheckup(JSONUtil.toJsonStr(form.getMedicalCheckup()));
         goods.setOtherCheckup(JSONUtil.toJsonStr(form.getOtherCheckup()));
-        goodsDomainService.createGoods(goods);
+        long goodsId = goodsDomainService.createGoods(goods);
 
         storageService.confirmTempFile(form.getImage());
+        saveSnapshot(goodsId);
+    }
+
+    @Async
+    public void saveSnapshot(long goodsId) {
+        Goods goods = goodsDomainService.getSnapshotGoodsById(goodsId);
+
+        GoodsSnapshot snapshot = new GoodsSnapshot();
+        snapshot.setGoodsId(goods.getId());
+        snapshot.setName(goods.getName());
+        snapshot.setDescription(goods.getDescription());
+        snapshot.setImage(goods.getImage());
+        snapshot.setOriginalPrice(goods.getOriginalPrice());
+        snapshot.setCurrentPrice(goods.getCurrentPrice());
+        snapshot.setType(goods.getType());
+        snapshot.setTag(goods.getTag());
+        snapshot.setDepartmentCheckup(goods.getDepartmentCheckup());
+        snapshot.setLaboratoryCheckup(goods.getLaboratoryCheckup());
+        snapshot.setMedicalCheckup(goods.getMedicalCheckup());
+        snapshot.setOtherCheckup(goods.getOtherCheckup());
+        snapshot.setUpdateTime(goods.getUpdateTime());
+        snapshot.setCreateTime(goods.getCreateTime());
+        snapshotDomainService.saveSnapshot(snapshot);
     }
 
     @Override
@@ -162,6 +189,7 @@ public class GoodsServiceImpl implements GoodsService {
             goods.setOtherCheckup(JSONUtil.toJsonStr(form.getOtherCheckup()));
         }
         goodsDomainService.updateGoods(goods);
+        saveSnapshot(form.getId());
     }
 
     @Override

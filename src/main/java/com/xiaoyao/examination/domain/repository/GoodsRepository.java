@@ -29,4 +29,6 @@ public interface GoodsRepository {
 
     List<Goods> searchGoodsByPage(int pass, int size, String name, Integer type, String gender,
                                   String bottomPrice, String topPrice, String order);
+
+    Goods getSnapshotGoodsById(long goodsId);
 }

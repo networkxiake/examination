@@ -22,7 +22,7 @@ public class GoodsDomainServiceImpl implements GoodsDomainService {
     private final GoodsRepository goodsRepository;
 
     @Override
-    public void createGoods(Goods goods) {
+    public long createGoods(Goods goods) {
         // 判断套餐类别是否存在
         checkGoodsType(goods.getType());
         // 判断套餐分类是否存在
@@ -38,6 +38,7 @@ public class GoodsDomainServiceImpl implements GoodsDomainService {
         goods.setUpdateTime(LocalDateTime.now());
         goods.setCreateTime(LocalDateTime.now());
         goodsRepository.insert(goods);
+        return goods.getId();
     }
 
     @Override
@@ -147,7 +148,7 @@ public class GoodsDomainServiceImpl implements GoodsDomainService {
 
     @Override
     public void deleteGoods(List<Long> ids) {
-        // 只有销量为零和已下架的套餐才能删除
+        // 只有已下架的套餐才能删除
         if (goodsRepository.countDontDeletedGoods(ids) > 0) {
             throw new ExaminationException(ErrorCode.GOODS_CAN_NOT_DELETE);
         }
@@ -188,5 +189,10 @@ public class GoodsDomainServiceImpl implements GoodsDomainService {
                                    String bottomPrice, String topPrice, String order) {
         checkGoodsType(type);
         return goodsRepository.searchGoodsByPage(pass, size, name, type, gender, bottomPrice, topPrice, order);
+    }
+
+    @Override
+    public Goods getSnapshotGoodsById(long goodsId) {
+        return goodsRepository.getSnapshotGoodsById(goodsId);
     }
 }

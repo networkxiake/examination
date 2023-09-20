@@ -117,9 +117,7 @@ public class GoodsRepositoryImpl implements GoodsRepository {
     public long countDontDeletedGoods(List<Long> ids) {
         return goodsMapper.selectCount(lambdaQuery(Goods.class)
                 .in(Goods::getId, ids)
-                .and(i -> i.eq(Goods::getStatus, GoodsStatus.ON.getStatus())
-                        .or()
-                        .ne(Goods::getSalesVolume, 0)));
+                .eq(Goods::getStatus, GoodsStatus.ON.getStatus()));
     }
 
     @Override
@@ -150,5 +148,25 @@ public class GoodsRepositoryImpl implements GoodsRepository {
     public List<Goods> searchGoodsByPage(int pass, int size, String name, Integer type, String gender,
                                          String bottomPrice, String topPrice, String order) {
         return goodsMapper.searchGoodsByPage(pass, size, name, type, gender, bottomPrice, topPrice, order);
+    }
+
+    @Override
+    public Goods getSnapshotGoodsById(long goodsId) {
+        return goodsMapper.selectOne(lambdaQuery(Goods.class)
+                .select(Goods::getId,
+                        Goods::getName,
+                        Goods::getDescription,
+                        Goods::getImage,
+                        Goods::getOriginalPrice,
+                        Goods::getCurrentPrice,
+                        Goods::getType,
+                        Goods::getTag,
+                        Goods::getDepartmentCheckup,
+                        Goods::getLaboratoryCheckup,
+                        Goods::getMedicalCheckup,
+                        Goods::getOtherCheckup,
+                        Goods::getUpdateTime,
+                        Goods::getCreateTime)
+                .eq(Goods::getId, goodsId));
     }
 }

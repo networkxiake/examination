@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 public interface GoodsDomainService {
-    void createGoods(Goods goods);
+    long createGoods(Goods goods);
 
     Map<Integer, String> getAllGoodsType();
 
@@ -36,4 +36,6 @@ public interface GoodsDomainService {
 
     List<Goods> searchGoods(int pass, int size, String name, Integer type, String gender,
                             String bottomPrice, String topPrice, String order);
+
+    Goods getSnapshotGoodsById(long goodsId);
 }
