@@ -45,4 +45,15 @@ public class UserRepositoryImpl implements UserRepository {
                         .eq(User::getId, userId))
                 .getPhoto();
     }
+
+    @Override
+    public User findById(long id) {
+        return userMapper.selectOne(lambdaQuery(User.class)
+                .select(User::getName,
+                        User::getGender,
+                        User::getPhone,
+                        User::getPhoto,
+                        User::getCreateTime)
+                .eq(User::getId, id));
+    }
 }

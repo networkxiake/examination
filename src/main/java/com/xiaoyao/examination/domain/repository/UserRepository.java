@@ -12,4 +12,6 @@ public interface UserRepository {
     void update(User user);
 
     String getPhoto(long userId);
+
+    User findById(long id);
 }

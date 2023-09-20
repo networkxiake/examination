@@ -25,7 +25,7 @@ import java.util.Set;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class StorageServiceImpl implements StorageService {
+public class MinIOStorageService implements StorageService {
     private final String DEFAULT_PHOTO = "default-photo.jpg";
     private final String EXCEL_PREFIX = "excel/";
     private final String TEMP_FILE_KEY = "temp-file";

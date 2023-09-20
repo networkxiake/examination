@@ -2,9 +2,8 @@ package com.xiaoyao.examination.controller;
 
 import com.xiaoyao.examination.annotation.CheckLoginUser;
 import com.xiaoyao.examination.controller.dto.user.UserLoginDTO;
-import com.xiaoyao.examination.controller.form.user.ChangePhotoForm;
-import com.xiaoyao.examination.controller.form.user.LoginForm;
-import com.xiaoyao.examination.controller.form.user.SendCodeForm;
+import com.xiaoyao.examination.controller.dto.user.UserProfileDTO;
+import com.xiaoyao.examination.controller.form.user.*;
 import com.xiaoyao.examination.domain.entity.User;
 import com.xiaoyao.examination.response.ResponseBody;
 import com.xiaoyao.examination.response.ResponseBodyBuilder;
@@ -13,10 +12,7 @@ import com.xiaoyao.examination.service.UserService;
 import com.xiaoyao.examination.util.AdminStpUtil;
 import com.xiaoyao.examination.util.UserStpUtil;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
@@ -57,8 +53,29 @@ public class UserController {
         return ResponseBodyBuilder.build(storageService.uploadTempUserPhoto(AdminStpUtil.getLoginId(), file));
     }
 
+    @CheckLoginUser
     @PostMapping("/confirm-photo")
-    public ResponseBody<String > confirmPhoto(@Valid @RequestBody ChangePhotoForm form) {
+    public ResponseBody<String> confirmPhoto(@Valid @RequestBody ChangePhotoForm form) {
         return ResponseBodyBuilder.build(userService.confirmPhoto(UserStpUtil.getLoginId(), form.getPath()));
+    }
+
+    @CheckLoginUser
+    @GetMapping("/profile")
+    public ResponseBody<UserProfileDTO> profile() {
+        return ResponseBodyBuilder.build(userService.profile(UserStpUtil.getLoginId()));
+    }
+
+    @CheckLoginUser
+    @PostMapping("/update-profile")
+    public ResponseBody<Void> updateProfile(@Valid @RequestBody UpdateProfileForm form) {
+        userService.updateProfile(UserStpUtil.getLoginId(), form.getName(), form.getGender());
+        return ResponseBodyBuilder.build();
+    }
+
+    @CheckLoginUser
+    @PostMapping("/update-phone")
+    public ResponseBody<Void> updatePhone(@Valid @RequestBody UpdatePhoneForm form) {
+        userService.updatePhone(UserStpUtil.getLoginId(), form.getPhone(), form.getCode());
+        return ResponseBodyBuilder.build();
     }
 }

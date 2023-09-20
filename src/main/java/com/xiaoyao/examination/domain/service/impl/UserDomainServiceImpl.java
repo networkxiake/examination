@@ -19,6 +19,11 @@ public class UserDomainServiceImpl implements UserDomainService {
     }
 
     @Override
+    public User findById(long id) {
+        return userRepository.findById(id);
+    }
+
+    @Override
     public void create(User user) {
         if (userRepository.countByPhone(user.getPhone()) == 1) {
             throw new ExaminationException(ErrorCode.USER_ALREADY_EXIST);
