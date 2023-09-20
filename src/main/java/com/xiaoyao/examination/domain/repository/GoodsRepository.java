@@ -24,4 +24,6 @@ public interface GoodsRepository {
     long countDontDeletedGoods(List<Long> ids);
 
     int getGoodsStatusById(long id);
+
+    List<Goods> getRecommendGoods(int sort, int count);
 }

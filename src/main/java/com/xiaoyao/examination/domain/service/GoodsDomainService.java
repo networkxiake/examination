@@ -31,4 +31,6 @@ public interface GoodsDomainService {
     int getGoodsStatusById(long id);
 
     Map<Integer, String> getAllGoodsSort();
+
+    List<Goods> getRecommendGoods(int sort, int count);
 }

@@ -1,9 +1,6 @@
 package com.xiaoyao.examination.service;
 
-import com.xiaoyao.examination.controller.dto.goods.GoodsSortDTO;
-import com.xiaoyao.examination.controller.dto.goods.GoodsTypeDTO;
-import com.xiaoyao.examination.controller.dto.goods.QueryGoodsDTO;
-import com.xiaoyao.examination.controller.dto.goods.SearchGoodsDTO;
+import com.xiaoyao.examination.controller.dto.goods.*;
 import com.xiaoyao.examination.controller.form.goods.CreateForm;
 import com.xiaoyao.examination.controller.form.goods.SearchForm;
 import com.xiaoyao.examination.controller.form.goods.UpdateForm;
@@ -37,4 +34,6 @@ public interface GoodsService {
     String getExcelUrl(long goodsId);
 
     GoodsSortDTO sort();
+
+    GoodsRecommendDTO recommend(int sort, int count);
 }

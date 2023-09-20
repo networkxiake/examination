@@ -1,10 +1,7 @@
 package com.xiaoyao.examination.controller;
 
 import com.xiaoyao.examination.annotation.CheckLoginAdmin;
-import com.xiaoyao.examination.controller.dto.goods.GoodsSortDTO;
-import com.xiaoyao.examination.controller.dto.goods.GoodsTypeDTO;
-import com.xiaoyao.examination.controller.dto.goods.QueryGoodsDTO;
-import com.xiaoyao.examination.controller.dto.goods.SearchGoodsDTO;
+import com.xiaoyao.examination.controller.dto.goods.*;
 import com.xiaoyao.examination.controller.form.goods.*;
 import com.xiaoyao.examination.response.ResponseBody;
 import com.xiaoyao.examination.response.ResponseBodyBuilder;
@@ -91,5 +88,13 @@ public class GoodsController {
     @GetMapping("/sort")
     public ResponseBody<GoodsSortDTO> sort() {
         return ResponseBodyBuilder.build(goodsService.sort());
+    }
+
+    @GetMapping("/recommend/{sort}")
+    public ResponseBody<GoodsRecommendDTO> recommend(@PathVariable Integer sort, Integer count) {
+        if (count == null) {
+            count = 4;
+        }
+        return ResponseBodyBuilder.build(goodsService.recommend(sort, count));
     }
 }

@@ -176,4 +176,10 @@ public class GoodsDomainServiceImpl implements GoodsDomainService {
         }
         return sorts;
     }
+
+    @Override
+    public List<Goods> getRecommendGoods(int sort, int count) {
+        checkGoodsSort(sort);
+        return goodsRepository.getRecommendGoods(sort, count);
+    }
 }

@@ -2,10 +2,7 @@ package com.xiaoyao.examination.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.json.JSONUtil;
-import com.xiaoyao.examination.controller.dto.goods.GoodsSortDTO;
-import com.xiaoyao.examination.controller.dto.goods.GoodsTypeDTO;
-import com.xiaoyao.examination.controller.dto.goods.QueryGoodsDTO;
-import com.xiaoyao.examination.controller.dto.goods.SearchGoodsDTO;
+import com.xiaoyao.examination.controller.dto.goods.*;
 import com.xiaoyao.examination.controller.form.goods.CreateForm;
 import com.xiaoyao.examination.controller.form.goods.SearchForm;
 import com.xiaoyao.examination.controller.form.goods.UpdateForm;
@@ -203,6 +200,28 @@ public class GoodsServiceImpl implements GoodsService {
 
         GoodsSortDTO dto = new GoodsSortDTO();
         dto.setSorts(sorts);
+        return dto;
+    }
+
+    @Override
+    public GoodsRecommendDTO recommend(int sort, int count) {
+        // TODO 添加缓存
+        List<GoodsRecommendDTO.Goods> goodsList = new ArrayList<>();
+        goodsDomainService.getRecommendGoods(sort, count).forEach(item -> {
+            GoodsRecommendDTO.Goods goods = new GoodsRecommendDTO.Goods();
+            goods.setId(String.valueOf(item.getId()));
+            goods.setName(item.getName());
+            goods.setDescription(item.getDescription());
+            goods.setImage(storageService.getPathDownloadingUrl(item.getImage()));
+            goods.setOriginalPrice(item.getOriginalPrice().toString());
+            goods.setCurrentPrice(item.getCurrentPrice().toString());
+            goods.setSalesVolume(item.getSalesVolume());
+            goods.setDiscountId(item.getDiscountId() != null ? String.valueOf(item.getDiscountId()) : null);
+            goodsList.add(goods);
+        });
+
+        GoodsRecommendDTO dto = new GoodsRecommendDTO();
+        dto.setGoodsList(goodsList);
         return dto;
     }
 }

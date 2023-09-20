@@ -128,4 +128,21 @@ public class GoodsRepositoryImpl implements GoodsRepository {
                 .select(Goods::getStatus)
                 .eq(Goods::getId, id)).getStatus();
     }
+
+    @Override
+    public List<Goods> getRecommendGoods(int sort, int count) {
+        return goodsMapper.selectList(lambdaQuery(Goods.class)
+                .select(Goods::getId,
+                        Goods::getName,
+                        Goods::getDescription,
+                        Goods::getImage,
+                        Goods::getOriginalPrice,
+                        Goods::getCurrentPrice,
+                        Goods::getSalesVolume,
+                        Goods::getDiscountId)
+                .eq(Goods::getSort, sort)
+                .eq(Goods::getStatus, GoodsStatus.ON.getStatus())
+                .orderByDesc(Goods::getSalesVolume)
+                .last("limit " + count));
+    }
 }
