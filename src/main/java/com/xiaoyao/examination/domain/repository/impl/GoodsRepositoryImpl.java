@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 import static com.baomidou.mybatisplus.core.toolkit.Wrappers.lambdaQuery;
+import static com.baomidou.mybatisplus.core.toolkit.Wrappers.lambdaUpdate;
 
 @Repository
 @RequiredArgsConstructor
@@ -24,7 +25,27 @@ public class GoodsRepositoryImpl implements GoodsRepository {
 
     @Override
     public void update(Goods goods) {
-        goodsMapper.updateById(goods);
+        // 区分值为null时的可选字段
+        Goods temp = new Goods();
+        temp.setDiscountId(goods.getDiscountId());
+        goods.setDiscountId(null);
+        temp.setTag(goods.getTag());
+        goods.setTag(null);
+        temp.setDepartmentCheckup(goods.getDepartmentCheckup());
+        goods.setDepartmentCheckup(null);
+        temp.setLaboratoryCheckup(goods.getLaboratoryCheckup());
+        goods.setLaboratoryCheckup(null);
+        temp.setMedicalCheckup(goods.getMedicalCheckup());
+        goods.setMedicalCheckup(null);
+        temp.setOtherCheckup(goods.getOtherCheckup());
+        goods.setOtherCheckup(null);
+        goodsMapper.update(goods, lambdaUpdate(Goods.class)
+                .set(Goods::getDiscountId, temp.getDiscountId())
+                .set(Goods::getTag, temp.getTag())
+                .set(Goods::getDepartmentCheckup, temp.getDepartmentCheckup())
+                .set(Goods::getLaboratoryCheckup, temp.getLaboratoryCheckup())
+                .set(Goods::getMedicalCheckup, temp.getMedicalCheckup())
+                .set(Goods::getOtherCheckup, temp.getOtherCheckup()));
     }
 
     @Override

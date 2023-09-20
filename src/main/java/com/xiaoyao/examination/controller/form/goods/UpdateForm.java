@@ -34,6 +34,9 @@ public class UpdateForm {
 
     private List<String> tag;
 
+    @Min(1)
+    private Integer sort;
+
     private List<CreateForm.Item> departmentCheckup;
 
     private List<CreateForm.Item> laboratoryCheckup;

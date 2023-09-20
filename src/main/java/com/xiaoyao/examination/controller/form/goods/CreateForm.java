@@ -40,6 +40,10 @@ public class CreateForm {
 
     private List<String> tag;
 
+    @NotNull
+    @Min(1)
+    private Integer sort;
+
     @Valid
     private List<Item> departmentCheckup;
 

@@ -1,6 +1,7 @@
 package com.xiaoyao.examination.controller;
 
 import com.xiaoyao.examination.annotation.CheckLoginAdmin;
+import com.xiaoyao.examination.controller.dto.goods.GoodsSortDTO;
 import com.xiaoyao.examination.controller.dto.goods.GoodsTypeDTO;
 import com.xiaoyao.examination.controller.dto.goods.QueryGoodsDTO;
 import com.xiaoyao.examination.controller.dto.goods.SearchGoodsDTO;
@@ -85,5 +86,10 @@ public class GoodsController {
     @GetMapping("/excel-url/{id}")
     public ResponseBody<String> getExcelUrl(@PathVariable long id) {
         return ResponseBodyBuilder.build(goodsService.getExcelUrl(id));
+    }
+
+    @GetMapping("/sort")
+    public ResponseBody<GoodsSortDTO> sort() {
+        return ResponseBodyBuilder.build(goodsService.sort());
     }
 }

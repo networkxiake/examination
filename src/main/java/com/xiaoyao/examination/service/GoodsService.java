@@ -1,5 +1,6 @@
 package com.xiaoyao.examination.service;
 
+import com.xiaoyao.examination.controller.dto.goods.GoodsSortDTO;
 import com.xiaoyao.examination.controller.dto.goods.GoodsTypeDTO;
 import com.xiaoyao.examination.controller.dto.goods.QueryGoodsDTO;
 import com.xiaoyao.examination.controller.dto.goods.SearchGoodsDTO;
@@ -34,4 +35,6 @@ public interface GoodsService {
      * 获取指定体检套餐的Excel文件的URL。
      */
     String getExcelUrl(long goodsId);
+
+    GoodsSortDTO sort();
 }

@@ -2,6 +2,7 @@ package com.xiaoyao.examination.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.json.JSONUtil;
+import com.xiaoyao.examination.controller.dto.goods.GoodsSortDTO;
 import com.xiaoyao.examination.controller.dto.goods.GoodsTypeDTO;
 import com.xiaoyao.examination.controller.dto.goods.QueryGoodsDTO;
 import com.xiaoyao.examination.controller.dto.goods.SearchGoodsDTO;
@@ -40,11 +41,11 @@ public class GoodsServiceImpl implements GoodsService {
         }
 
         Goods goods = BeanUtil.copyProperties(form, Goods.class);
-        goods.setTag(JSONUtil.toJsonPrettyStr(form.getTag()));
-        goods.setDepartmentCheckup(JSONUtil.toJsonPrettyStr(form.getDepartmentCheckup()));
-        goods.setLaboratoryCheckup(JSONUtil.toJsonPrettyStr(form.getLaboratoryCheckup()));
-        goods.setMedicalCheckup(JSONUtil.toJsonPrettyStr(form.getMedicalCheckup()));
-        goods.setOtherCheckup(JSONUtil.toJsonPrettyStr(form.getOtherCheckup()));
+        goods.setTag(JSONUtil.toJsonStr(form.getTag()));
+        goods.setDepartmentCheckup(JSONUtil.toJsonStr(form.getDepartmentCheckup()));
+        goods.setLaboratoryCheckup(JSONUtil.toJsonStr(form.getLaboratoryCheckup()));
+        goods.setMedicalCheckup(JSONUtil.toJsonStr(form.getMedicalCheckup()));
+        goods.setOtherCheckup(JSONUtil.toJsonStr(form.getOtherCheckup()));
         goodsDomainService.createGoods(goods);
 
         storageService.confirmTempFile(form.getImage());
@@ -135,11 +136,6 @@ public class GoodsServiceImpl implements GoodsService {
 
     @Override
     public void updateGoods(UpdateForm form) {
-        // 确保真的需要更新
-        if (BeanUtil.beanToMap(form, false, true).size() == 1) {
-            return;
-        }
-
         // 判断折扣类别是否存在
         if (form.getDiscountId() != null && !discountDomainService.isIdExist(form.getDiscountId())) {
             throw new ExaminationException(ErrorCode.DISCOUNT_NOT_EXIST);
@@ -153,19 +149,19 @@ public class GoodsServiceImpl implements GoodsService {
 
         Goods goods = BeanUtil.copyProperties(form, Goods.class);
         if (form.getTag() != null) {
-            goods.setTag(JSONUtil.toJsonPrettyStr(form.getTag()));
+            goods.setTag(JSONUtil.toJsonStr(form.getTag()));
         }
         if (form.getDepartmentCheckup() != null) {
-            goods.setDepartmentCheckup(JSONUtil.toJsonPrettyStr(form.getDepartmentCheckup()));
+            goods.setDepartmentCheckup(JSONUtil.toJsonStr(form.getDepartmentCheckup()));
         }
         if (form.getLaboratoryCheckup() != null) {
-            goods.setLaboratoryCheckup(JSONUtil.toJsonPrettyStr(form.getLaboratoryCheckup()));
+            goods.setLaboratoryCheckup(JSONUtil.toJsonStr(form.getLaboratoryCheckup()));
         }
         if (form.getMedicalCheckup() != null) {
-            goods.setMedicalCheckup(JSONUtil.toJsonPrettyStr(form.getMedicalCheckup()));
+            goods.setMedicalCheckup(JSONUtil.toJsonStr(form.getMedicalCheckup()));
         }
         if (form.getOtherCheckup() != null) {
-            goods.setOtherCheckup(JSONUtil.toJsonPrettyStr(form.getOtherCheckup()));
+            goods.setOtherCheckup(JSONUtil.toJsonStr(form.getOtherCheckup()));
         }
         goodsDomainService.updateGoods(goods);
     }
@@ -196,5 +192,17 @@ public class GoodsServiceImpl implements GoodsService {
     @Override
     public String getExcelUrl(long goodsId) {
         return storageService.getExcelDownloadingUrl(goodsId);
+    }
+
+    @Override
+    public GoodsSortDTO sort() {
+        // TODO 添加缓存
+        List<GoodsSortDTO.Sort> sorts = new ArrayList<>();
+        goodsDomainService.getAllGoodsSort().forEach((key, value) ->
+                sorts.add(new GoodsSortDTO.Sort(key, value)));
+
+        GoodsSortDTO dto = new GoodsSortDTO();
+        dto.setSorts(sorts);
+        return dto;
     }
 }

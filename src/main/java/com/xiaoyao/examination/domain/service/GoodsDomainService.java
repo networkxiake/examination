@@ -29,4 +29,6 @@ public interface GoodsDomainService {
     void changeFormItem(long id, String formItem);
 
     int getGoodsStatusById(long id);
+
+    Map<Integer, String> getAllGoodsSort();
 }

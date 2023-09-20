@@ -1,6 +1,7 @@
 package com.xiaoyao.examination.domain.service.impl;
 
 import com.xiaoyao.examination.domain.entity.Goods;
+import com.xiaoyao.examination.domain.enums.GoodsSort;
 import com.xiaoyao.examination.domain.enums.GoodsStatus;
 import com.xiaoyao.examination.domain.enums.GoodsType;
 import com.xiaoyao.examination.domain.repository.GoodsRepository;
@@ -23,16 +24,10 @@ public class GoodsDomainServiceImpl implements GoodsDomainService {
     @Override
     public void createGoods(Goods goods) {
         // 判断套餐类别是否存在
-        boolean isTypeExist = false;
-        for (GoodsType goodsType : GoodsType.values()) {
-            if (goodsType.getType() == goods.getType()) {
-                isTypeExist = true;
-                break;
-            }
-        }
-        if (!isTypeExist) {
-            throw new ExaminationException(ErrorCode.GOODS_TYPE_NOT_EXIST);
-        }
+        checkGoodsType(goods.getType());
+        // 判断套餐分类是否存在
+        checkGoodsSort(goods.getSort());
+
         // 判断套餐名称或编号是否已存在
         if (goodsRepository.countGoodsByNameOrCode(goods.getName(), goods.getCode()) == 1) {
             throw new ExaminationException(ErrorCode.GOODS_NAME_OR_CODE_EXIST);
@@ -98,18 +93,9 @@ public class GoodsDomainServiceImpl implements GoodsDomainService {
     @Override
     public void updateGoods(Goods goods) {
         // 判断套餐类别是否存在
-        if (goods.getType() != null) {
-            boolean isTypeExist = false;
-            for (GoodsType goodsType : GoodsType.values()) {
-                if (goodsType.getType() == goods.getType()) {
-                    isTypeExist = true;
-                    break;
-                }
-            }
-            if (!isTypeExist) {
-                throw new ExaminationException(ErrorCode.GOODS_TYPE_NOT_EXIST);
-            }
-        }
+        checkGoodsType(goods.getType());
+        // 判断套餐分类是否存在
+        checkGoodsSort(goods.getSort());
 
         // 判断套餐名称或编号是否已存在
         if (goods.getName() != null || goods.getCode() != null) {
@@ -120,6 +106,36 @@ public class GoodsDomainServiceImpl implements GoodsDomainService {
 
         goods.setUpdateTime(LocalDateTime.now());
         goodsRepository.update(goods);
+    }
+
+    private void checkGoodsType(Integer type) {
+        if (type != null) {
+            boolean isTypeExist = false;
+            for (GoodsType goodsType : GoodsType.values()) {
+                if (goodsType.getType() == type) {
+                    isTypeExist = true;
+                    break;
+                }
+            }
+            if (!isTypeExist) {
+                throw new ExaminationException(ErrorCode.GOODS_TYPE_NOT_EXIST);
+            }
+        }
+    }
+
+    private void checkGoodsSort(Integer sort) {
+        if (sort != null) {
+            boolean isSortExist = false;
+            for (GoodsSort goodsSort : GoodsSort.values()) {
+                if (goodsSort.getSort() == sort) {
+                    isSortExist = true;
+                    break;
+                }
+            }
+            if (!isSortExist) {
+                throw new ExaminationException(ErrorCode.GOODS_SORT_NOT_EXIST);
+            }
+        }
     }
 
     @Override
@@ -148,5 +164,14 @@ public class GoodsDomainServiceImpl implements GoodsDomainService {
     @Override
     public int getGoodsStatusById(long id) {
         return goodsRepository.getGoodsStatusById(id);
+    }
+
+    @Override
+    public Map<Integer, String> getAllGoodsSort() {
+        Map<Integer, String> sorts = new HashMap<>();
+        for (GoodsStatus value : GoodsStatus.values()) {
+            sorts.put(value.getStatus(), value.getName());
+        }
+        return sorts;
     }
 }

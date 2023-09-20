@@ -57,6 +57,11 @@ public class Goods {
     private Integer type;
 
     /**
+     * 套餐分类
+     */
+    private Integer sort;
+
+    /**
      * 套餐标签
      */
     private String tag;
