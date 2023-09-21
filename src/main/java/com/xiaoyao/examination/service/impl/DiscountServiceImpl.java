@@ -1,5 +1,6 @@
 package com.xiaoyao.examination.service.impl;
 
+import com.ql.util.express.DefaultContext;
 import com.ql.util.express.ExpressRunner;
 import com.xiaoyao.examination.controller.dto.discount.ListDiscountDTO;
 import com.xiaoyao.examination.controller.dto.discount.SearchDiscountDTO;
@@ -15,6 +16,8 @@ import com.xiaoyao.examination.service.GoodsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -81,6 +84,28 @@ public class DiscountServiceImpl implements DiscountService {
         discount.setScript(form.getScript());
         discount.setDescription(form.getDescription());
         discountDomainService.update(discount);
+    }
+
+    @Override
+    public BigDecimal compute(long discountId, BigDecimal price, int count) {
+        DefaultContext<String, Object> context = new DefaultContext<>();
+        context.put("price", price);
+        context.put("count", count);
+
+        String script = discountDomainService.getScriptByDiscountId(discountId);
+        Object result = null;
+        Exception exception = null;
+        try {
+            result = expressRunner.execute(script, context, null, true, false);
+        } catch (Exception e) {
+            exception = e;
+        }
+
+        if (exception == null && result instanceof BigDecimal newPrice) {
+            return newPrice.setScale(2, RoundingMode.DOWN);
+        } else {
+            throw new ExaminationException(ErrorCode.DISCOUNT_SCRIPT_ERROR);
+        }
     }
 
     private void checkScript(String script) {

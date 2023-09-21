@@ -46,4 +46,9 @@ public class DiscountDomainServiceImpl implements DiscountDomainService {
             throw new ExaminationException(ErrorCode.DISCOUNT_NOT_EXIST);
         }
     }
+
+    @Override
+    public String getScriptByDiscountId(long discountId) {
+        return discountRepository.getScriptByDiscountId(discountId);
+    }
 }

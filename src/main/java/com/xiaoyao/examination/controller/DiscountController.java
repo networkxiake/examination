@@ -44,4 +44,6 @@ public class DiscountController {
         discountService.update(form);
         return ResponseBodyBuilder.build();
     }
+
+    // TODO 新增删除折扣的接口
 }

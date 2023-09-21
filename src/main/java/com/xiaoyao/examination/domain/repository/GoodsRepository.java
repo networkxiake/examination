@@ -34,4 +34,8 @@ public interface GoodsRepository {
     Goods getSnapshotGoodsById(long goodsId);
 
     Map<Long, Long> countGoodsByDiscountIds(List<Long> discountIds);
+
+    Goods getOrderGoodsById(long id);
+
+    void increaseSales(long goodsId, int count);
 }

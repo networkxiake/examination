@@ -6,6 +6,8 @@ import com.xiaoyao.examination.controller.form.discount.CreateForm;
 import com.xiaoyao.examination.controller.form.discount.SearchForm;
 import com.xiaoyao.examination.controller.form.discount.UpdateForm;
 
+import java.math.BigDecimal;
+
 public interface DiscountService {
     ListDiscountDTO list();
 
@@ -14,4 +16,6 @@ public interface DiscountService {
     SearchDiscountDTO search(SearchForm form);
 
     void update(UpdateForm form);
+
+    BigDecimal compute(long discountId, BigDecimal price, int count);
 }

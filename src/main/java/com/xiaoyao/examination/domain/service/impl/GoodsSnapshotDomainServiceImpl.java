@@ -6,6 +6,8 @@ import com.xiaoyao.examination.domain.service.GoodsSnapshotDomainService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+
 @Service
 @RequiredArgsConstructor
 public class GoodsSnapshotDomainServiceImpl implements GoodsSnapshotDomainService {
@@ -14,5 +16,10 @@ public class GoodsSnapshotDomainServiceImpl implements GoodsSnapshotDomainServic
     @Override
     public void saveSnapshot(GoodsSnapshot snapshot) {
         goodsSnapshotRepository.save(snapshot);
+    }
+
+    @Override
+    public long queryNewestSnapshotId(long goodsId, LocalDateTime updateTime) {
+        return goodsSnapshotRepository.queryNewestSnapshotId(goodsId, updateTime);
     }
 }

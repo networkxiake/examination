@@ -70,7 +70,7 @@ public class Order {
     /**
      * 套餐快照主键值
      */
-    private String snapshotId;
+    private Long snapshotId;
 
     /**
      * 订单状态

@@ -16,4 +16,6 @@ public interface DiscountDomainService {
     List<Discount> searchByName(long page, long size, String name, long[] total);
 
     void update(Discount discount);
+
+    String getScriptByDiscountId(long discountId);
 }

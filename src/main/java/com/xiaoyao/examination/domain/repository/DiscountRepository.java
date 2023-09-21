@@ -16,4 +16,6 @@ public interface DiscountRepository {
     List<Discount> searchByName(long page, long size, String name, long[] total);
 
     boolean update(Discount discount);
+
+    String getScriptByDiscountId(long discountId);
 }

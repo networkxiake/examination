@@ -180,4 +180,24 @@ public class GoodsRepositoryImpl implements GoodsRepository {
                 result.put(((BigInteger) map.get("discount_id")).longValue(), (Long) map.get("count")));
         return result;
     }
+
+    @Override
+    public Goods getOrderGoodsById(long id) {
+        return goodsMapper.selectOne(lambdaQuery(Goods.class)
+                .select(Goods::getName,
+                        Goods::getDescription,
+                        Goods::getImage,
+                        Goods::getCurrentPrice,
+                        Goods::getDiscountId,
+                        Goods::getUpdateTime)
+                .eq(Goods::getId, id)
+                .eq(Goods::getStatus, GoodsStatus.ON.getStatus()));
+    }
+
+    @Override
+    public void increaseSales(long goodsId, int count) {
+        goodsMapper.update(null, lambdaUpdate(Goods.class)
+                .setSql("sales_volume = sales_volume + " + count)
+                .eq(Goods::getId, goodsId));
+    }
 }

@@ -1,5 +1,7 @@
 package com.xiaoyao.examination.service;
 
+import javax.servlet.http.HttpServletRequest;
+
 public interface PayService {
     /**
      * 随机生成长度为32位的订单号。
@@ -16,10 +18,16 @@ public interface PayService {
     /**
      * 创建支付订单。
      *
-     * @param orderId     订单号
+     * @param paymentId   支付单号
      * @param money       金额，单位为分
      * @param description 描述
+     * @param orderId     订单id
+     * @param goodsId     套餐id
+     * @param count       购买数量
      * @return 用于生成支付二维码的支付链接
      */
-    String createPayOrder(String orderId, int money, String description);
+    String createPayOrder(String paymentId, int money, String description,
+                          long orderId, long goodsId, int count);
+
+    void payCallback(HttpServletRequest request);
 }

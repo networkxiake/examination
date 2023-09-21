@@ -147,6 +147,11 @@ public class GoodsDomainServiceImpl implements GoodsDomainService {
     }
 
     @Override
+    public Goods getOrderGoodsById(long id) {
+        return goodsRepository.getOrderGoodsById(id);
+    }
+
+    @Override
     public void deleteGoods(List<Long> ids) {
         // 只有已下架的套餐才能删除
         if (goodsRepository.countDontDeletedGoods(ids) > 0) {
@@ -199,5 +204,10 @@ public class GoodsDomainServiceImpl implements GoodsDomainService {
     @Override
     public Map<Long, Long> countGoodsByDiscountIds(List<Long> discountIds) {
         return goodsRepository.countGoodsByDiscountIds(discountIds);
+    }
+
+    @Override
+    public void increaseSales(long goodsId, int count) {
+        goodsRepository.increaseSales(goodsId, count);
     }
 }

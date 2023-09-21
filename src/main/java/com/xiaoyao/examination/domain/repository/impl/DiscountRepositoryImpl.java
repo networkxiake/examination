@@ -62,4 +62,12 @@ public class DiscountRepositoryImpl implements DiscountRepository {
         return discountMapper.update(discount, lambdaUpdate(Discount.class)
                 .set(Discount::getDescription, temp.getDescription())) == 1;
     }
+
+    @Override
+    public String getScriptByDiscountId(long discountId) {
+        return discountMapper.selectOne(lambdaQuery(Discount.class)
+                        .select(Discount::getScript)
+                        .eq(Discount::getId, discountId))
+                .getScript();
+    }
 }

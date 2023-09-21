@@ -17,4 +17,14 @@ public class OrderDomainServiceImpl implements OrderDomainService {
     public List<Order> findAllOrderCountAndTotalByUserId(long userId) {
         return orderRepository.findAllOrderCountAndTotalByUserId(userId);
     }
+
+    @Override
+    public void save(Order order) {
+        orderRepository.insert(order);
+    }
+
+    @Override
+    public boolean payOrder(long orderId) {
+        return orderRepository.payOrder(orderId);
+    }
 }

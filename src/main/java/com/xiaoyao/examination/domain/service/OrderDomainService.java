@@ -6,4 +6,8 @@ import java.util.List;
 
 public interface OrderDomainService {
     List<Order> findAllOrderCountAndTotalByUserId(long userId);
+
+    void save(Order order);
+
+    boolean payOrder(long orderId);
 }

@@ -6,4 +6,8 @@ import java.util.List;
 
 public interface OrderService {
     List<Order> findAllOrderCountAndTotalByUserId(long userId);
+
+    String submitOrder(long userId, long goodsId, int count);
+
+    void payOrder(long orderId, long goodsId, int count);
 }

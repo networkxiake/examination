@@ -27,7 +27,9 @@ public enum ErrorCode {
     USER_ALREADY_EXIST(1018, "用户已存在"),
     PHOTO_TYPE_ERROR(1019, "图片的类型要为jpg、png或jpeg"),
     GOODS_SORT_NOT_EXIST(1020, "套餐分类不存在"),
-    DISCOUNT_SCRIPT_ERROR(1021, "折扣计算脚本语法错误");
+    DISCOUNT_SCRIPT_ERROR(1021, "折扣计算脚本语法错误"),
+    ORDER_STATUS_ERROR(1022, "订单状态错误"),
+    GOODS_NOT_FOUND(1023, "套餐不存在");
 
     private final int code;
     private final String message;

@@ -24,6 +24,8 @@ public interface GoodsDomainService {
 
     Goods getUpdateGoodsById(long id);
 
+    Goods getOrderGoodsById(long id);
+
     void deleteGoods(List<Long> ids);
 
     void changeFormItem(long id, String formItem);
@@ -40,4 +42,6 @@ public interface GoodsDomainService {
     Goods getSnapshotGoodsById(long goodsId);
 
     Map<Long, Long> countGoodsByDiscountIds(List<Long> discountIds);
+
+    void increaseSales(long goodsId, int count);
 }

@@ -1,6 +1,8 @@
 spring:
   profiles:
     active: prod
+  main:
+    allow-circular-references: true
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
 sa-token:
@@ -20,4 +22,4 @@ examination:
   init-admin-username: admin
   init-admin-password: 123456
   init-admin-name: 初始账户
-  pay-notify-url: /test
+  pay-notify-url: /pay/notify
