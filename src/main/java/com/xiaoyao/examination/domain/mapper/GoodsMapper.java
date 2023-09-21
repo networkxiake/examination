@@ -6,6 +6,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
+import java.util.Map;
 
 @Mapper
 public interface GoodsMapper extends BaseMapper<Goods> {
@@ -17,6 +18,8 @@ public interface GoodsMapper extends BaseMapper<Goods> {
                                   @Param("bottomPrice") String bottomPrice,
                                   @Param("topPrice") String topPrice,
                                   @Param("order") String order);
+
+    List<Map<String, Object>> countGoodsByDiscountIds(List<Long> discountIds);
 }
 
 

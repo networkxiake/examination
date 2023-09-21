@@ -8,7 +8,10 @@ import com.xiaoyao.examination.domain.repository.GoodsRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigInteger;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static com.baomidou.mybatisplus.core.toolkit.Wrappers.lambdaQuery;
 import static com.baomidou.mybatisplus.core.toolkit.Wrappers.lambdaUpdate;
@@ -168,5 +171,13 @@ public class GoodsRepositoryImpl implements GoodsRepository {
                         Goods::getUpdateTime,
                         Goods::getCreateTime)
                 .eq(Goods::getId, goodsId));
+    }
+
+    @Override
+    public Map<Long, Long> countGoodsByDiscountIds(List<Long> discountIds) {
+        Map<Long, Long> result = new HashMap<>();
+        goodsMapper.countGoodsByDiscountIds(discountIds).forEach(map ->
+                result.put(((BigInteger) map.get("discount_id")).longValue(), (Long) map.get("count")));
+        return result;
     }
 }

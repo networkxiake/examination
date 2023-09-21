@@ -8,6 +8,7 @@ import com.xiaoyao.examination.controller.form.goods.UpdateForm;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Map;
 
 public interface GoodsService {
     void createGoods(CreateForm form);
@@ -39,4 +40,6 @@ public interface GoodsService {
     SearchGoodsDTO recommend(int sort, int count);
 
     SearchGoodsDTO searchGoods(SearchGoodsForm form);
+
+    Map<Long, Long> countGoodsByDiscountIds(List<Long> discountIds);
 }

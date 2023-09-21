@@ -276,4 +276,9 @@ public class GoodsServiceImpl implements GoodsService {
         dto.setGoodsList(goodsList);
         return dto;
     }
+
+    @Override
+    public Map<Long, Long> countGoodsByDiscountIds(List<Long> discountIds) {
+        return goodsDomainService.countGoodsByDiscountIds(discountIds);
+    }
 }

@@ -38,4 +38,6 @@ public interface GoodsDomainService {
                             String bottomPrice, String topPrice, String order);
 
     Goods getSnapshotGoodsById(long goodsId);
+
+    Map<Long, Long> countGoodsByDiscountIds(List<Long> discountIds);
 }

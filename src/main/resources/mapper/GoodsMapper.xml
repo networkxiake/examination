@@ -48,4 +48,14 @@
         </choose>
         LIMIT #{pass}, #{size}
     </select>
+
+    <select id="countGoodsByDiscountIds" resultType="java.util.Map">
+        SELECT discount_id, COUNT(*) AS `count`
+        FROM tb_goods
+        WHERE discount_id IN
+            <foreach collection="discountIds" item="id" open="(" separator="," close=")">
+                #{id}
+            </foreach>
+        GROUP BY discount_id
+    </select>
 </mapper>

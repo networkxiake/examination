@@ -10,4 +10,10 @@ public interface DiscountRepository {
     long countDiscount(Long id);
 
     String getNameById(long id);
+
+    void save(Discount discount);
+
+    List<Discount> searchByName(long page, long size, String name, long[] total);
+
+    boolean update(Discount discount);
 }

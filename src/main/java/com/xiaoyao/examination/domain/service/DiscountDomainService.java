@@ -10,4 +10,10 @@ public interface DiscountDomainService {
     boolean isIdExist(long id);
 
     String getNameById(long id);
+
+    void save(Discount discount);
+
+    List<Discount> searchByName(long page, long size, String name, long[] total);
+
+    void update(Discount discount);
 }

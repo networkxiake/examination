@@ -195,4 +195,9 @@ public class GoodsDomainServiceImpl implements GoodsDomainService {
     public Goods getSnapshotGoodsById(long goodsId) {
         return goodsRepository.getSnapshotGoodsById(goodsId);
     }
+
+    @Override
+    public Map<Long, Long> countGoodsByDiscountIds(List<Long> discountIds) {
+        return goodsRepository.countGoodsByDiscountIds(discountIds);
+    }
 }

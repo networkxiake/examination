@@ -3,6 +3,7 @@ package com.xiaoyao.examination.domain.repository;
 import com.xiaoyao.examination.domain.entity.Goods;
 
 import java.util.List;
+import java.util.Map;
 
 public interface GoodsRepository {
     void insert(Goods goods);
@@ -31,4 +32,6 @@ public interface GoodsRepository {
                                   String bottomPrice, String topPrice, String order);
 
     Goods getSnapshotGoodsById(long goodsId);
+
+    Map<Long, Long> countGoodsByDiscountIds(List<Long> discountIds);
 }
