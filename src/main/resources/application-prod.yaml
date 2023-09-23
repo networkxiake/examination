@@ -23,5 +23,5 @@ wechat:
         app-id: wx4cb8e9621950da45
         app-v3-secret: b693aee4bdfb4080b93832d90b41e270
         mch-id: 1526972031
-        domain: https://49e0b218.r1.cpolar.top
+        domain: https://259f0195.r16.cpolar.top
         cert-path: apiclient_cert.p12

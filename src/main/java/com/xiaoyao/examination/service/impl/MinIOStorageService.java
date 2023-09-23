@@ -123,6 +123,7 @@ public class MinIOStorageService implements StorageService {
     @Override
     public void deleteUserPhoto(List<String> paths) {
         // 不能删除默认头像
+        paths = new ArrayList<>(paths);    // 将参数转换为可变的
         String defaultPhotoPath = getDefaultPhotoPath();
         paths.removeIf(path -> path.equals(defaultPhotoPath));
         if (!paths.isEmpty()) {
