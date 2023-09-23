@@ -97,7 +97,8 @@ public class MinIOStorageService implements StorageService {
     @Override
     public String getPathDownloadingUrl(String path) {
         return minIOProperties.isHttps() ? "https://" : "http://" +
-                minIOProperties.getHost() + ":" + minIOProperties.getPort() + "/" + path;
+                minIOProperties.getHost() + ":" + minIOProperties.getPort() + "/" +
+                minIOProperties.getBucketName() + "/" + path;
     }
 
     @Override
