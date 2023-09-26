@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import java.math.BigInteger;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -48,7 +49,16 @@ public class GoodsRepositoryImpl implements GoodsRepository {
                 .set(Goods::getDepartmentCheckup, temp.getDepartmentCheckup())
                 .set(Goods::getLaboratoryCheckup, temp.getLaboratoryCheckup())
                 .set(Goods::getMedicalCheckup, temp.getMedicalCheckup())
-                .set(Goods::getOtherCheckup, temp.getOtherCheckup()));
+                .set(Goods::getOtherCheckup, temp.getOtherCheckup())
+                .eq(Goods::getId, goods.getId()));
+    }
+
+    @Override
+    public void changeStatus(long id, int status) {
+        goodsMapper.update(null, lambdaUpdate(Goods.class)
+                .set(Goods::getStatus, status)
+                .set(Goods::getUpdateTime, LocalDateTime.now())
+                .eq(Goods::getId, id));
     }
 
     @Override

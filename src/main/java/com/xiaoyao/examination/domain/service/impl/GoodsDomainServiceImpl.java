@@ -74,11 +74,7 @@ public class GoodsDomainServiceImpl implements GoodsDomainService {
             throw new ExaminationException(ErrorCode.GOODS_STATUS_NOT_EXIST);
         }
 
-        Goods goods = new Goods();
-        goods.setId(id);
-        goods.setStatus(status);
-        goods.setUpdateTime(LocalDateTime.now());
-        goodsRepository.update(goods);
+        goodsRepository.changeStatus(id, status);
     }
 
     @Override

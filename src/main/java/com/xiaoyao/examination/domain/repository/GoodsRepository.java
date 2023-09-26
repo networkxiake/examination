@@ -10,6 +10,8 @@ public interface GoodsRepository {
 
     void update(Goods goods);
 
+    void changeStatus(long id, int status);
+
     List<Goods> searchGoods(long page, long size,
                             String code, String name, Integer type, Integer status, Integer sort,
                             long[] total);
