@@ -177,8 +177,8 @@ public class GoodsDomainServiceImpl implements GoodsDomainService {
     @Override
     public Map<Integer, String> getAllGoodsSort() {
         Map<Integer, String> sorts = new HashMap<>();
-        for (GoodsStatus value : GoodsStatus.values()) {
-            sorts.put(value.getStatus(), value.getName());
+        for (GoodsSort value : GoodsSort.values()) {
+            sorts.put(value.getSort(), value.getName());
         }
         return sorts;
     }
