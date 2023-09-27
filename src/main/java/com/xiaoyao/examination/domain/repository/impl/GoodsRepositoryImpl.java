@@ -1,5 +1,6 @@
 package com.xiaoyao.examination.domain.repository.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.xiaoyao.examination.domain.entity.Goods;
 import com.xiaoyao.examination.domain.enums.GoodsStatus;
@@ -87,11 +88,18 @@ public class GoodsRepositoryImpl implements GoodsRepository {
     }
 
     @Override
-    public long countGoodsByNameOrCode(String name, String code) {
-        return goodsMapper.selectCount(lambdaQuery(Goods.class)
-                .eq(Goods::getName, name)
-                .or()
-                .eq(Goods::getCode, code));
+    public long countGoodsByNameOrCode(long goodsId, String name, String code) {
+        LambdaQueryWrapper<Goods> queryWrapper = lambdaQuery(Goods.class);
+        queryWrapper.ne(Goods::getId, goodsId);
+        if (name != null && code != null) {
+            queryWrapper.and(i -> i.eq(Goods::getName, name).or().eq(Goods::getCode, code));
+        } else if (name != null) {
+            queryWrapper.eq(Goods::getName, name);
+        } else if (code != null) {
+            queryWrapper.eq(Goods::getCode, code);
+        }
+
+        return goodsMapper.selectCount(queryWrapper);
     }
 
     @Override

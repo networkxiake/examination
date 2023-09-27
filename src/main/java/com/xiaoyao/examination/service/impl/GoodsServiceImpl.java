@@ -135,6 +135,7 @@ public class GoodsServiceImpl implements GoodsService {
         dto.setDiscountId(goods.getDiscountId() != null ? String.valueOf(goods.getDiscountId()) : null);
         dto.setImage(storageService.getPathDownloadingUrl(goods.getImage()));
         dto.setType(goods.getType());
+        dto.setSort(goods.getSort());
         dto.setTag(JSONUtil.parseArray(goods.getTag()).toList(String.class));
         if (goods.getDepartmentCheckup() != null) {
             dto.setDepartmentCheckup(JSONUtil.parseArray(goods.getDepartmentCheckup()).toList(QueryGoodsDTO.Item.class));

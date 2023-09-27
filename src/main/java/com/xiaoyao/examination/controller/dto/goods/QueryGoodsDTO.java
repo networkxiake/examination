@@ -14,6 +14,7 @@ public class QueryGoodsDTO {
     private String discountId;
     private String image;
     private int type;
+    private int sort;
     private List<String> tag;
     private List<QueryGoodsDTO.Item> departmentCheckup;
     private List<QueryGoodsDTO.Item> laboratoryCheckup;

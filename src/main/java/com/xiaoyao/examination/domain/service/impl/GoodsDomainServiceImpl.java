@@ -98,7 +98,7 @@ public class GoodsDomainServiceImpl implements GoodsDomainService {
 
         // 判断套餐名称或编号是否已存在
         if (goods.getName() != null || goods.getCode() != null) {
-            if (goodsRepository.countGoodsByNameOrCode(goods.getName(), goods.getCode()) == 1) {
+            if (goodsRepository.countGoodsByNameOrCode(goods.getId(), goods.getName(), goods.getCode()) > 0) {
                 throw new ExaminationException(ErrorCode.GOODS_NAME_OR_CODE_EXIST);
             }
         }
