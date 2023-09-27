@@ -88,9 +88,9 @@ public class GoodsRepositoryImpl implements GoodsRepository {
     }
 
     @Override
-    public long countGoodsByNameOrCode(long goodsId, String name, String code) {
+    public long countGoodsByNameOrCode(Long goodsId, String name, String code) {
         LambdaQueryWrapper<Goods> queryWrapper = lambdaQuery(Goods.class);
-        queryWrapper.ne(Goods::getId, goodsId);
+        queryWrapper.ne(goodsId != null, Goods::getId, goodsId);
         if (name != null && code != null) {
             queryWrapper.and(i -> i.eq(Goods::getName, name).or().eq(Goods::getCode, code));
         } else if (name != null) {

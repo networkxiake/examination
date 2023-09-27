@@ -16,7 +16,7 @@ public interface GoodsRepository {
                             String code, String name, Integer type, Integer status, Integer sort,
                             long[] total);
 
-    long countGoodsByNameOrCode(long goodsId, String name, String code);
+    long countGoodsByNameOrCode(Long goodsId, String name, String code);
 
     Goods queryGoodsById(long id);
 

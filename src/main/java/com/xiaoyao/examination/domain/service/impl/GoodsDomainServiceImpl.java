@@ -29,7 +29,7 @@ public class GoodsDomainServiceImpl implements GoodsDomainService {
         checkGoodsSort(goods.getSort());
 
         // 判断套餐名称或编号是否已存在
-        if (goodsRepository.countGoodsByNameOrCode(goods.getName(), goods.getCode()) == 1) {
+        if (goodsRepository.countGoodsByNameOrCode(null, goods.getName(), goods.getCode()) == 1) {
             throw new ExaminationException(ErrorCode.GOODS_NAME_OR_CODE_EXIST);
         }
 
