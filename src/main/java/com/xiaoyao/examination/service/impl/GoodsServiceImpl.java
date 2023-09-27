@@ -3,8 +3,8 @@ package com.xiaoyao.examination.service.impl;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.json.JSONUtil;
 import com.xiaoyao.examination.controller.dto.goods.*;
-import com.xiaoyao.examination.controller.form.goods.CreateForm;
 import com.xiaoyao.examination.controller.form.goods.AdminSearchForm;
+import com.xiaoyao.examination.controller.form.goods.CreateForm;
 import com.xiaoyao.examination.controller.form.goods.SearchGoodsForm;
 import com.xiaoyao.examination.controller.form.goods.UpdateForm;
 import com.xiaoyao.examination.domain.entity.Goods;
@@ -23,7 +23,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -98,9 +97,6 @@ public class GoodsServiceImpl implements GoodsService {
         long[] total = new long[1];
         List<AdminSearchGoodsDTO.Goods> result = new ArrayList<>();
 
-        Map<Long, String> discounts = new HashMap<>();
-        discountDomainService.listIdAndName().forEach(item -> discounts.put(item.getId(), item.getName()));
-
         goodsDomainService.searchGoodsByAdmin(form.getPage(), form.getSize(),
                 form.getCode(), form.getName(), form.getType(), form.getStatus(), form.getSort(), total).forEach(item -> {
             AdminSearchGoodsDTO.Goods goods = new AdminSearchGoodsDTO.Goods();
@@ -110,7 +106,7 @@ public class GoodsServiceImpl implements GoodsService {
             goods.setOriginalPrice(item.getOriginalPrice().toString());
             goods.setCurrentPrice(item.getCurrentPrice().toString());
             // 根据折扣id获取折扣名称
-            goods.setDiscount(discounts.get(item.getDiscountId()));
+            goods.setDiscount(item.getDiscountId());
             goods.setSalesVolume(item.getSalesVolume());
             goods.setType(item.getType());
             goods.setStatus(item.getStatus());
