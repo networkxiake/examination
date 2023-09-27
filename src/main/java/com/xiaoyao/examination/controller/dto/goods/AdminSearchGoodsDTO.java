@@ -18,7 +18,7 @@ public class AdminSearchGoodsDTO {
         private String currentPrice;
         private String discount;
         private int salesVolume;
-        private String type;
+        private int type;
         private int status;
         private boolean hasExcel;
     }

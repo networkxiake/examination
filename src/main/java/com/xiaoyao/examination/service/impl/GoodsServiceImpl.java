@@ -98,7 +98,6 @@ public class GoodsServiceImpl implements GoodsService {
         long[] total = new long[1];
         List<AdminSearchGoodsDTO.Goods> result = new ArrayList<>();
 
-        Map<Integer, String> goodsType = goodsDomainService.getAllGoodsType();
         Map<Long, String> discounts = new HashMap<>();
         discountDomainService.listIdAndName().forEach(item -> discounts.put(item.getId(), item.getName()));
 
@@ -113,7 +112,7 @@ public class GoodsServiceImpl implements GoodsService {
             // 根据折扣id获取折扣名称
             goods.setDiscount(discounts.get(item.getDiscountId()));
             goods.setSalesVolume(item.getSalesVolume());
-            goods.setType(goodsType.get(item.getType()));
+            goods.setType(item.getType());
             goods.setStatus(item.getStatus());
             goods.setHasExcel(item.getFormItem() != null);
             result.add(goods);
