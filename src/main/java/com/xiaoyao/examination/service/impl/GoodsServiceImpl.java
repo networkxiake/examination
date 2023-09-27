@@ -105,7 +105,7 @@ public class GoodsServiceImpl implements GoodsService {
             goods.setCode(item.getCode());
             goods.setOriginalPrice(item.getOriginalPrice().toString());
             goods.setCurrentPrice(item.getCurrentPrice().toString());
-            goods.setDiscountId(item.getDiscountId());
+            goods.setDiscountId(item.getDiscountId() != null ? String.valueOf(item.getDiscountId()) : null);
             goods.setSalesVolume(item.getSalesVolume());
             goods.setType(item.getType());
             goods.setStatus(item.getStatus());
@@ -132,11 +132,9 @@ public class GoodsServiceImpl implements GoodsService {
         dto.setDescription(goods.getDescription());
         dto.setOriginalPrice(goods.getOriginalPrice().toString());
         dto.setCurrentPrice(goods.getCurrentPrice().toString());
-        if (goods.getDiscountId() != null) {
-            dto.setDiscount(discountDomainService.getNameById(goods.getDiscountId()));
-        }
+        dto.setDiscountId(goods.getDiscountId() != null ? String.valueOf(goods.getDiscountId()) : null);
         dto.setImage(storageService.getPathDownloadingUrl(goods.getImage()));
-        dto.setType(goodsDomainService.getGoodsTypeById(goods.getType()));
+        dto.setType(goods.getType());
         dto.setTag(JSONUtil.parseArray(goods.getTag()).toList(String.class));
         if (goods.getDepartmentCheckup() != null) {
             dto.setDepartmentCheckup(JSONUtil.parseArray(goods.getDepartmentCheckup()).toList(QueryGoodsDTO.Item.class));

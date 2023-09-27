@@ -11,9 +11,9 @@ public class QueryGoodsDTO {
     private String description;
     private String originalPrice;
     private String currentPrice;
-    private String discount;
+    private String discountId;
     private String image;
-    private String type;
+    private int type;
     private List<String> tag;
     private List<QueryGoodsDTO.Item> departmentCheckup;
     private List<QueryGoodsDTO.Item> laboratoryCheckup;
