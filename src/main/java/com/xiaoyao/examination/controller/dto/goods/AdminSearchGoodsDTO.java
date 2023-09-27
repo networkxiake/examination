@@ -16,7 +16,7 @@ public class AdminSearchGoodsDTO {
         private String code;
         private String originalPrice;
         private String currentPrice;
-        private Long discount;
+        private Long discountId;
         private int salesVolume;
         private int type;
         private int status;

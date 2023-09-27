@@ -106,7 +106,7 @@ public class GoodsServiceImpl implements GoodsService {
             goods.setOriginalPrice(item.getOriginalPrice().toString());
             goods.setCurrentPrice(item.getCurrentPrice().toString());
             // 根据折扣id获取折扣名称
-            goods.setDiscount(item.getDiscountId());
+            goods.setDiscountId(item.getDiscountId());
             goods.setSalesVolume(item.getSalesVolume());
             goods.setType(item.getType());
             goods.setStatus(item.getStatus());
