@@ -113,6 +113,7 @@ public class GoodsRepositoryImpl implements GoodsRepository {
                         Goods::getDiscountId,
                         Goods::getImage,
                         Goods::getType,
+                        Goods::getSort,
                         Goods::getTag,
                         Goods::getDepartmentCheckup,
                         Goods::getLaboratoryCheckup,
