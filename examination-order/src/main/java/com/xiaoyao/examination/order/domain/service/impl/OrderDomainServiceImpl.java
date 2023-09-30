@@ -1,6 +1,7 @@
 package com.xiaoyao.examination.order.domain.service.impl;
 
 import com.xiaoyao.examination.order.domain.entity.Order;
+import com.xiaoyao.examination.order.domain.enums.OrderStatus;
 import com.xiaoyao.examination.order.domain.repository.OrderRepository;
 import com.xiaoyao.examination.order.domain.service.OrderDomainService;
 import org.springframework.stereotype.Service;
@@ -17,16 +18,16 @@ public class OrderDomainServiceImpl implements OrderDomainService {
 
     @Override
     public List<Order> findAllOrderCountAndTotalByUserId(long userId) {
-        return orderRepository.findAllOrderCountAndTotalByUserId(userId);
+        return orderRepository.findOrderListForUserSummary(userId);
     }
 
     @Override
     public void save(Order order) {
-        orderRepository.insert(order);
+        orderRepository.save(order);
     }
 
     @Override
     public boolean payOrder(long orderId) {
-        return orderRepository.payOrder(orderId);
+        return orderRepository.updateStatus(orderId, OrderStatus.PAYING.getStatus(), OrderStatus.SUBSCRIBING.getStatus());
     }
 }

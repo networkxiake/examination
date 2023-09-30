@@ -1,7 +1,6 @@
 package com.xiaoyao.examination.order.domain.repository.impl;
 
 import com.xiaoyao.examination.order.domain.entity.Order;
-import com.xiaoyao.examination.order.domain.enums.OrderStatus;
 import com.xiaoyao.examination.order.domain.mapper.OrderMapper;
 import com.xiaoyao.examination.order.domain.repository.OrderRepository;
 import org.springframework.stereotype.Repository;
@@ -20,7 +19,7 @@ public class OrderRepositoryImpl implements OrderRepository {
     }
 
     @Override
-    public List<Order> findAllOrderCountAndTotalByUserId(long userId) {
+    public List<Order> findOrderListForUserSummary(long userId) {
         return orderMapper.selectList(lambdaQuery(Order.class)
                 .select(Order::getCount,
                         Order::getTotal)
@@ -28,15 +27,15 @@ public class OrderRepositoryImpl implements OrderRepository {
     }
 
     @Override
-    public void insert(Order order) {
+    public void save(Order order) {
         orderMapper.insert(order);
     }
 
     @Override
-    public boolean payOrder(long orderId) {
+    public boolean updateStatus(long orderId, Integer oldStatus, Integer newStatus) {
         return orderMapper.update(null, lambdaUpdate(Order.class)
-                .set(Order::getStatus, OrderStatus.SUBSCRIBING)
+                .set(Order::getStatus, newStatus)
                 .eq(Order::getId, orderId)
-                .eq(Order::getStatus, OrderStatus.PAYING)) == 1;
+                .eq(Order::getStatus, oldStatus)) == 1;
     }
 }

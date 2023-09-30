@@ -5,9 +5,9 @@ import com.xiaoyao.examination.order.domain.entity.Order;
 import java.util.List;
 
 public interface OrderRepository {
-    List<Order> findAllOrderCountAndTotalByUserId(long userId);
+    List<Order> findOrderListForUserSummary(long userId);
 
-    void insert(Order order);
+    void save(Order order);
 
-    boolean payOrder(long orderId);
+    boolean updateStatus(long orderId, Integer oldStatus, Integer newStatus);
 }
