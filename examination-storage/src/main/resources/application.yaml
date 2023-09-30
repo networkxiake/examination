@@ -1,0 +1,25 @@
+spring:
+  data:
+    redis:
+      host: 116.205.233.28
+      port: 6379
+      username: default
+      password: YS8OYDtcLFAsQ5Xb
+dubbo:
+  application:
+    name: examination-storage
+    qos-port: 22001
+  protocol:
+    name: dubbo
+    port: 9101
+  registry:
+    address: nacos://127.0.0.1:8848
+storage:
+  type: minio
+  minio:
+    https: false
+    host: 116.205.233.28
+    port: 9000
+    access-key: LsmHvWcnBql2ExK7uqyN
+    secret-key: r33dUvhtk1k6z7zgCw3TzPDbO16A9z7rrUCOv0ws
+    bucket-name: examination

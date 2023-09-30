@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiaoyao.examination.goods.domain.mapper.GoodsMapper">
+    <select id="searchGoodsByPage" resultType="com.xiaoyao.examination.goods.domain.entity.Goods">
+        SELECT
+            id,
+            `name`,
+            description,
+            image,
+            original_price,
+            current_price,
+            sales_volume,
+            discount_id
+        FROM tb_goods
+        WHERE
+            `status` = 1
+            <if test="name != null">
+                <bind name="likeName" value="'%'+name+'%'"/>
+                AND `name` = #{likeName}
+            </if>
+            <if test="type != null">
+                AND `type` = #{type}
+            </if>
+            <if test="gender != null">
+                AND JSON_CONTAINS(tag, JSON_ARRAY(#{gender}))
+            </if>
+            <if test="bottomPrice != null">
+                AND current_price >= #{bottomPrice}
+            </if>
+            <if test="topPrice != null">
+                AND current_price &lt;= #{topPrice}
+            </if>
+        <choose>
+            <when test="order == 'new'">
+                ORDER BY create_time DESC
+            </when>
+            <when test="order == 'sale'">
+                ORDER BY sales_volume DESC
+            </when>
+            <when test="order == 'priceAsc'">
+                ORDER BY current_price
+            </when>
+            <when test="order == 'priceDesc'">
+                ORDER BY current_price DESC
+            </when>
+        </choose>
+        LIMIT #{pass}, #{size}
+    </select>
+
+    <select id="countGoodsByDiscountIds" resultType="java.util.Map">
+        SELECT discount_id, COUNT(*) AS `count`
+        FROM tb_goods
+        WHERE discount_id IN
+            <foreach collection="discountIds" item="id" open="(" separator="," close=")">
+                #{id}
+            </foreach>
+        GROUP BY discount_id
+    </select>
+</mapper>

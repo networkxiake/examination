@@ -1,0 +1,25 @@
+server:
+  port: 80
+spring:
+  data:
+    redis:
+      host: 116.205.233.28
+      port: 6379
+      username: default
+      password: YS8OYDtcLFAsQ5Xb
+sa-token:
+  is-print: false
+  token-name: token
+  is-read-body: false
+  is-read-cookie: false
+  is-concurrent: false
+dubbo:
+  application:
+    name: examination-api
+    qos-port: 22000
+    serialize-check-status: DISABLE
+  protocol:
+    name: dubbo
+    port: 9100
+  registry:
+    address: nacos://127.0.0.1:8848

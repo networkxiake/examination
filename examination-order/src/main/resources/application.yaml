@@ -1,0 +1,20 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://116.205.233.28:3306/examination?connectionTimeZone=Asia/Shanghai&forceConnectionTimeZoneToSession=true
+    username: examination
+    password: BySootNYdwVn3Jg6
+mybatis-plus:
+  global-config:
+    banner: false
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+dubbo:
+  application:
+    name: examination-order
+    qos-port: 22002
+  protocol:
+    name: dubbo
+    port: 9102
+  registry:
+    address: nacos://127.0.0.1:8848

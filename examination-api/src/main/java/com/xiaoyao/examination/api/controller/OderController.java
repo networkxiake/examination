@@ -1,0 +1,27 @@
+package com.xiaoyao.examination.api.controller;
+
+import com.xiaoyao.examination.api.annotation.CheckLoginUser;
+import com.xiaoyao.examination.api.response.ResponseBody;
+import com.xiaoyao.examination.api.response.ResponseBodyBuilder;
+import com.xiaoyao.examination.api.util.UserStpUtil;
+import com.xiaoyao.examination.common.interfaces.order.OrderService;
+import jakarta.validation.constraints.Min;
+import org.apache.dubbo.config.annotation.DubboReference;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+@Validated
+@RequestMapping("/order")
+public class OderController {
+    @DubboReference
+    private OrderService orderService;
+
+    @CheckLoginUser
+    @PostMapping("/submit")
+    public ResponseBody<String> submitOrder(@Min(1) long goodsId, @Min(1) int count) {
+        return ResponseBodyBuilder.build(orderService.submitOrder(UserStpUtil.getLoginId(), goodsId, count));
+    }
+}
