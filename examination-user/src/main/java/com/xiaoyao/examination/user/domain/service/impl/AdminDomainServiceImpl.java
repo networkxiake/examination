@@ -24,7 +24,7 @@ public class AdminDomainServiceImpl implements AdminDomainService {
 
     @Override
     public Admin getLoginAdminByUsername(String username) {
-        return adminRepository.getLoginAdminByUsername(username);
+        return adminRepository.findAdminForLogin(username);
     }
 
     @Override
@@ -34,22 +34,22 @@ public class AdminDomainServiceImpl implements AdminDomainService {
 
     @Override
     public void createInitAdmin(Admin admin) {
-        adminRepository.createInitAdmin(admin);
+        adminRepository.save(admin);
     }
 
     @Override
     public Admin getSaltAndPasswordById(long id) {
-        return adminRepository.getSaltAndPasswordById(id);
+        return adminRepository.findAdminForChangePassword(id);
     }
 
     @Override
     public void updateAdmin(Admin admin) {
-        adminRepository.updateAdmin(admin);
+        adminRepository.update(admin);
     }
 
     @Override
     public String getPhotoById(long id) {
-        return adminRepository.getPhotoById(id);
+        return adminRepository.getPhoto(id);
     }
 
     @Override
@@ -59,7 +59,7 @@ public class AdminDomainServiceImpl implements AdminDomainService {
 
     @Override
     public void createAdmin(String username, String password, String name, String photo) {
-        if (adminRepository.isUsernameExist(username)) {
+        if (adminRepository.isExistUsername(username)) {
             throw new ExaminationException(ErrorCode.USERNAME_EXIST);
         }
         Admin admin = new Admin();
@@ -70,18 +70,18 @@ public class AdminDomainServiceImpl implements AdminDomainService {
         admin.setName(name);
         admin.setPhoto(photo);
         admin.setCreateTime(LocalDateTime.now());
-        adminRepository.createAdmin(admin);
+        adminRepository.save(admin);
     }
 
     @Override
     public List<String> deleteAdmin(List<Long> ids) {
-        List<String> photos = adminRepository.getPhotoByAdminIds(ids, properties.getInitAdminUsername());
-        adminRepository.deleteAdmin(ids, properties.getInitAdminUsername());
+        List<String> photos = adminRepository.getPhotoInIds(ids, properties.getInitAdminUsername());
+        adminRepository.delete(ids, properties.getInitAdminUsername());
         return photos;
     }
 
     @Override
     public List<Admin> searchAdmin(long page, long size, String name, long[] total) {
-        return adminRepository.searchAdmin(page, size, name, total, properties.getInitAdminUsername());
+        return adminRepository.findAdminListForSearch(page, size, name, total, properties.getInitAdminUsername());
     }
 }

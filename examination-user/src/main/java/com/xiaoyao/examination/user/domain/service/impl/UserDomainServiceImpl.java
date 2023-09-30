@@ -17,20 +17,20 @@ public class UserDomainServiceImpl implements UserDomainService {
 
     @Override
     public User findByPhone(String phone) {
-        return userRepository.findByPhone(phone);
+        return userRepository.findUserForLogin(phone);
     }
 
     @Override
     public User findById(long id) {
-        return userRepository.findById(id);
+        return userRepository.findUserForProfile(id);
     }
 
     @Override
     public void create(User user) {
-        if (userRepository.countByPhone(user.getPhone()) == 1) {
+        if (userRepository.countPhone(user.getPhone()) == 1) {
             throw new ExaminationException(ErrorCode.USER_ALREADY_EXIST);
         }
-        userRepository.create(user);
+        userRepository.save(user);
     }
 
     @Override

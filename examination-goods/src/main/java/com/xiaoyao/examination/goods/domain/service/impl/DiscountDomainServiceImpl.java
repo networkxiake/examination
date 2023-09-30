@@ -19,7 +19,7 @@ public class DiscountDomainServiceImpl implements DiscountDomainService {
 
     @Override
     public List<Discount> listIdAndName() {
-        return discountRepository.listIdAndName();
+        return discountRepository.findDiscountListForList();
     }
 
     @Override
@@ -29,7 +29,7 @@ public class DiscountDomainServiceImpl implements DiscountDomainService {
 
     @Override
     public String getNameById(long id) {
-        return discountRepository.getNameById(id);
+        return discountRepository.getName(id);
     }
 
     @Override
@@ -39,7 +39,7 @@ public class DiscountDomainServiceImpl implements DiscountDomainService {
 
     @Override
     public List<Discount> searchByName(long page, long size, String name, long[] total) {
-        return discountRepository.searchByName(page, size, name, total);
+        return discountRepository.findDiscountListForSearch(page, size, name, total);
     }
 
     @Override
@@ -51,6 +51,6 @@ public class DiscountDomainServiceImpl implements DiscountDomainService {
 
     @Override
     public String getScriptByDiscountId(long discountId) {
-        return discountRepository.getScriptByDiscountId(discountId);
+        return discountRepository.getScript(discountId);
     }
 }

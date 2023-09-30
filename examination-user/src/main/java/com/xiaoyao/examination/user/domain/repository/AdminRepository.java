@@ -1,30 +1,27 @@
 package com.xiaoyao.examination.user.domain.repository;
 
-
 import com.xiaoyao.examination.user.domain.entity.Admin;
 
 import java.util.List;
 
 public interface AdminRepository {
-    Admin getLoginAdminByUsername(String username);
-
     long countAdmin(Long id);
 
-    void createInitAdmin(Admin admin);
+    List<Admin> findAdminListForSearch(long page, long size, String name, long[] total, String initAdminUsername);
 
-    Admin getSaltAndPasswordById(long id);
+    Admin findAdminForLogin(String username);
 
-    void updateAdmin(Admin admin);
+    Admin findAdminForChangePassword(long id);
 
-    String getPhotoById(long id);
+    String getPhoto(long id);
 
-    void createAdmin(Admin admin);
+    List<String> getPhotoInIds(List<Long> ids, String initAdminUsername);
 
-    boolean isUsernameExist(String username);
+    boolean isExistUsername(String username);
 
-    void deleteAdmin(List<Long> ids, String initAdminUsername);
+    void save(Admin admin);
 
-    List<Admin> searchAdmin(long page, long size, String name, long[] total, String initAdminUsername);
+    void delete(List<Long> ids, String initAdminUsername);
 
-    List<String> getPhotoByAdminIds(List<Long> ids, String initAdminUsername);
+    void update(Admin admin);
 }

@@ -16,7 +16,13 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public User findByPhone(String phone) {
+    public long countPhone(String phone) {
+        return userMapper.selectCount(lambdaQuery(User.class)
+                .eq(User::getPhone, phone));
+    }
+
+    @Override
+    public User findUserForLogin(String phone) {
         return userMapper.selectOne(lambdaQuery(User.class)
                 .select(User::getId,
                         User::getName,
@@ -25,31 +31,7 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public long countByPhone(String phone) {
-        return userMapper.selectCount(lambdaQuery(User.class)
-                .eq(User::getPhone, phone));
-    }
-
-    @Override
-    public void create(User user) {
-        userMapper.insert(user);
-    }
-
-    @Override
-    public void update(User user) {
-        userMapper.updateById(user);
-    }
-
-    @Override
-    public String getPhoto(long userId) {
-        return userMapper.selectOne(lambdaQuery(User.class)
-                        .select(User::getPhoto)
-                        .eq(User::getId, userId))
-                .getPhoto();
-    }
-
-    @Override
-    public User findById(long id) {
+    public User findUserForProfile(long id) {
         return userMapper.selectOne(lambdaQuery(User.class)
                 .select(User::getName,
                         User::getGender,
@@ -57,5 +39,23 @@ public class UserRepositoryImpl implements UserRepository {
                         User::getPhoto,
                         User::getCreateTime)
                 .eq(User::getId, id));
+    }
+
+    @Override
+    public String getPhoto(long id) {
+        return userMapper.selectOne(lambdaQuery(User.class)
+                        .select(User::getPhoto)
+                        .eq(User::getId, id))
+                .getPhoto();
+    }
+
+    @Override
+    public void save(User user) {
+        userMapper.insert(user);
+    }
+
+    @Override
+    public void update(User user) {
+        userMapper.updateById(user);
     }
 }

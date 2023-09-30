@@ -1,18 +1,17 @@
 package com.xiaoyao.examination.user.domain.repository;
 
-
 import com.xiaoyao.examination.user.domain.entity.User;
 
 public interface UserRepository {
-    User findByPhone(String phone);
+    long countPhone(String phone);
 
-    long countByPhone(String phone);
+    User findUserForLogin(String phone);
 
-    void create(User user);
+    User findUserForProfile(long id);
+
+    String getPhoto(long id);
+
+    void save(User user);
 
     void update(User user);
-
-    String getPhoto(long userId);
-
-    User findById(long id);
 }

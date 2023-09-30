@@ -20,66 +20,13 @@ public class AdminRepositoryImpl implements AdminRepository {
     }
 
     @Override
-    public Admin getLoginAdminByUsername(String username) {
-        return adminMapper.selectOne(lambdaQuery(Admin.class)
-                .select(Admin::getId,
-                        Admin::getSalt,
-                        Admin::getPassword,
-                        Admin::getName,
-                        Admin::getPhoto)
-                .eq(Admin::getUsername, username));
-    }
-
-    @Override
     public long countAdmin(Long id) {
         return adminMapper.selectCount(lambdaQuery(Admin.class)
                 .eq(id != null, Admin::getId, id));
     }
 
     @Override
-    public void createInitAdmin(Admin admin) {
-        adminMapper.insert(admin);
-    }
-
-    @Override
-    public Admin getSaltAndPasswordById(long id) {
-        return adminMapper.selectOne(lambdaQuery(Admin.class)
-                .select(Admin::getSalt,
-                        Admin::getPassword)
-                .eq(Admin::getId, id));
-    }
-
-    @Override
-    public void updateAdmin(Admin admin) {
-        adminMapper.updateById(admin);
-    }
-
-    @Override
-    public String getPhotoById(long id) {
-        return adminMapper.selectOne(lambdaQuery(Admin.class)
-                .select(Admin::getPhoto)
-                .eq(Admin::getId, id)).getPhoto();
-    }
-
-    @Override
-    public void createAdmin(Admin admin) {
-        adminMapper.insert(admin);
-    }
-
-    @Override
-    public boolean isUsernameExist(String username) {
-        return adminMapper.selectCount(lambdaQuery(Admin.class).eq(Admin::getUsername, username)) == 1;
-    }
-
-    @Override
-    public void deleteAdmin(List<Long> ids, String initAdminUsername) {
-        adminMapper.delete(lambdaQuery(Admin.class)
-                .in(Admin::getId, ids)
-                .ne(Admin::getUsername, initAdminUsername));
-    }
-
-    @Override
-    public List<Admin> searchAdmin(long page, long size, String name, long[] total, String initAdminUsername) {
+    public List<Admin> findAdminListForSearch(long page, long size, String name, long[] total, String initAdminUsername) {
         Page<Admin> adminPage = adminMapper.selectPage(Page.of(page, size), lambdaQuery(Admin.class)
                 .select(Admin::getId,
                         Admin::getUsername,
@@ -93,10 +40,58 @@ public class AdminRepositoryImpl implements AdminRepository {
     }
 
     @Override
-    public List<String> getPhotoByAdminIds(List<Long> ids, String initAdminUsername) {
+    public Admin findAdminForLogin(String username) {
+        return adminMapper.selectOne(lambdaQuery(Admin.class)
+                .select(Admin::getId,
+                        Admin::getSalt,
+                        Admin::getPassword,
+                        Admin::getName,
+                        Admin::getPhoto)
+                .eq(Admin::getUsername, username));
+    }
+
+    @Override
+    public Admin findAdminForChangePassword(long id) {
+        return adminMapper.selectOne(lambdaQuery(Admin.class)
+                .select(Admin::getSalt,
+                        Admin::getPassword)
+                .eq(Admin::getId, id));
+    }
+
+    @Override
+    public String getPhoto(long id) {
+        return adminMapper.selectOne(lambdaQuery(Admin.class)
+                .select(Admin::getPhoto)
+                .eq(Admin::getId, id)).getPhoto();
+    }
+
+    @Override
+    public List<String> getPhotoInIds(List<Long> ids, String initAdminUsername) {
         return adminMapper.selectList(lambdaQuery(Admin.class)
                 .select(Admin::getPhoto)
                 .in(Admin::getId, ids)
                 .ne(Admin::getUsername, initAdminUsername)).stream().map(Admin::getPhoto).toList();
+    }
+
+    @Override
+    public boolean isExistUsername(String username) {
+        return adminMapper.selectCount(lambdaQuery(Admin.class).eq(Admin::getUsername, username)) > 0;
+    }
+
+    @Override
+    public void save(Admin admin) {
+        adminMapper.insert(admin);
+    }
+
+    @Override
+    public void delete(List<Long> ids, String initAdminUsername) {
+        adminMapper.delete(lambdaQuery(Admin.class)
+                .in(Admin::getId, ids)
+                .ne(Admin::getUsername, initAdminUsername));
+    }
+
+    @Override
+    public void update(Admin admin) {
+        adminMapper.updateById(admin);
     }
 }
