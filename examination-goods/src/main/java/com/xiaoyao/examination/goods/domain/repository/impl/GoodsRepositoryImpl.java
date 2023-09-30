@@ -25,15 +25,146 @@ public class GoodsRepositoryImpl implements GoodsRepository {
     }
 
     @Override
-    public void insert(Goods goods) {
+    public long countGoodsInIdsAndStatus(List<Long> ids, int status) {
+        return goodsMapper.selectCount(lambdaQuery(Goods.class)
+                .in(Goods::getId, ids)
+                .eq(Goods::getStatus, status));
+    }
+
+    @Override
+    public List<Goods> findGoodsListForAdminSearch(long page, long size, long[] total, Goods goods) {
+        Page<Goods> goodsPage = goodsMapper.selectPage(Page.of(page, size), lambdaQuery(Goods.class)
+                .select(Goods::getId,
+                        Goods::getName,
+                        Goods::getCode,
+                        Goods::getOriginalPrice,
+                        Goods::getCurrentPrice,
+                        Goods::getDiscountId,
+                        Goods::getSalesVolume,
+                        Goods::getType,
+                        Goods::getStatus,
+                        Goods::getFormItem)
+                .eq(StrUtil.isNotBlank(goods.getCode()), Goods::getCode, goods.getCode())
+                .eq(StrUtil.isNotBlank(goods.getName()), Goods::getName, goods.getName())
+                .eq(goods.getType() != null, Goods::getType, goods.getType())
+                .eq(goods.getStatus() != null, Goods::getStatus, goods.getStatus())
+                .eq(goods.getSort() != null, Goods::getSort, goods.getSort()));
+        total[0] = goodsPage.getTotal();
+        return goodsPage.getRecords();
+    }
+
+    @Override
+    public List<Goods> findGoodsListForUserRecommend(int sort, int count) {
+        return goodsMapper.selectList(lambdaQuery(Goods.class)
+                .select(Goods::getId,
+                        Goods::getName,
+                        Goods::getDescription,
+                        Goods::getImage,
+                        Goods::getOriginalPrice,
+                        Goods::getCurrentPrice,
+                        Goods::getSalesVolume,
+                        Goods::getDiscountId)
+                .eq(Goods::getSort, sort)
+                .eq(Goods::getStatus, GoodsStatus.ON.getStatus())
+                .orderByDesc(Goods::getSalesVolume)
+                .last("LIMIT " + count));
+    }
+
+    @Override
+    public List<Goods> findGoodsListForUserSearch(int pass, int size, String name, Integer type, String gender,
+                                                  String bottomPrice, String topPrice, String order) {
+        return goodsMapper.searchGoodsByPage(pass, size, name, type, gender, bottomPrice, topPrice, order);
+    }
+
+    @Override
+    public Goods findGoodsForUpdate(long id) {
+        return goodsMapper.selectOne(lambdaQuery(Goods.class)
+                .select(Goods::getName,
+                        Goods::getCode,
+                        Goods::getDescription,
+                        Goods::getOriginalPrice,
+                        Goods::getCurrentPrice,
+                        Goods::getDiscountId,
+                        Goods::getImage,
+                        Goods::getType,
+                        Goods::getSort,
+                        Goods::getTag,
+                        Goods::getDepartmentCheckup,
+                        Goods::getLaboratoryCheckup,
+                        Goods::getMedicalCheckup,
+                        Goods::getOtherCheckup)
+                .eq(Goods::getId, id));
+    }
+
+    @Override
+    public Goods findGoodsForPreUpdate(long id) {
+        return goodsMapper.selectOne(lambdaQuery(Goods.class)
+                .select(Goods::getImage,
+                        Goods::getStatus)
+                .eq(Goods::getId, id));
+    }
+
+    @Override
+    public Goods findGoodsForSnapshot(long id) {
+        return goodsMapper.selectOne(lambdaQuery(Goods.class)
+                .select(Goods::getName,
+                        Goods::getDescription,
+                        Goods::getImage,
+                        Goods::getOriginalPrice,
+                        Goods::getCurrentPrice,
+                        Goods::getType,
+                        Goods::getTag,
+                        Goods::getDepartmentCheckup,
+                        Goods::getLaboratoryCheckup,
+                        Goods::getMedicalCheckup,
+                        Goods::getOtherCheckup,
+                        Goods::getSnapshotMd5)
+                .eq(Goods::getId, id));
+    }
+
+    @Override
+    public Goods findGoodsForSubmitOrder(long id) {
+        return goodsMapper.selectOne(lambdaQuery(Goods.class)
+                .select(Goods::getName,
+                        Goods::getDescription,
+                        Goods::getImage,
+                        Goods::getCurrentPrice,
+                        Goods::getDiscountId,
+                        Goods::getUpdateTime)
+                .eq(Goods::getId, id)
+                .eq(Goods::getStatus, GoodsStatus.ON.getStatus()));
+    }
+
+    @Override
+    public int getGoodsStatus(long id) {
+        return goodsMapper.selectOne(lambdaQuery(Goods.class)
+                .select(Goods::getStatus)
+                .eq(Goods::getId, id)).getStatus();
+    }
+
+    @Override
+    public Map<Long, Long> getGoodsCountInDiscountIds(List<Long> discountIds) {
+        Map<Long, Long> result = new HashMap<>();
+        goodsMapper.countGoodsByDiscountIds(discountIds).forEach(map ->
+                result.put(((BigInteger) map.get("discount_id")).longValue(), (Long) map.get("count")));
+        return result;
+    }
+
+    @Override
+    public boolean isExistCode(String code, Long goodsId) {
+        return goodsMapper.selectCount(lambdaQuery(Goods.class)
+                .eq(Goods::getCode, code)
+                .ne(goodsId != null, Goods::getId, goodsId)) > 0;
+    }
+
+    @Override
+    public void save(Goods goods) {
         goodsMapper.insert(goods);
     }
 
     @Override
-    public void updateSnapshot(long goodsId, String md5) {
-        goodsMapper.update(null, lambdaUpdate(Goods.class)
-                .set(Goods::getSnapshotMd5, md5)
-                .eq(Goods::getId, goodsId));
+    public void delete(List<Long> ids) {
+        goodsMapper.deleteBatchIds(ids);
     }
 
     @Override
@@ -63,157 +194,23 @@ public class GoodsRepositoryImpl implements GoodsRepository {
     }
 
     @Override
-    public void changeStatus(long id, int status) {
+    public void updateSnapshot(long goodsId, String md5) {
+        goodsMapper.update(null, lambdaUpdate(Goods.class)
+                .set(Goods::getSnapshotMd5, md5)
+                .eq(Goods::getId, goodsId));
+    }
+
+    @Override
+    public void updateStatus(long id, int status) {
         goodsMapper.update(null, lambdaUpdate(Goods.class)
                 .set(Goods::getStatus, status)
                 .eq(Goods::getId, id));
     }
 
     @Override
-    public List<Goods> searchGoods(long page, long size,
-                                   String code, String name, Integer type, Integer status, Integer sort,
-                                   long[] total) {
-        Page<Goods> goodsPage = goodsMapper.selectPage(Page.of(page, size), lambdaQuery(Goods.class)
-                .select(Goods::getId,
-                        Goods::getName,
-                        Goods::getCode,
-                        Goods::getOriginalPrice,
-                        Goods::getCurrentPrice,
-                        Goods::getDiscountId,
-                        Goods::getSalesVolume,
-                        Goods::getType,
-                        Goods::getStatus,
-                        Goods::getFormItem)
-                .eq(StrUtil.isNotBlank(code), Goods::getCode, code)
-                .eq(StrUtil.isNotBlank(name), Goods::getName, name)
-                .eq(type != null, Goods::getType, type)
-                .eq(status != null, Goods::getStatus, status)
-                .eq(sort != null, Goods::getSort, sort));
-
-        total[0] = goodsPage.getTotal();
-        return goodsPage.getRecords();
-    }
-
-    @Override
-    public boolean isCodeExist(String code, Long goodsId) {
-        return goodsMapper.selectCount(lambdaQuery(Goods.class)
-                .eq(Goods::getCode, code)
-                .ne(goodsId != null, Goods::getId, goodsId)) > 0;
-    }
-
-    @Override
-    public Goods queryGoodsById(long id) {
-        return goodsMapper.selectOne(lambdaQuery(Goods.class)
-                .select(Goods::getName,
-                        Goods::getCode,
-                        Goods::getDescription,
-                        Goods::getOriginalPrice,
-                        Goods::getCurrentPrice,
-                        Goods::getDiscountId,
-                        Goods::getImage,
-                        Goods::getType,
-                        Goods::getSort,
-                        Goods::getTag,
-                        Goods::getDepartmentCheckup,
-                        Goods::getLaboratoryCheckup,
-                        Goods::getMedicalCheckup,
-                        Goods::getOtherCheckup)
-                .eq(Goods::getId, id));
-    }
-
-    @Override
-    public Goods getUpdateGoodsById(long id) {
-        return goodsMapper.selectOne(lambdaQuery(Goods.class)
-                .select(Goods::getImage,
-                        Goods::getStatus)
-                .eq(Goods::getId, id));
-    }
-
-    @Override
-    public void deleteGoods(List<Long> ids) {
-        goodsMapper.deleteBatchIds(ids);
-    }
-
-    @Override
-    public long countDontDeletedGoods(List<Long> ids) {
-        return goodsMapper.selectCount(lambdaQuery(Goods.class)
-                .in(Goods::getId, ids)
-                .eq(Goods::getStatus, GoodsStatus.ON.getStatus()));
-    }
-
-    @Override
-    public int getGoodsStatusById(long id) {
-        return goodsMapper.selectOne(lambdaQuery(Goods.class)
-                .select(Goods::getStatus)
-                .eq(Goods::getId, id)).getStatus();
-    }
-
-    @Override
-    public List<Goods> getRecommendGoods(int sort, int count) {
-        return goodsMapper.selectList(lambdaQuery(Goods.class)
-                .select(Goods::getId,
-                        Goods::getName,
-                        Goods::getDescription,
-                        Goods::getImage,
-                        Goods::getOriginalPrice,
-                        Goods::getCurrentPrice,
-                        Goods::getSalesVolume,
-                        Goods::getDiscountId)
-                .eq(Goods::getSort, sort)
-                .eq(Goods::getStatus, GoodsStatus.ON.getStatus())
-                .orderByDesc(Goods::getSalesVolume)
-                .last("LIMIT " + count));
-    }
-
-    @Override
-    public List<Goods> searchGoodsByPage(int pass, int size, String name, Integer type, String gender,
-                                         String bottomPrice, String topPrice, String order) {
-        return goodsMapper.searchGoodsByPage(pass, size, name, type, gender, bottomPrice, topPrice, order);
-    }
-
-    @Override
-    public Goods getSnapshotGoodsById(long goodsId) {
-        return goodsMapper.selectOne(lambdaQuery(Goods.class)
-                .select(Goods::getName,
-                        Goods::getDescription,
-                        Goods::getImage,
-                        Goods::getOriginalPrice,
-                        Goods::getCurrentPrice,
-                        Goods::getType,
-                        Goods::getTag,
-                        Goods::getDepartmentCheckup,
-                        Goods::getLaboratoryCheckup,
-                        Goods::getMedicalCheckup,
-                        Goods::getOtherCheckup,
-                        Goods::getSnapshotMd5)
-                .eq(Goods::getId, goodsId));
-    }
-
-    @Override
-    public Map<Long, Long> countGoodsByDiscountIds(List<Long> discountIds) {
-        Map<Long, Long> result = new HashMap<>();
-        goodsMapper.countGoodsByDiscountIds(discountIds).forEach(map ->
-                result.put(((BigInteger) map.get("discount_id")).longValue(), (Long) map.get("count")));
-        return result;
-    }
-
-    @Override
-    public Goods getOrderGoodsById(long id) {
-        return goodsMapper.selectOne(lambdaQuery(Goods.class)
-                .select(Goods::getName,
-                        Goods::getDescription,
-                        Goods::getImage,
-                        Goods::getCurrentPrice,
-                        Goods::getDiscountId,
-                        Goods::getUpdateTime)
-                .eq(Goods::getId, id)
-                .eq(Goods::getStatus, GoodsStatus.ON.getStatus()));
-    }
-
-    @Override
-    public void increaseSales(long goodsId, int count) {
+    public void updateSalesVolume(long id, int count) {
         goodsMapper.update(null, lambdaUpdate(Goods.class)
                 .setSql("sales_volume = sales_volume + " + count)
-                .eq(Goods::getId, goodsId));
+                .eq(Goods::getId, id));
     }
 }

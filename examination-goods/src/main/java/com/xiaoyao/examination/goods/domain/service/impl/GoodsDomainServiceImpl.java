@@ -27,13 +27,13 @@ public class GoodsDomainServiceImpl implements GoodsDomainService {
     public long createGoods(Goods goods) {
         checkGoodsType(goods.getType());
         checkGoodsSort(goods.getSort());
-        if (goodsRepository.isCodeExist(goods.getCode(), null)) {
+        if (goodsRepository.isExistCode(goods.getCode(), null)) {
             throw new ExaminationException(ErrorCode.GOODS_CODE_EXIST);
         }
 
         goods.setUpdateTime(LocalDateTime.now());
         goods.setCreateTime(LocalDateTime.now());
-        goodsRepository.insert(goods);
+        goodsRepository.save(goods);
         return goods.getId();
     }
 
@@ -64,26 +64,32 @@ public class GoodsDomainServiceImpl implements GoodsDomainService {
     @Override
     public void changeStatus(long id, int status) {
         checkGoodsStatus(status);
-        goodsRepository.changeStatus(id, status);
+        goodsRepository.updateStatus(id, status);
     }
 
     @Override
     public List<Goods> searchGoodsByAdmin(long page, long size,
                                           String code, String name, Integer type, Integer status, Integer sort,
                                           long[] total) {
-        return goodsRepository.searchGoods(page, size, code, name, type, status, sort, total);
+        Goods goods = new Goods();
+        goods.setCode(code);
+        goods.setName(name);
+        goods.setType(type);
+        goods.setStatus(status);
+        goods.setSort(sort);
+        return goodsRepository.findGoodsListForAdminSearch(page, size, total, goods);
     }
 
     @Override
     public Goods queryGoodsById(long id) {
-        return goodsRepository.queryGoodsById(id);
+        return goodsRepository.findGoodsForUpdate(id);
     }
 
     @Override
     public void updateGoods(Goods goods) {
         checkGoodsType(goods.getType());
         checkGoodsSort(goods.getSort());
-        if (goods.getCode() != null && goodsRepository.isCodeExist(goods.getCode(), goods.getId())) {
+        if (goods.getCode() != null && goodsRepository.isExistCode(goods.getCode(), goods.getId())) {
             throw new ExaminationException(ErrorCode.GOODS_CODE_EXIST);
         }
 
@@ -138,18 +144,18 @@ public class GoodsDomainServiceImpl implements GoodsDomainService {
 
     @Override
     public Goods getUpdateGoodsById(long id) {
-        return goodsRepository.getUpdateGoodsById(id);
+        return goodsRepository.findGoodsForPreUpdate(id);
     }
 
     @Override
     public Goods getOrderGoodsById(long id) {
-        return goodsRepository.getOrderGoodsById(id);
+        return goodsRepository.findGoodsForSubmitOrder(id);
     }
 
     @Override
     public void deleteGoods(List<Long> ids) {
 
-        goodsRepository.deleteGoods(ids);
+        goodsRepository.delete(ids);
     }
 
     @Override
@@ -163,7 +169,7 @@ public class GoodsDomainServiceImpl implements GoodsDomainService {
 
     @Override
     public int getGoodsStatusById(long id) {
-        return goodsRepository.getGoodsStatusById(id);
+        return goodsRepository.getGoodsStatus(id);
     }
 
     @Override
@@ -178,33 +184,33 @@ public class GoodsDomainServiceImpl implements GoodsDomainService {
     @Override
     public List<Goods> getRecommendGoods(int sort, int count) {
         checkGoodsSort(sort);
-        return goodsRepository.getRecommendGoods(sort, count);
+        return goodsRepository.findGoodsListForUserRecommend(sort, count);
     }
 
     @Override
     public List<Goods> searchGoods(int pass, int size, String name, Integer type, String gender,
                                    String bottomPrice, String topPrice, String order) {
         checkGoodsType(type);
-        return goodsRepository.searchGoodsByPage(pass, size, name, type, gender, bottomPrice, topPrice, order);
+        return goodsRepository.findGoodsListForUserSearch(pass, size, name, type, gender, bottomPrice, topPrice, order);
     }
 
     @Override
     public Goods getSnapshotGoodsById(long goodsId) {
-        return goodsRepository.getSnapshotGoodsById(goodsId);
+        return goodsRepository.findGoodsForSnapshot(goodsId);
     }
 
     @Override
     public Map<Long, Long> countGoodsByDiscountIds(List<Long> discountIds) {
-        return goodsRepository.countGoodsByDiscountIds(discountIds);
+        return goodsRepository.getGoodsCountInDiscountIds(discountIds);
     }
 
     @Override
     public void increaseSales(long goodsId, int count) {
-        goodsRepository.increaseSales(goodsId, count);
+        goodsRepository.updateSalesVolume(goodsId, count);
     }
 
     @Override
     public long countDontDeletedGoods(List<Long> ids) {
-        return goodsRepository.countDontDeletedGoods(ids);
+        return goodsRepository.countGoodsInIdsAndStatus(ids, GoodsStatus.ON.getStatus());
     }
 }

@@ -7,17 +7,26 @@ import java.util.List;
 import java.util.Map;
 
 public interface GoodsRepository {
-    void insert(Goods goods);
+    long countGoodsInIdsAndStatus(List<Long> ids, int status);
 
-    void updateSnapshot(long goodsId, String md5);
+    List<Goods> findGoodsListForAdminSearch(long page, long size, long[] total, Goods goods);
 
-    void update(Goods goods);
+    List<Goods> findGoodsListForUserRecommend(int sort, int count);
 
-    void changeStatus(long id, int status);
+    List<Goods> findGoodsListForUserSearch(int pass, int size, String name, Integer type, String gender,
+                                           String bottomPrice, String topPrice, String order);
 
-    List<Goods> searchGoods(long page, long size,
-                            String code, String name, Integer type, Integer status, Integer sort,
-                            long[] total);
+    Goods findGoodsForUpdate(long id);
+
+    Goods findGoodsForPreUpdate(long id);
+
+    Goods findGoodsForSnapshot(long id);
+
+    Goods findGoodsForSubmitOrder(long id);
+
+    int getGoodsStatus(long id);
+
+    Map<Long, Long> getGoodsCountInDiscountIds(List<Long> discountIds);
 
     /**
      * 查询套餐中是否存在指定的编号。
@@ -25,28 +34,17 @@ public interface GoodsRepository {
      * @param code    要查询的编号
      * @param goodsId 当前套餐的id，如果指定了则排除当前套餐。
      */
-    boolean isCodeExist(String code, @Nullable Long goodsId);
+    boolean isExistCode(String code, @Nullable Long goodsId);
 
-    Goods queryGoodsById(long id);
+    void save(Goods goods);
 
-    Goods getUpdateGoodsById(long id);
+    void delete(List<Long> ids);
 
-    void deleteGoods(List<Long> ids);
+    void update(Goods goods);
 
-    long countDontDeletedGoods(List<Long> ids);
+    void updateSnapshot(long id, String md5);
 
-    int getGoodsStatusById(long id);
+    void updateStatus(long id, int status);
 
-    List<Goods> getRecommendGoods(int sort, int count);
-
-    List<Goods> searchGoodsByPage(int pass, int size, String name, Integer type, String gender,
-                                  String bottomPrice, String topPrice, String order);
-
-    Goods getSnapshotGoodsById(long goodsId);
-
-    Map<Long, Long> countGoodsByDiscountIds(List<Long> discountIds);
-
-    Goods getOrderGoodsById(long id);
-
-    void increaseSales(long goodsId, int count);
+    void updateSalesVolume(long id, int count);
 }

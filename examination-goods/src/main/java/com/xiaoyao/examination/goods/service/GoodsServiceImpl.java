@@ -297,7 +297,7 @@ public class GoodsServiceImpl implements GoodsService {
 
     @Override
     public SubmitOrderGoodsInfoResponse getGoodsInfoInSubmitOrder(long goodsId) {
-        //        Goods goods = goodsDomainService.getOrderGoodsById(goodsId);
+        //        Goods goods = goodsDomainService.findGoodsForSubmitOrder(goodsId);
         //        SubmitOrderGoodsInfoResponse response = new SubmitOrderGoodsInfoResponse();
         //        response.setName();
         //        return response;
