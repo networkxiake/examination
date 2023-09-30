@@ -1,5 +1,7 @@
 package com.xiaoyao.examination.user.service;
 
+import cn.hutool.captcha.CaptchaUtil;
+import cn.hutool.captcha.LineCaptcha;
 import cn.hutool.core.util.IdUtil;
 import com.xiaoyao.examination.common.exception.ErrorCode;
 import com.xiaoyao.examination.common.exception.ExaminationException;
@@ -25,6 +27,7 @@ import java.util.concurrent.TimeUnit;
 
 @DubboService
 public class UserServiceImpl implements UserService {
+    private final String IMAGE_CODE_PREFIX = "image-code:";
     private final String VERIFICATION_CODE_PREFIX = "verification-code:";
     private final String VERIFICATION_CODE_IP_PREFIX = "verification-code-ip:";
 
@@ -45,7 +48,23 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public String generateImageCode(String phone, Integer width, Integer height) {
+        LineCaptcha lineCaptcha = CaptchaUtil.createLineCaptcha(width != null ? width : 200, height != null ? height : 100);
+        lineCaptcha.createCode();
+        redisTemplate.opsForValue().set(IMAGE_CODE_PREFIX + phone, lineCaptcha.getCode(), 1, TimeUnit.MINUTES);
+        return lineCaptcha.getImageBase64();
+    }
+
+    @Override
     public void sendVerificationCode(String ip, String phone) {
+        // 验证图形验证码
+        String imageCode = redisTemplate.opsForValue().get(IMAGE_CODE_PREFIX + phone);
+        if (imageCode == null) {
+            throw new ExaminationException(ErrorCode.IMAGE_CODE_NOT_EXIST);
+        } else if (!imageCode.equals(phone)) {
+            throw new ExaminationException(ErrorCode.IMAGE_CODE_ERROR);
+        }
+
         // 防止频繁发送验证码
         if (Boolean.TRUE.equals(redisTemplate.hasKey(VERIFICATION_CODE_IP_PREFIX + ip))) {
             throw new ExaminationException(ErrorCode.VERIFICATION_CODE_SEND_TOO_FREQUENTLY);
