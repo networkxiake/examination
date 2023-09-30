@@ -49,7 +49,7 @@ public class GoodsController {
     @PostMapping("/apply-upload-photo")
     public ResponseBody<ApplyUploadFileDTO> applyUploadPhoto(@NotBlank String suffix) {
         ApplyUploadFileResponse response = goodsService.applyUploadPhoto(suffix);
-        return ResponseBodyBuilder.build(new ApplyUploadFileDTO(response.getPath(), response.getUrl()));
+        return ResponseBodyBuilder.build(BeanUtil.copyProperties(response, ApplyUploadFileDTO.class));
     }
 
     @CheckLoginAdmin
@@ -104,7 +104,7 @@ public class GoodsController {
     @PostMapping("/apply-upload-excel")
     public ResponseBody<ApplyUploadFileDTO> applyUploadExcel(long id, @NotBlank String suffix) {
         ApplyUploadFileResponse response = goodsService.applyUploadExcel(id, suffix);
-        return ResponseBodyBuilder.build(new ApplyUploadFileDTO(response.getPath(), response.getUrl()));
+        return ResponseBodyBuilder.build(BeanUtil.copyProperties(response, ApplyUploadFileDTO.class));
     }
 
     @CheckLoginAdmin

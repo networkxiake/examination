@@ -1,24 +1,36 @@
 package com.xiaoyao.examination.api.controller.dto.goods;
 
-import lombok.Data;
-
 import java.util.List;
 
-@Data
 public class GoodsSortDTO {
     List<Sort> sorts;
 
-    @Data
+    public List<Sort> getSorts() {
+        return sorts;
+    }
+
+    public void setSorts(List<Sort> sorts) {
+        this.sorts = sorts;
+    }
+
     public static class Sort {
         private int sort;
         private String name;
 
-        public Sort() {
+        public int getSort() {
+            return sort;
         }
 
-        public Sort(Integer key, String value) {
-            this.sort = key;
-            this.name = value;
+        public void setSort(int sort) {
+            this.sort = sort;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
         }
     }
 }

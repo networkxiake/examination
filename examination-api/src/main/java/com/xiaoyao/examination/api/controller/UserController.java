@@ -60,7 +60,7 @@ public class UserController {
     @PostMapping("/apply-upload-photo")
     public ResponseBody<ApplyUploadPhotoDTO> applyUploadPhoto(@NotBlank String suffix) {
         ApplyUploadPhotoResponse response = userService.applyUploadPhoto(suffix);
-        return ResponseBodyBuilder.build(new ApplyUploadPhotoDTO(response.getPath(), response.getUrl()));
+        return ResponseBodyBuilder.build(BeanUtil.copyProperties(response, ApplyUploadPhotoDTO.class));
     }
 
     @CheckLoginUser

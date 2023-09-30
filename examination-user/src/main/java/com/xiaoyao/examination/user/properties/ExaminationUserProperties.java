@@ -1,9 +1,7 @@
 package com.xiaoyao.examination.user.properties;
 
-import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
-@Data
 @ConfigurationProperties(prefix = "examination.user")
 public class ExaminationUserProperties {
     /**
@@ -20,4 +18,28 @@ public class ExaminationUserProperties {
      * 初始运营账户的姓名。
      */
     private String initAdminName;
+
+    public String getInitAdminUsername() {
+        return initAdminUsername;
+    }
+
+    public void setInitAdminUsername(String initAdminUsername) {
+        this.initAdminUsername = initAdminUsername;
+    }
+
+    public String getInitAdminPassword() {
+        return initAdminPassword;
+    }
+
+    public void setInitAdminPassword(String initAdminPassword) {
+        this.initAdminPassword = initAdminPassword;
+    }
+
+    public String getInitAdminName() {
+        return initAdminName;
+    }
+
+    public void setInitAdminName(String initAdminName) {
+        this.initAdminName = initAdminName;
+    }
 }

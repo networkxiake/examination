@@ -1,15 +1,27 @@
 package com.xiaoyao.examination.api.controller.dto.goods;
 
-import lombok.Data;
-
 import java.util.List;
 
-@Data
 public class AdminSearchGoodsDTO {
     private long total;
     private List<Goods> goodsList;
 
-    @Data
+    public long getTotal() {
+        return total;
+    }
+
+    public void setTotal(long total) {
+        this.total = total;
+    }
+
+    public List<Goods> getGoodsList() {
+        return goodsList;
+    }
+
+    public void setGoodsList(List<Goods> goodsList) {
+        this.goodsList = goodsList;
+    }
+
     public static class Goods {
         private String id;
         private String name;
@@ -21,5 +33,85 @@ public class AdminSearchGoodsDTO {
         private int type;
         private int status;
         private boolean hasExcel;
+
+        public String getId() {
+            return id;
+        }
+
+        public void setId(String id) {
+            this.id = id;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public String getCode() {
+            return code;
+        }
+
+        public void setCode(String code) {
+            this.code = code;
+        }
+
+        public String getOriginalPrice() {
+            return originalPrice;
+        }
+
+        public void setOriginalPrice(String originalPrice) {
+            this.originalPrice = originalPrice;
+        }
+
+        public String getCurrentPrice() {
+            return currentPrice;
+        }
+
+        public void setCurrentPrice(String currentPrice) {
+            this.currentPrice = currentPrice;
+        }
+
+        public String getDiscountId() {
+            return discountId;
+        }
+
+        public void setDiscountId(String discountId) {
+            this.discountId = discountId;
+        }
+
+        public int getSalesVolume() {
+            return salesVolume;
+        }
+
+        public void setSalesVolume(int salesVolume) {
+            this.salesVolume = salesVolume;
+        }
+
+        public int getType() {
+            return type;
+        }
+
+        public void setType(int type) {
+            this.type = type;
+        }
+
+        public int getStatus() {
+            return status;
+        }
+
+        public void setStatus(int status) {
+            this.status = status;
+        }
+
+        public boolean isHasExcel() {
+            return hasExcel;
+        }
+
+        public void setHasExcel(boolean hasExcel) {
+            this.hasExcel = hasExcel;
+        }
     }
 }
