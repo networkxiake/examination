@@ -21,6 +21,7 @@
         <module>examination-goods</module>
         <module>examination-payment</module>
         <module>examination-storage</module>
+        <module>examination-starter-mq</module>
     </modules>
 
     <properties>

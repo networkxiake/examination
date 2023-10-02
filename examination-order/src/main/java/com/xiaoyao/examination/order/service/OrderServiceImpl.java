@@ -10,17 +10,14 @@ import com.xiaoyao.examination.common.interfaces.order.response.UserOrderSummary
 import com.xiaoyao.examination.common.interfaces.payment.PayService;
 import com.xiaoyao.examination.common.interfaces.payment.request.CreatePayOrderRequest;
 import com.xiaoyao.examination.common.interfaces.payment.response.CreatePayOrderResponse;
+import com.xiaoyao.examination.mq.client.MQClient;
+import com.xiaoyao.examination.mq.message.OrderCreatedMessage;
 import com.xiaoyao.examination.order.domain.entity.Order;
 import com.xiaoyao.examination.order.domain.enums.OrderStatus;
 import com.xiaoyao.examination.order.domain.service.OrderDomainService;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.apache.dubbo.config.annotation.DubboService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.amqp.core.MessageBuilder;
-import org.springframework.amqp.core.MessageProperties;
-import org.springframework.amqp.rabbit.annotation.RabbitListener;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -28,10 +25,8 @@ import java.util.List;
 
 @DubboService
 public class OrderServiceImpl implements OrderService {
-    private static final Logger log = LoggerFactory.getLogger(OrderServiceImpl.class);
-
     private final OrderDomainService orderDomainService;
-    private final RabbitTemplate rabbitTemplate;
+    private final MQClient mqClient;
 
     @DubboReference
     private PayService payService;
@@ -40,9 +35,9 @@ public class OrderServiceImpl implements OrderService {
     @DubboReference
     private GoodsService goodsService;
 
-    public OrderServiceImpl(OrderDomainService orderDomainService, RabbitTemplate rabbitTemplate) {
+    public OrderServiceImpl(OrderDomainService orderDomainService, MQClient mqClient) {
         this.orderDomainService = orderDomainService;
-        this.rabbitTemplate = rabbitTemplate;
+        this.mqClient = mqClient;
     }
 
     @Override
@@ -63,6 +58,7 @@ public class OrderServiceImpl implements OrderService {
         return response;
     }
 
+    @Transactional
     @Override
     public String submitOrder(long userId, long goodsId, int count) {
         SubmitOrderGoodsInfoResponse goods = goodsService.getGoodsInfoInSubmitOrder(goodsId);
@@ -92,39 +88,18 @@ public class OrderServiceImpl implements OrderService {
         orderDomainService.save(order);
 
         // 发送定时消息到消息队列，如果超时未支付则关闭订单，超时时间为30分钟。
-        rabbitTemplate.send("pay", "pay.order.paying",
-                MessageBuilder.withBody(order.getPaymentCode().getBytes())
-                        .setContentType(MessageProperties.CONTENT_TYPE_TEXT_PLAIN)
-                        .setExpiration(String.valueOf(1000 * 60 * 30))
-                        .build());
+        mqClient.orderCreated(new OrderCreatedMessage(order.getPaymentCode()), 1000 * 60 * 30);
 
         return response.getPayUrl();
     }
 
-    @RabbitListener(queues = "pay.order")
-    public void payOrder(String paymentCode) throws Exception {
-        if (!paySuccess(paymentCode)) {
-            if (log.isWarnEnabled()) {
-                log.warn("支付失败，paymentCode={}", paymentCode);
-            }
-            throw new Exception("支付失败");
-        }
-    }
-
-    @RabbitListener(queues = "pay.order.close")
-    public void closeOrder(String paymentCode) {
-        long orderId = orderDomainService.getOrderIdByPaymentCode(paymentCode);
-        orderDomainService.updateStatus(orderId, OrderStatus.PAY_WAITING.getStatus(), OrderStatus.CANCELED.getStatus());
-    }
-
+    @Transactional
     @Override
-    public boolean paySuccess(String paymentCode) {
+    public void paySuccess(String paymentCode) {
         Order order = orderDomainService.findOrderByPaymentCode(paymentCode);
         // 使用CAS思想实现消息的幂等性
         if (orderDomainService.updateStatus(order.getId(), OrderStatus.PAY_WAITING.getStatus(), OrderStatus.SUBSCRIBE_WAITING.getStatus())) {
             goodsService.increaseSalesVolume(order.getGoodsId(), order.getCount());
-            return true;
         }
-        return false;
     }
 }

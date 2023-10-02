@@ -4,19 +4,18 @@ import cn.hutool.core.util.RandomUtil;
 import com.xiaoyao.examination.common.interfaces.payment.PayService;
 import com.xiaoyao.examination.common.interfaces.payment.request.CreatePayOrderRequest;
 import com.xiaoyao.examination.common.interfaces.payment.response.CreatePayOrderResponse;
+import com.xiaoyao.examination.mq.client.MQClient;
+import com.xiaoyao.examination.mq.message.OrderPayedMessage;
 import org.apache.dubbo.config.annotation.DubboService;
-import org.springframework.amqp.core.MessageBuilder;
-import org.springframework.amqp.core.MessageProperties;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
 
 import java.util.Map;
 
 @DubboService
 public class PayServiceImpl implements PayService {
-    private final RabbitTemplate rabbitTemplate;
+    private final MQClient mqClient;
 
-    public PayServiceImpl(RabbitTemplate rabbitTemplate) {
-        this.rabbitTemplate = rabbitTemplate;
+    public PayServiceImpl(MQClient mqClient) {
+        this.mqClient = mqClient;
     }
 
     @Override
@@ -33,7 +32,6 @@ public class PayServiceImpl implements PayService {
     @Override
     public void payOrderCallback(Map<String, String> headers, String body) {
         // TODO 将消息持久化到数据库，并添加事务以确保消息发送成功。
-        rabbitTemplate.send("pay", "pay.order",
-                MessageBuilder.withBody(body.getBytes()).setContentType(MessageProperties.CONTENT_TYPE_TEXT_PLAIN).build());
+        mqClient.orderPayed(new OrderPayedMessage(body));
     }
 }

@@ -16,5 +16,5 @@ public interface OrderService {
     /**
      * 支付成功后调用，返回值表示是否处理完支付。
      */
-    boolean paySuccess(String paymentCode);
+    void paySuccess(String paymentCode);
 }
