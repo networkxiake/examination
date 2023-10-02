@@ -31,12 +31,8 @@ public class UserController {
     private UserService userService;
 
     @GetMapping("/generate-image-code")
-    public ResponseBody<String> generateImageCode(@NotBlank
-                                                  @Pattern(regexp = "^((13[0-9])|(14(0|[5-7]|9))|(15([0-3]|[5-9]))|(16(2|[5-7]))|(17[0-8])|(18[0-9])|(19([0-3]|[5-9])))\\d{8}$")
-                                                  String phone,
-                                                  Integer width,
-                                                  Integer height) {
-        return ResponseBodyBuilder.build(userService.generateImageCode(phone, width, height));
+    public ResponseBody<String> generateImageCode(Integer width, Integer height) {
+        return ResponseBodyBuilder.build(userService.generateImageCode(UserStpUtil.getLoginId(), width, height));
     }
 
     @PostMapping("/send-verification-code")
@@ -44,7 +40,7 @@ public class UserController {
                                                    @Pattern(regexp = "^((13[0-9])|(14(0|[5-7]|9))|(15([0-3]|[5-9]))|(16(2|[5-7]))|(17[0-8])|(18[0-9])|(19([0-3]|[5-9])))\\d{8}$")
                                                    String phone,
                                                    HttpServletRequest request) {
-        userService.sendVerificationCode(request.getRemoteAddr(), phone);
+        userService.sendVerificationCode(request.getRemoteAddr(), UserStpUtil.getLoginId(), phone);
         return ResponseBodyBuilder.build();
     }
 

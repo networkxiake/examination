@@ -8,12 +8,12 @@ public interface UserService {
     /**
      * 生成图片验证码，默认的宽高为200x100，返回图片的Base64字符串。
      */
-    String generateImageCode(String phone, Integer width, Integer height);
+    String generateImageCode(long userId, Integer width, Integer height);
 
     /**
      * 在验证图像验证码成功后，发送短信验证码。
      */
-    void sendVerificationCode(String ip, String phone);
+    void sendVerificationCode(String ip, long userId, String phone);
 
     /**
      * 在验证短信验证码成功后登录。

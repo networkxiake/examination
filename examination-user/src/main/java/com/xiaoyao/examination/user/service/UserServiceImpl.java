@@ -48,17 +48,17 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public String generateImageCode(String phone, Integer width, Integer height) {
+    public String generateImageCode(long userId, Integer width, Integer height) {
         LineCaptcha lineCaptcha = CaptchaUtil.createLineCaptcha(width != null ? width : 200, height != null ? height : 100);
         lineCaptcha.createCode();
-        redisTemplate.opsForValue().set(IMAGE_CODE_PREFIX + phone, lineCaptcha.getCode(), 1, TimeUnit.MINUTES);
+        redisTemplate.opsForValue().set(IMAGE_CODE_PREFIX + userId, lineCaptcha.getCode(), 1, TimeUnit.MINUTES);
         return lineCaptcha.getImageBase64();
     }
 
     @Override
-    public void sendVerificationCode(String ip, String phone) {
+    public void sendVerificationCode(String ip, long userId, String phone) {
         // 验证图形验证码
-        String imageCode = redisTemplate.opsForValue().get(IMAGE_CODE_PREFIX + phone);
+        String imageCode = redisTemplate.opsForValue().get(IMAGE_CODE_PREFIX + userId);
         if (imageCode == null) {
             throw new ExaminationException(ErrorCode.IMAGE_CODE_NOT_EXIST);
         } else if (!imageCode.equals(phone)) {
