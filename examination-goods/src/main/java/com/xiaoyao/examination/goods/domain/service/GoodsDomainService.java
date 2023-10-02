@@ -8,7 +8,7 @@ import java.util.Map;
 public interface GoodsDomainService {
     long createGoods(Goods goods);
 
-    void updateSnapshot(long goodsId, String md5);
+    void updateSnapshotId(long goodsId, Long snapshotId);
 
     Map<Integer, String> getAllGoodsType();
 

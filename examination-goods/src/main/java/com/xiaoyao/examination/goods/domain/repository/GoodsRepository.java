@@ -42,7 +42,7 @@ public interface GoodsRepository {
 
     void update(Goods goods);
 
-    void updateSnapshot(long id, String md5);
+    void updateSnapshotId(long id, Long snapshotId);
 
     void updateStatus(long id, int status);
 

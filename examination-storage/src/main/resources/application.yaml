@@ -9,6 +9,7 @@ dubbo:
   application:
     name: examination-storage
     qos-port: 22001
+    serialize-check-status: DISABLE
   protocol:
     name: dubbo
     port: 9101

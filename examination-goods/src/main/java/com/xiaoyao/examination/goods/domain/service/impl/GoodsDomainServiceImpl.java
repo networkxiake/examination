@@ -38,8 +38,8 @@ public class GoodsDomainServiceImpl implements GoodsDomainService {
     }
 
     @Override
-    public void updateSnapshot(long goodsId, String md5) {
-        goodsRepository.updateSnapshot(goodsId, md5);
+    public void updateSnapshotId(long goodsId, Long snapshotId) {
+        goodsRepository.updateSnapshotId(goodsId, snapshotId);
     }
 
     @Override

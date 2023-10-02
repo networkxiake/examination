@@ -100,9 +100,9 @@ public class Goods {
     private String formItem;
 
     /**
-     * 当前套餐的快照md5值
+     * 套餐快照主键值
      */
-    private String snapshotMd5;
+    private Long snapshotId;
 
     /**
      * 更新时间
@@ -258,12 +258,12 @@ public class Goods {
         this.formItem = formItem;
     }
 
-    public String getSnapshotMd5() {
-        return snapshotMd5;
+    public Long getSnapshotId() {
+        return snapshotId;
     }
 
-    public void setSnapshotMd5(String snapshotMd5) {
-        this.snapshotMd5 = snapshotMd5;
+    public void setSnapshotId(Long snapshotId) {
+        this.snapshotId = snapshotId;
     }
 
     public LocalDateTime getUpdateTime() {

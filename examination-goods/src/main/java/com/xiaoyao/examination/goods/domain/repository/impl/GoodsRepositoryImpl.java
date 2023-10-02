@@ -118,7 +118,7 @@ public class GoodsRepositoryImpl implements GoodsRepository {
                         Goods::getLaboratoryCheckup,
                         Goods::getMedicalCheckup,
                         Goods::getOtherCheckup,
-                        Goods::getSnapshotMd5)
+                        Goods::getSnapshotId)
                 .eq(Goods::getId, id));
     }
 
@@ -130,7 +130,7 @@ public class GoodsRepositoryImpl implements GoodsRepository {
                         Goods::getImage,
                         Goods::getCurrentPrice,
                         Goods::getDiscountId,
-                        Goods::getSnapshotMd5)
+                        Goods::getSnapshotId)
                 .eq(Goods::getId, id)
                 .eq(Goods::getStatus, GoodsStatus.ON.getStatus()));
     }
@@ -194,9 +194,9 @@ public class GoodsRepositoryImpl implements GoodsRepository {
     }
 
     @Override
-    public void updateSnapshot(long goodsId, String md5) {
+    public void updateSnapshotId(long goodsId, Long snapshotId) {
         goodsMapper.update(null, lambdaUpdate(Goods.class)
-                .set(Goods::getSnapshotMd5, md5)
+                .set(Goods::getSnapshotId, snapshotId)
                 .eq(Goods::getId, goodsId));
     }
 

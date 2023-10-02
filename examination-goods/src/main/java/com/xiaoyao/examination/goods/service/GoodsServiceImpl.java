@@ -21,6 +21,7 @@ import com.xiaoyao.examination.goods.domain.service.GoodsDomainService;
 import com.xiaoyao.examination.goods.domain.service.GoodsSnapshotDomainService;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.apache.dubbo.config.annotation.DubboService;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,6 +43,7 @@ public class GoodsServiceImpl implements GoodsService {
         this.snapshotDomainService = snapshotDomainService;
     }
 
+    @Transactional
     @Override
     public void createGoods(CreateGoodsRequest request) {
         checkDiscountId(request.getDiscountId());
@@ -73,6 +75,7 @@ public class GoodsServiceImpl implements GoodsService {
     private void updateSnapshot(long goodsId) {
         Goods goods = goodsDomainService.getSnapshotGoodsById(goodsId);
 
+        // 计算套餐的md5值
         GoodsSnapshot snapshot = new GoodsSnapshot();
         snapshot.setName(goods.getName());
         snapshot.setDescription(goods.getDescription());
@@ -85,16 +88,18 @@ public class GoodsServiceImpl implements GoodsService {
         snapshot.setLaboratoryCheckup(goods.getLaboratoryCheckup());
         snapshot.setMedicalCheckup(goods.getMedicalCheckup());
         snapshot.setOtherCheckup(goods.getOtherCheckup());
-
         String md5 = DigestUtil.md5Hex(JSONUtil.toJsonStr(snapshot));
-        if (goods.getSnapshotMd5() != null && goods.getSnapshotMd5().equals(md5)) {
+
+        if (goods.getSnapshotId() != null && snapshotDomainService.getSnapshotMd5(goods.getSnapshotId()).equals(md5)) {
             // md5值没有发生变化，不需要更新快照。
             return;
         }
 
+        snapshot.setGoodsId(goodsId);
         snapshot.setSnapshotMd5(md5);
         snapshotDomainService.saveSnapshot(snapshot);
-        goodsDomainService.updateSnapshot(goodsId, md5);
+
+        goodsDomainService.updateSnapshotId(goodsId, snapshot.getId());
     }
 
     @Override

@@ -13,6 +13,7 @@ dubbo:
   application:
     name: examination-goods
     qos-port: 22004
+    serialize-check-status: DISABLE
   protocol:
     name: dubbo
     port: 9204

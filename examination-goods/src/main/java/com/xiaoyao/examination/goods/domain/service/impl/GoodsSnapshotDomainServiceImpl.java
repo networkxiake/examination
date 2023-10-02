@@ -17,4 +17,9 @@ public class GoodsSnapshotDomainServiceImpl implements GoodsSnapshotDomainServic
     public void saveSnapshot(GoodsSnapshot snapshot) {
         goodsSnapshotRepository.save(snapshot);
     }
+
+    @Override
+    public String getSnapshotMd5(long goodsId) {
+        return goodsSnapshotRepository.getSnapshotMd5(goodsId);
+    }
 }

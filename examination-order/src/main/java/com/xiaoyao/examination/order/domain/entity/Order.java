@@ -68,7 +68,7 @@ public class Order {
     /**
      * 套餐快照主键值
      */
-    private String snapshotMd5;
+    private Long snapshotId;
 
     /**
      * 订单状态
@@ -178,12 +178,12 @@ public class Order {
         this.createTime = createTime;
     }
 
-    public String getSnapshotMd5() {
-        return snapshotMd5;
+    public Long getSnapshotId() {
+        return snapshotId;
     }
 
-    public void setSnapshotMd5(String snapshotMd5) {
-        this.snapshotMd5 = snapshotMd5;
+    public void setSnapshotId(Long snapshotId) {
+        this.snapshotId = snapshotId;
     }
 
     public Integer getStatus() {

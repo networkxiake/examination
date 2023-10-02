@@ -9,7 +9,7 @@ public class SubmitOrderGoodsInfoResponse implements Serializable {
     private String image;
     private BigDecimal currentPrice;
     private Long discountId;
-    private String snapshotMd5;
+    private Long snapshotId;
 
     public String getName() {
         return name;
@@ -51,11 +51,11 @@ public class SubmitOrderGoodsInfoResponse implements Serializable {
         this.discountId = discountId;
     }
 
-    public String getSnapshotMd5() {
-        return snapshotMd5;
+    public Long getSnapshotId() {
+        return snapshotId;
     }
 
-    public void setSnapshotMd5(String snapshotMd5) {
-        this.snapshotMd5 = snapshotMd5;
+    public void setSnapshotId(Long snapshotId) {
+        this.snapshotId = snapshotId;
     }
 }

@@ -79,7 +79,7 @@ public class OrderServiceImpl implements OrderService {
         } else {
             order.setTotal(goods.getCurrentPrice().multiply(new BigDecimal(count)));
         }
-        order.setSnapshotMd5(goods.getSnapshotMd5());
+        order.setSnapshotId(goods.getSnapshotId());
         order.setStatus(OrderStatus.PAY_WAITING.getStatus());
         CreatePayOrderResponse response = payService.createPayOrder(new CreatePayOrderRequest(
                 order.getTotal().multiply(new BigDecimal(100)).setScale(0, RoundingMode.DOWN).intValue(),
