@@ -17,16 +17,20 @@ import com.xiaoyao.examination.order.domain.enums.OrderStatus;
 import com.xiaoyao.examination.order.domain.service.OrderDomainService;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.apache.dubbo.config.annotation.DubboService;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @DubboService
 public class OrderServiceImpl implements OrderService {
+
     private final OrderDomainService orderDomainService;
     private final MQClient mqClient;
+    private final StringRedisTemplate redisTemplate;
 
     @DubboReference
     private PayService payService;
@@ -35,9 +39,10 @@ public class OrderServiceImpl implements OrderService {
     @DubboReference
     private GoodsService goodsService;
 
-    public OrderServiceImpl(OrderDomainService orderDomainService, MQClient mqClient) {
+    public OrderServiceImpl(OrderDomainService orderDomainService, MQClient mqClient, StringRedisTemplate redisTemplate) {
         this.orderDomainService = orderDomainService;
         this.mqClient = mqClient;
+        this.redisTemplate = redisTemplate;
     }
 
     @Override
@@ -60,7 +65,13 @@ public class OrderServiceImpl implements OrderService {
 
     @Transactional
     @Override
-    public String submitOrder(long userId, long goodsId, int count) {
+    public String submitOrder(long userId, long goodsId, int count, long globalId) {
+        // 使用全局唯一的id来解决创建订单的幂等性
+        if (Boolean.FALSE.equals(redisTemplate.opsForValue()
+                .setIfAbsent("submit-order-id:" + globalId, "1", 5, TimeUnit.MINUTES))) {
+            throw new ExaminationException(ErrorCode.ORDER_CREATED);
+        }
+
         SubmitOrderGoodsInfoResponse goods = goodsService.getGoodsInfoInSubmitOrder(goodsId);
         if (goods == null) {
             throw new ExaminationException(ErrorCode.GOODS_NOT_FOUND);
@@ -74,6 +85,7 @@ public class OrderServiceImpl implements OrderService {
         order.setImage(goods.getImage());
         order.setUnitPrice(goods.getCurrentPrice());
         order.setCount(count);
+        // 计算总金额
         if (goods.getDiscountId() != null) {
             order.setTotal(discountService.compute(goods.getDiscountId(), goods.getCurrentPrice(), count));
         } else {
@@ -81,6 +93,7 @@ public class OrderServiceImpl implements OrderService {
         }
         order.setSnapshotId(goods.getSnapshotId());
         order.setStatus(OrderStatus.PAY_WAITING.getStatus());
+        // 创建支付订单
         CreatePayOrderResponse response = payService.createPayOrder(new CreatePayOrderRequest(
                 order.getTotal().multiply(new BigDecimal(100)).setScale(0, RoundingMode.DOWN).intValue(),
                 "购买体检套餐", PayService.PayType.ORDER));

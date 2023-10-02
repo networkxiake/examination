@@ -1,5 +1,6 @@
 package com.xiaoyao.examination.api.controller;
 
+import cn.hutool.core.util.IdUtil;
 import com.xiaoyao.examination.api.annotation.CheckLoginUser;
 import com.xiaoyao.examination.api.response.ResponseBody;
 import com.xiaoyao.examination.api.response.ResponseBodyBuilder;
@@ -22,6 +23,7 @@ public class OderController {
     @CheckLoginUser
     @PostMapping("/submit")
     public ResponseBody<String> submitOrder(@Min(1) long goodsId, @Min(1) int count) {
-        return ResponseBodyBuilder.build(orderService.submitOrder(UserStpUtil.getLoginId(), goodsId, count));
+        return ResponseBodyBuilder.build(orderService.submitOrder(UserStpUtil.getLoginId(), goodsId, count,
+                IdUtil.getSnowflakeNextId()));
     }
 }

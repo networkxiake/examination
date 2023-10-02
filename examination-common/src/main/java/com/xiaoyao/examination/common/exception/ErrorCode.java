@@ -29,6 +29,7 @@ public enum ErrorCode {
     STORAGE_SPACE_HAVE_NO_FILE(1025, "存储空间中没有文件，请先上传文件！"),
     IMAGE_CODE_NOT_EXIST(1026, "图形验证码不存在"),
     IMAGE_CODE_ERROR(1027, "图形验证码错误"),
+    ORDER_CREATED(1028, "订单已创建，请刷新！"),
     ;
 
     private final int code;
