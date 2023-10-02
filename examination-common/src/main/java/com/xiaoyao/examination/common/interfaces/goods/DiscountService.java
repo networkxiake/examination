@@ -17,5 +17,8 @@ public interface DiscountService {
 
     void update(UpdateDiscountRequest request);
 
+    /**
+     * 计算折扣后的价格。
+     */
     BigDecimal compute(long discountId, BigDecimal price, int count);
 }

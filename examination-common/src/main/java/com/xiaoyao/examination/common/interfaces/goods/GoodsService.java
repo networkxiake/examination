@@ -47,4 +47,9 @@ public interface GoodsService {
      * 查询下单时的套餐信息。
      */
     SubmitOrderGoodsInfoResponse getGoodsInfoInSubmitOrder(long goodsId);
+
+    /**
+     * 增加套餐销量。
+     */
+    void increaseSalesVolume(long goodsId, int count);
 }

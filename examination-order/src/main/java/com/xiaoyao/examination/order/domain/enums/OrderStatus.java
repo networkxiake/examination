@@ -1,10 +1,10 @@
 package com.xiaoyao.examination.order.domain.enums;
 
 public enum OrderStatus {
-    PAYING(1, "待付款"),
+    PAY_WAITING(1, "待支付"),
     CANCELED(2, "已取消"),
     REFUNDED(3, "已退款"),
-    SUBSCRIBING(4, "待预约"),
+    SUBSCRIBE_WAITING(4, "待预约"),
     FINISHED(5, "已完成");
 
     private final int status;

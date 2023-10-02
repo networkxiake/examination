@@ -130,7 +130,7 @@ public class GoodsRepositoryImpl implements GoodsRepository {
                         Goods::getImage,
                         Goods::getCurrentPrice,
                         Goods::getDiscountId,
-                        Goods::getUpdateTime)
+                        Goods::getSnapshotMd5)
                 .eq(Goods::getId, id)
                 .eq(Goods::getStatus, GoodsStatus.ON.getStatus()));
     }

@@ -148,7 +148,7 @@ public class GoodsDomainServiceImpl implements GoodsDomainService {
     }
 
     @Override
-    public Goods getOrderGoodsById(long id) {
+    public Goods findGoodsForSubmitOrder(long id) {
         return goodsRepository.findGoodsForSubmitOrder(id);
     }
 

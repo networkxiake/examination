@@ -297,10 +297,12 @@ public class GoodsServiceImpl implements GoodsService {
 
     @Override
     public SubmitOrderGoodsInfoResponse getGoodsInfoInSubmitOrder(long goodsId) {
-        //        Goods goods = goodsDomainService.findGoodsForSubmitOrder(goodsId);
-        //        SubmitOrderGoodsInfoResponse response = new SubmitOrderGoodsInfoResponse();
-        //        response.setName();
-        //        return response;
-        return null;
+        return BeanUtil.copyProperties(goodsDomainService.findGoodsForSubmitOrder(goodsId),
+                SubmitOrderGoodsInfoResponse.class);
+    }
+
+    @Override
+    public void increaseSalesVolume(long goodsId, int count) {
+        goodsDomainService.increaseSales(goodsId, count);
     }
 }

@@ -27,6 +27,23 @@ public class OrderRepositoryImpl implements OrderRepository {
     }
 
     @Override
+    public Order findOrderForPayment(String paymentCode) {
+        return orderMapper.selectOne(lambdaQuery(Order.class)
+                .select(Order::getId,
+                        Order::getGoodsId,
+                        Order::getCount)
+                .eq(Order::getPaymentCode, paymentCode));
+    }
+
+    @Override
+    public long getOrderIdByPaymentCode(String paymentCode) {
+        return orderMapper.selectOne(lambdaQuery(Order.class)
+                        .select(Order::getId)
+                        .eq(Order::getPaymentCode, paymentCode))
+                .getId();
+    }
+
+    @Override
     public void save(Order order) {
         orderMapper.insert(order);
     }

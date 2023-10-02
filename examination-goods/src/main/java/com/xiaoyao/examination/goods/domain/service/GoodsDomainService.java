@@ -26,7 +26,7 @@ public interface GoodsDomainService {
 
     Goods getUpdateGoodsById(long id);
 
-    Goods getOrderGoodsById(long id);
+    Goods findGoodsForSubmitOrder(long id);
 
     void deleteGoods(List<Long> ids);
 

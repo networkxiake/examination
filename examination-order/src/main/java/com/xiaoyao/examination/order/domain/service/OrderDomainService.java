@@ -9,5 +9,9 @@ public interface OrderDomainService {
 
     void save(Order order);
 
-    boolean payOrder(long orderId);
+    Order findOrderByPaymentCode(String paymentCode);
+
+    boolean updateStatus(long orderId, Integer oldStatus, Integer newStatus);
+
+    long getOrderIdByPaymentCode(String paymentCode);
 }
