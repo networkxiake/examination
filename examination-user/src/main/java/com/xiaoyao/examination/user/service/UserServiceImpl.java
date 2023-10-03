@@ -10,6 +10,7 @@ import com.xiaoyao.examination.common.interfaces.order.response.UserOrderSummary
 import com.xiaoyao.examination.common.interfaces.storage.StorageService;
 import com.xiaoyao.examination.common.interfaces.user.UserService;
 import com.xiaoyao.examination.common.interfaces.user.response.ApplyUploadPhotoResponse;
+import com.xiaoyao.examination.common.interfaces.user.response.GenerateImageCodeResponse;
 import com.xiaoyao.examination.common.interfaces.user.response.UserLoginResponse;
 import com.xiaoyao.examination.common.interfaces.user.response.UserProfileResponse;
 import com.xiaoyao.examination.user.domain.entity.User;
@@ -48,17 +49,23 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public String generateImageCode(long userId, Integer width, Integer height) {
+    public GenerateImageCodeResponse generateImageCode(Integer width, Integer height) {
+        String key = IdUtil.fastSimpleUUID();
+
         LineCaptcha lineCaptcha = CaptchaUtil.createLineCaptcha(width != null ? width : 200, height != null ? height : 100);
         lineCaptcha.createCode();
-        redisTemplate.opsForValue().set(IMAGE_CODE_PREFIX + userId, lineCaptcha.getCode(), 1, TimeUnit.MINUTES);
-        return lineCaptcha.getImageBase64();
+        redisTemplate.opsForValue().set(IMAGE_CODE_PREFIX + key, lineCaptcha.getCode(), 1, TimeUnit.MINUTES);
+
+        GenerateImageCodeResponse response = new GenerateImageCodeResponse();
+        response.setKey(key);
+        response.setImageBase64(lineCaptcha.getImageBase64());
+        return response;
     }
 
     @Override
-    public void sendVerificationCode(String ip, long userId, String phone) {
+    public void sendVerificationCode(String ip, String key, String phone) {
         // 验证图形验证码
-        String imageCode = redisTemplate.opsForValue().get(IMAGE_CODE_PREFIX + userId);
+        String imageCode = redisTemplate.opsForValue().get(IMAGE_CODE_PREFIX + key);
         if (imageCode == null) {
             throw new ExaminationException(ErrorCode.IMAGE_CODE_NOT_EXIST);
         } else if (!imageCode.equals(phone)) {

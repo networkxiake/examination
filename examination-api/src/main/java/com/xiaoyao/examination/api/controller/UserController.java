@@ -3,6 +3,7 @@ package com.xiaoyao.examination.api.controller;
 import cn.hutool.core.bean.BeanUtil;
 import com.xiaoyao.examination.api.annotation.CheckLoginUser;
 import com.xiaoyao.examination.api.controller.dto.user.ApplyUploadPhotoDTO;
+import com.xiaoyao.examination.api.controller.dto.user.GenerateImageCodeDTO;
 import com.xiaoyao.examination.api.controller.dto.user.UserLoginDTO;
 import com.xiaoyao.examination.api.controller.dto.user.UserProfileDTO;
 import com.xiaoyao.examination.api.response.ResponseBody;
@@ -31,16 +32,17 @@ public class UserController {
     private UserService userService;
 
     @GetMapping("/generate-image-code")
-    public ResponseBody<String> generateImageCode(Integer width, Integer height) {
-        return ResponseBodyBuilder.build(userService.generateImageCode(UserStpUtil.getLoginId(), width, height));
+    public ResponseBody<GenerateImageCodeDTO> generateImageCode(Integer width, Integer height) {
+        return ResponseBodyBuilder.build(BeanUtil.copyProperties(userService.generateImageCode(width, height), GenerateImageCodeDTO.class));
     }
 
     @PostMapping("/send-verification-code")
     public ResponseBody<Void> sendVerificationCode(@NotBlank
                                                    @Pattern(regexp = "^((13[0-9])|(14(0|[5-7]|9))|(15([0-3]|[5-9]))|(16(2|[5-7]))|(17[0-8])|(18[0-9])|(19([0-3]|[5-9])))\\d{8}$")
                                                    String phone,
+                                                   @NotBlank String key,
                                                    HttpServletRequest request) {
-        userService.sendVerificationCode(request.getRemoteAddr(), UserStpUtil.getLoginId(), phone);
+        userService.sendVerificationCode(request.getRemoteAddr(), key, phone);
         return ResponseBodyBuilder.build();
     }
 
