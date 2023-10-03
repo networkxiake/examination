@@ -63,12 +63,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void sendVerificationCode(String ip, String key, String phone) {
+    public void sendVerificationCode(String ip, String key, String code, String phone) {
         // 验证图形验证码
         String imageCode = redisTemplate.opsForValue().get(IMAGE_CODE_PREFIX + key);
         if (imageCode == null) {
             throw new ExaminationException(ErrorCode.IMAGE_CODE_NOT_EXIST);
-        } else if (!imageCode.equals(key)) {
+        } else if (!imageCode.equals(code)) {
             throw new ExaminationException(ErrorCode.IMAGE_CODE_ERROR);
         }
 
@@ -77,7 +77,7 @@ public class UserServiceImpl implements UserService {
             throw new ExaminationException(ErrorCode.VERIFICATION_CODE_SEND_TOO_FREQUENTLY);
         }
         redisTemplate.opsForValue().set(VERIFICATION_CODE_IP_PREFIX + ip, "1", 1, TimeUnit.MINUTES);
-        String code = verificationCodeUtil.generate();
+        code = verificationCodeUtil.generate();
         redisTemplate.opsForHash().putAll(VERIFICATION_CODE_PREFIX + phone, Map.of(
                 "code", code,
                 "remain", "5"

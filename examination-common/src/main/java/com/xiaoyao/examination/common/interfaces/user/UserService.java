@@ -14,7 +14,7 @@ public interface UserService {
     /**
      * 在验证图像验证码成功后，发送短信验证码。
      */
-    void sendVerificationCode(String ip, String key, String phone);
+    void sendVerificationCode(String ip, String key, String code, String phone);
 
     /**
      * 在验证短信验证码成功后登录。
