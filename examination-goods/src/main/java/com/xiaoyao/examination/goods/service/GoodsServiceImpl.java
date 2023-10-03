@@ -95,7 +95,6 @@ public class GoodsServiceImpl implements GoodsService {
             return;
         }
 
-        snapshot.setGoodsId(goodsId);
         snapshot.setSnapshotMd5(md5);
         snapshotDomainService.saveSnapshot(snapshot);
 

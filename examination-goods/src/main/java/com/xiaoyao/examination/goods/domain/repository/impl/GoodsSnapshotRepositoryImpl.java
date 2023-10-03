@@ -16,9 +16,9 @@ public class GoodsSnapshotRepositoryImpl implements GoodsSnapshotRepository {
     }
 
     @Override
-    public String getSnapshotMd5(long goodsId) {
+    public String getSnapshotMd5(long id) {
         return goodsSnapshotMapper.selectOne(lambdaQuery(GoodsSnapshot.class)
-                        .eq(GoodsSnapshot::getGoodsId, goodsId))
+                        .eq(GoodsSnapshot::getId, id))
                 .getSnapshotMd5();
     }
 

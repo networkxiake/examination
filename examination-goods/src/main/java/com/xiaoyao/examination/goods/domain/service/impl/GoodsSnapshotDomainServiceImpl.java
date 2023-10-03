@@ -19,7 +19,7 @@ public class GoodsSnapshotDomainServiceImpl implements GoodsSnapshotDomainServic
     }
 
     @Override
-    public String getSnapshotMd5(long goodsId) {
-        return goodsSnapshotRepository.getSnapshotMd5(goodsId);
+    public String getSnapshotMd5(long id) {
+        return goodsSnapshotRepository.getSnapshotMd5(id);
     }
 }

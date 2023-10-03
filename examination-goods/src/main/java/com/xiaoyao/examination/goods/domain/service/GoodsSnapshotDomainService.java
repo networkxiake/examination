@@ -5,5 +5,5 @@ import com.xiaoyao.examination.goods.domain.entity.GoodsSnapshot;
 public interface GoodsSnapshotDomainService {
     void saveSnapshot(GoodsSnapshot snapshot);
 
-    String getSnapshotMd5(long goodsId);
+    String getSnapshotMd5(long id);
 }

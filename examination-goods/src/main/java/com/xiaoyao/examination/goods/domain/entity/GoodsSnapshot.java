@@ -14,11 +14,6 @@ public class GoodsSnapshot {
     private Long id;
 
     /**
-     * 商品主键值
-     */
-    private Long goodsId;
-
-    /**
      * 快照的md5值
      */
     private String snapshotMd5;
@@ -84,14 +79,6 @@ public class GoodsSnapshot {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public Long getGoodsId() {
-        return goodsId;
-    }
-
-    public void setGoodsId(Long goodsId) {
-        this.goodsId = goodsId;
     }
 
     public String getSnapshotMd5() {
