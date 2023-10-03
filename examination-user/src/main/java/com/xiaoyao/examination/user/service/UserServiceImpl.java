@@ -52,9 +52,10 @@ public class UserServiceImpl implements UserService {
     public GenerateImageCodeResponse generateImageCode(Integer width, Integer height) {
         String key = IdUtil.fastSimpleUUID();
 
-        LineCaptcha lineCaptcha = CaptchaUtil.createLineCaptcha(width != null ? width : 200, height != null ? height : 100);
+        LineCaptcha lineCaptcha = CaptchaUtil.createLineCaptcha(width != null ? width : 200,
+                height != null ? height : 100, 5, 50);
         lineCaptcha.createCode();
-        redisTemplate.opsForValue().set(IMAGE_CODE_PREFIX + key, lineCaptcha.getCode(), 1, TimeUnit.MINUTES);
+        redisTemplate.opsForValue().set(IMAGE_CODE_PREFIX + key, lineCaptcha.getCode(), 5, TimeUnit.MINUTES);
 
         GenerateImageCodeResponse response = new GenerateImageCodeResponse();
         response.setKey(key);
@@ -68,15 +69,16 @@ public class UserServiceImpl implements UserService {
         String imageCode = redisTemplate.opsForValue().get(IMAGE_CODE_PREFIX + key);
         if (imageCode == null) {
             throw new ExaminationException(ErrorCode.IMAGE_CODE_NOT_EXIST);
-        } else if (!imageCode.equals(code)) {
+        } else if (!imageCode.equalsIgnoreCase(code)) {
             throw new ExaminationException(ErrorCode.IMAGE_CODE_ERROR);
         }
+        redisTemplate.delete(IMAGE_CODE_PREFIX + key);
 
         // 防止频繁发送验证码
-        if (Boolean.TRUE.equals(redisTemplate.hasKey(VERIFICATION_CODE_IP_PREFIX + ip))) {
+        if (Boolean.FALSE.equals(redisTemplate.opsForValue().setIfAbsent(VERIFICATION_CODE_IP_PREFIX + ip,
+                "1", 1, TimeUnit.MINUTES))) {
             throw new ExaminationException(ErrorCode.VERIFICATION_CODE_SEND_TOO_FREQUENTLY);
         }
-        redisTemplate.opsForValue().set(VERIFICATION_CODE_IP_PREFIX + ip, "1", 1, TimeUnit.MINUTES);
         code = verificationCodeUtil.generate();
         redisTemplate.opsForHash().putAll(VERIFICATION_CODE_PREFIX + phone, Map.of(
                 "code", code,
