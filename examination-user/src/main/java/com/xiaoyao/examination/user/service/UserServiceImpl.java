@@ -68,7 +68,7 @@ public class UserServiceImpl implements UserService {
         String imageCode = redisTemplate.opsForValue().get(IMAGE_CODE_PREFIX + key);
         if (imageCode == null) {
             throw new ExaminationException(ErrorCode.IMAGE_CODE_NOT_EXIST);
-        } else if (!imageCode.equals(phone)) {
+        } else if (!imageCode.equals(key)) {
             throw new ExaminationException(ErrorCode.IMAGE_CODE_ERROR);
         }
 
