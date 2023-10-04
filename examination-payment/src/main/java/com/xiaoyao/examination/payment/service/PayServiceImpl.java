@@ -34,4 +34,9 @@ public class PayServiceImpl implements PayService {
         // TODO 将消息持久化到数据库，并添加事务以确保消息发送成功。
         mqClient.orderPayed(new OrderPayedMessage(body));
     }
+
+    @Override
+    public boolean isPaid(String paymentCode) {
+        return true;
+    }
 }

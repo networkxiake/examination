@@ -16,6 +16,8 @@ public interface PayService {
      */
     void payOrderCallback(Map<String, String> headers, String body);
 
+    boolean isPaid(String paymentCode);
+
     enum PayType {
         /**
          * 订单

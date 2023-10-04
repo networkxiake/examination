@@ -1,6 +1,9 @@
 package com.xiaoyao.examination.order.domain.service.impl;
 
+import com.xiaoyao.examination.common.exception.ErrorCode;
+import com.xiaoyao.examination.common.exception.ExaminationException;
 import com.xiaoyao.examination.order.domain.entity.Order;
+import com.xiaoyao.examination.order.domain.enums.OrderStatus;
 import com.xiaoyao.examination.order.domain.repository.OrderRepository;
 import com.xiaoyao.examination.order.domain.service.OrderDomainService;
 import org.springframework.stereotype.Service;
@@ -42,5 +45,23 @@ public class OrderDomainServiceImpl implements OrderDomainService {
     @Override
     public long getOrderIdByPaymentCode(String paymentCode) {
         return orderRepository.getOrderIdByPaymentCode(paymentCode);
+    }
+
+    @Override
+    public String getPaymentCodeByOrderId(long orderId) {
+        String paymentCode = orderRepository.getPaymentCodeByOrderId(orderId);
+        if (paymentCode == null) {
+            throw new ExaminationException(ErrorCode.ORDER_NOT_FOUND);
+        }
+        return paymentCode;
+    }
+
+    @Override
+    public boolean isPaid(long orderId) {
+        Integer status = orderRepository.getStatus(orderId);
+        if (status == null) {
+            throw new ExaminationException(ErrorCode.ORDER_NOT_FOUND);
+        }
+        return status == OrderStatus.SUBSCRIBE_WAITING.getStatus() || status == OrderStatus.FINISHED.getStatus();
     }
 }

@@ -19,4 +19,9 @@ public interface OrderService {
      * 支付成功后调用，返回值表示是否处理完支付。
      */
     void paySuccess(String paymentCode);
+
+    /**
+     * 查看订单是否付款。
+     */
+    boolean isPaid(long orderId);
 }

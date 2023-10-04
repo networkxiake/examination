@@ -14,4 +14,8 @@ public interface OrderDomainService {
     boolean updateStatus(long orderId, Integer oldStatus, Integer newStatus);
 
     long getOrderIdByPaymentCode(String paymentCode);
+
+    String getPaymentCodeByOrderId(long orderId);
+
+    boolean isPaid(long orderId);
 }

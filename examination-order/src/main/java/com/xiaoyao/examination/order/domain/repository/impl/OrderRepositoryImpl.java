@@ -44,6 +44,14 @@ public class OrderRepositoryImpl implements OrderRepository {
     }
 
     @Override
+    public Integer getStatus(long orderId) {
+        Order order = orderMapper.selectOne(lambdaQuery(Order.class)
+                .select(Order::getStatus)
+                .eq(Order::getId, orderId));
+        return order == null ? null : order.getStatus();
+    }
+
+    @Override
     public void save(Order order) {
         orderMapper.insert(order);
     }
@@ -54,5 +62,13 @@ public class OrderRepositoryImpl implements OrderRepository {
                 .set(Order::getStatus, newStatus)
                 .eq(Order::getId, orderId)
                 .eq(Order::getStatus, oldStatus)) == 1;
+    }
+
+    @Override
+    public String getPaymentCodeByOrderId(long orderId) {
+        Order order = orderMapper.selectOne(lambdaQuery(Order.class)
+                .select(Order::getPaymentCode)
+                .eq(Order::getId, orderId));
+        return order == null ? null : order.getPaymentCode();
     }
 }

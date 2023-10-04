@@ -11,7 +11,11 @@ public interface OrderRepository {
 
     long getOrderIdByPaymentCode(String paymentCode);
 
+    Integer getStatus(long orderId);
+
     void save(Order order);
 
     boolean updateStatus(long orderId, Integer oldStatus, Integer newStatus);
+
+    String getPaymentCodeByOrderId(long orderId);
 }

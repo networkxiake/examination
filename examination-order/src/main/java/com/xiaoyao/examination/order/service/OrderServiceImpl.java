@@ -27,7 +27,6 @@ import java.util.concurrent.TimeUnit;
 
 @DubboService
 public class OrderServiceImpl implements OrderService {
-
     private final OrderDomainService orderDomainService;
     private final MQClient mqClient;
     private final StringRedisTemplate redisTemplate;
@@ -111,8 +110,31 @@ public class OrderServiceImpl implements OrderService {
     public void paySuccess(String paymentCode) {
         Order order = orderDomainService.findOrderByPaymentCode(paymentCode);
         // 使用CAS思想实现消息的幂等性
-        if (orderDomainService.updateStatus(order.getId(), OrderStatus.PAY_WAITING.getStatus(), OrderStatus.SUBSCRIBE_WAITING.getStatus())) {
+        if (tryPayOrder(order.getId())) {
             goodsService.increaseSalesVolume(order.getGoodsId(), order.getCount());
         }
+    }
+
+    /**
+     * 使用CAS的方式尝试去更新订单状态为已支付。
+     */
+    private boolean tryPayOrder(long orderId) {
+        return orderDomainService.updateStatus(orderId, OrderStatus.PAY_WAITING.getStatus(), OrderStatus.SUBSCRIBE_WAITING.getStatus());
+    }
+
+    @Override
+    public boolean isPaid(long orderId) {
+        // 先去数据库中查询订单是否已支付
+        if (orderDomainService.isPaid(orderId)) {
+            return true;
+        }
+
+        // 主动去支付服务中查询支付订单是否已完成支付
+        boolean paid = payService.isPaid(orderDomainService.getPaymentCodeByOrderId(orderId));
+        if (paid) {
+            // 如果已支付，则更新订单状态为已支付。
+            tryPayOrder(orderId);
+        }
+        return paid;
     }
 }

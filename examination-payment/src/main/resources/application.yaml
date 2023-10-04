@@ -1,9 +1,4 @@
 spring:
-  datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://116.205.233.28:3306/examination?connectionTimeZone=Asia/Shanghai&forceConnectionTimeZoneToSession=true
-    username: examination
-    password: BySootNYdwVn3Jg6
   rabbitmq:
     host: 116.205.233.28
     port: 5672

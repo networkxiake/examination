@@ -30,6 +30,7 @@ public enum ErrorCode {
     IMAGE_CODE_NOT_EXIST(1026, "图形验证码不存在"),
     IMAGE_CODE_ERROR(1027, "图形验证码错误"),
     ORDER_CREATED(1028, "订单已创建，请刷新！"),
+    ORDER_NOT_FOUND(1029, "订单不存在"),
     ;
 
     private final int code;
