@@ -10,6 +10,7 @@ import com.xiaoyao.examination.api.util.UserStpUtil;
 import com.xiaoyao.examination.common.interfaces.order.OrderService;
 import com.xiaoyao.examination.common.interfaces.order.request.SearchOrdersRequest;
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.validation.annotation.Validated;
@@ -32,7 +33,7 @@ public class OderController {
     @CheckLoginUser
     @GetMapping("/pay-result/{orderId}")
     public ResponseBody<Boolean> payResult(@PathVariable long orderId) {
-        return ResponseBodyBuilder.build(orderService.isPaid(orderId));
+        return ResponseBodyBuilder.build(orderService.isPaid(UserStpUtil.getLoginId(), orderId));
     }
 
     @CheckLoginUser
@@ -46,5 +47,12 @@ public class OderController {
         request.setCode(code);
         request.setStatus(status);
         return ResponseBodyBuilder.build(BeanUtil.copyProperties(orderService.searchOrders(request), SearchOrdersDTO.class));
+    }
+
+    @CheckLoginUser
+    @PostMapping("/refund")
+    public ResponseBody<Void> refund(@NotBlank Long orderId) {
+        orderService.refund(UserStpUtil.getLoginId(), orderId);
+        return ResponseBodyBuilder.build();
     }
 }
