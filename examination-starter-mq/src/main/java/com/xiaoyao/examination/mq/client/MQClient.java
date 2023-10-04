@@ -2,6 +2,7 @@ package com.xiaoyao.examination.mq.client;
 
 import com.xiaoyao.examination.mq.message.OrderCreatedMessage;
 import com.xiaoyao.examination.mq.message.OrderPayedMessage;
+import com.xiaoyao.examination.mq.message.OrderRefundMessage;
 
 public interface MQClient {
     /**
@@ -28,6 +29,12 @@ public interface MQClient {
     String PAY_ORDER_PAYED_ROUTE_KEY = "pay.order.payed";
 
     /**
+     * 存放订单退款的消息，支付服务在监听到消息后需要进行退款。
+     */
+    String PAY_ORDER_REFUND_QUEUE = "pay.order.refund";
+    String PAY_ORDER_REFUND_ROUTE_KEY = "pay.order.refund";
+
+    /**
      * 订单创建后发送定时关闭未支付订单的消息。
      *
      * @param message    消息对象
@@ -39,4 +46,9 @@ public interface MQClient {
      * 订单已付款后发送消息。
      */
     void orderPayed(OrderPayedMessage message);
+
+    /**
+     * 订单退款后发送消息。
+     */
+    void orderRefund(OrderRefundMessage message);
 }

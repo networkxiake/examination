@@ -39,4 +39,9 @@ public class PayServiceImpl implements PayService {
     public boolean isPaid(String paymentCode) {
         return true;
     }
+
+    @Override
+    public void refund(String paymentCode) {
+
+    }
 }

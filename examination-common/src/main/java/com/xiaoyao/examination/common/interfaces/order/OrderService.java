@@ -25,10 +25,15 @@ public interface OrderService {
     /**
      * 查看订单是否付款。
      */
-    boolean isPaid(long orderId);
+    boolean isPaid(long userId, long orderId);
 
     /**
      * 分页搜索订单。
      */
     SearchOrdersResponse searchOrders(SearchOrdersRequest request);
+
+    /**
+     * 退款。
+     */
+    void refund(long userId, long orderId);
 }

@@ -18,6 +18,11 @@ public interface PayService {
 
     boolean isPaid(String paymentCode);
 
+    void refund(String paymentCode);
+
+    /**
+     * 支付类型，在创建支付订单时需要根据支付类型来设置不同的通知回调地址。
+     */
     enum PayType {
         /**
          * 订单

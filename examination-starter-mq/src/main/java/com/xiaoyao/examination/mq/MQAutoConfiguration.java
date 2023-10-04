@@ -58,5 +58,10 @@ public class MQAutoConfiguration {
                 "x-queue-type", "quorum")));
         admin.declareBinding(new Binding(MQClient.PAY_ORDER_PAYED_QUEUE, Binding.DestinationType.QUEUE,
                 MQClient.PAY_EXCHANGE, MQClient.PAY_ORDER_PAYED_ROUTE_KEY, null));
+
+        admin.declareQueue(new Queue(MQClient.PAY_ORDER_REFUND_QUEUE, true, false, false, Map.of(
+                "x-queue-type", "quorum")));
+        admin.declareBinding(new Binding(MQClient.PAY_ORDER_REFUND_QUEUE, Binding.DestinationType.QUEUE,
+                MQClient.PAY_EXCHANGE, MQClient.PAY_ORDER_REFUND_ROUTE_KEY, null));
     }
 }

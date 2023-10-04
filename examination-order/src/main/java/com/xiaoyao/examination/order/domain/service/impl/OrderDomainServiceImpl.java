@@ -38,8 +38,8 @@ public class OrderDomainServiceImpl implements OrderDomainService {
     }
 
     @Override
-    public boolean updateStatus(long orderId, Integer oldStatus, Integer newStatus) {
-        return orderRepository.updateStatus(orderId, oldStatus, newStatus);
+    public boolean updateStatus(long userId, long orderId, OrderStatus oldStatus, OrderStatus newStatus) {
+        return orderRepository.updateStatus(userId, orderId, oldStatus.getStatus(), newStatus.getStatus());
     }
 
     @Override
@@ -74,5 +74,10 @@ public class OrderDomainServiceImpl implements OrderDomainService {
     @Override
     public List<Order> searchOrders(long page, long size, String name, String code, Integer status, long[] total) {
         return orderRepository.findOrderListForSearch(page, size, name, code, status, total);
+    }
+
+    @Override
+    public void refund(long userId, long orderId) {
+        orderRepository.updateRefundDateAndRefundTime(userId, orderId, LocalDate.now(), LocalDateTime.now());
     }
 }

@@ -15,6 +15,7 @@ import com.xiaoyao.examination.common.interfaces.payment.response.CreatePayOrder
 import com.xiaoyao.examination.common.interfaces.storage.StorageService;
 import com.xiaoyao.examination.mq.client.MQClient;
 import com.xiaoyao.examination.mq.message.OrderCreatedMessage;
+import com.xiaoyao.examination.mq.message.OrderRefundMessage;
 import com.xiaoyao.examination.order.domain.entity.Order;
 import com.xiaoyao.examination.order.domain.enums.OrderStatus;
 import com.xiaoyao.examination.order.domain.service.OrderDomainService;
@@ -116,7 +117,7 @@ public class OrderServiceImpl implements OrderService {
     public void paySuccess(String paymentCode) {
         Order order = orderDomainService.findOrderByPaymentCode(paymentCode);
         // 使用CAS思想实现消息的幂等性
-        if (tryPayOrder(order.getId())) {
+        if (tryPayOrder(order.getUserId(), order.getId())) {
             goodsService.increaseSalesVolume(order.getGoodsId(), order.getCount());
         }
     }
@@ -124,12 +125,12 @@ public class OrderServiceImpl implements OrderService {
     /**
      * 使用CAS的方式尝试去更新订单状态为已支付。
      */
-    private boolean tryPayOrder(long orderId) {
-        return orderDomainService.updateStatus(orderId, OrderStatus.PAY_WAITING.getStatus(), OrderStatus.SUBSCRIBE_WAITING.getStatus());
+    private boolean tryPayOrder(long userId, long orderId) {
+        return orderDomainService.updateStatus(userId, orderId, OrderStatus.PAY_WAITING, OrderStatus.SUBSCRIBE_WAITING);
     }
 
     @Override
-    public boolean isPaid(long orderId) {
+    public boolean isPaid(long userId, long orderId) {
         // 先去数据库中查询订单是否已支付
         if (orderDomainService.isPaidByStatus(orderDomainService.getStatus(orderId))) {
             return true;
@@ -139,7 +140,7 @@ public class OrderServiceImpl implements OrderService {
         boolean paid = payService.isPaid(orderDomainService.getPaymentCodeByOrderId(orderId));
         if (paid) {
             // 如果已支付，则更新订单状态为已支付。
-            tryPayOrder(orderId);
+            tryPayOrder(userId, orderId);
         }
         return paid;
     }
@@ -165,5 +166,14 @@ public class OrderServiceImpl implements OrderService {
         response.setTotal(total[0]);
         response.setOrders(orders);
         return response;
+    }
+
+    @Override
+    public void refund(long userId, long orderId) {
+        if (!orderDomainService.updateStatus(userId, orderId, OrderStatus.SUBSCRIBE_WAITING, OrderStatus.REFUNDED)) {
+            throw new ExaminationException(ErrorCode.REFUNDED_FAILED);
+        }
+        orderDomainService.refund(userId, orderId);
+        mqClient.orderRefund(new OrderRefundMessage(orderDomainService.getPaymentCodeByOrderId(orderId)));
     }
 }

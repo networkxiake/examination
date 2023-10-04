@@ -2,6 +2,8 @@ package com.xiaoyao.examination.order.domain.repository;
 
 import com.xiaoyao.examination.order.domain.entity.Order;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface OrderRepository {
@@ -17,7 +19,9 @@ public interface OrderRepository {
 
     void save(Order order);
 
-    boolean updateStatus(long orderId, Integer oldStatus, Integer newStatus);
+    boolean updateStatus(long userId, long orderId, Integer oldStatus, Integer newStatus);
+
+    void updateRefundDateAndRefundTime(long userId, long orderId, LocalDate refundDate, LocalDateTime refundTime);
 
     String getPaymentCodeByOrderId(long orderId);
 }

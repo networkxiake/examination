@@ -2,6 +2,7 @@ package com.xiaoyao.examination.mq.client;
 
 import com.xiaoyao.examination.mq.message.OrderCreatedMessage;
 import com.xiaoyao.examination.mq.message.OrderPayedMessage;
+import com.xiaoyao.examination.mq.message.OrderRefundMessage;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.core.MessageProperties;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -35,5 +36,10 @@ public class MQClientImpl implements MQClient {
     @Override
     public void orderPayed(OrderPayedMessage message) {
         send(PAY_EXCHANGE, PAY_ORDER_PAYED_ROUTE_KEY, message);
+    }
+
+    @Override
+    public void orderRefund(OrderRefundMessage message) {
+        send(PAY_EXCHANGE, PAY_ORDER_REFUND_ROUTE_KEY, message);
     }
 }

@@ -7,6 +7,8 @@ import com.xiaoyao.examination.order.domain.mapper.OrderMapper;
 import com.xiaoyao.examination.order.domain.repository.OrderRepository;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static com.baomidou.mybatisplus.core.toolkit.Wrappers.lambdaQuery;
@@ -43,6 +45,7 @@ public class OrderRepositoryImpl implements OrderRepository {
     public Order findOrderForPayment(String paymentCode) {
         return orderMapper.selectOne(lambdaQuery(Order.class)
                 .select(Order::getId,
+                        Order::getUserId,
                         Order::getGoodsId,
                         Order::getCount)
                 .eq(Order::getPaymentCode, paymentCode));
@@ -70,11 +73,21 @@ public class OrderRepositoryImpl implements OrderRepository {
     }
 
     @Override
-    public boolean updateStatus(long orderId, Integer oldStatus, Integer newStatus) {
+    public boolean updateStatus(long userId, long orderId, Integer oldStatus, Integer newStatus) {
         return orderMapper.update(null, lambdaUpdate(Order.class)
                 .set(Order::getStatus, newStatus)
                 .eq(Order::getId, orderId)
+                .eq(Order::getUserId, userId)
                 .eq(Order::getStatus, oldStatus)) == 1;
+    }
+
+    @Override
+    public void updateRefundDateAndRefundTime(long userId, long orderId, LocalDate refundDate, LocalDateTime refundTime) {
+        orderMapper.update(null, lambdaUpdate(Order.class)
+                .set(Order::getRefundDate, refundDate)
+                .set(Order::getRefundTime, refundTime)
+                .eq(Order::getId, orderId)
+                .eq(Order::getUserId, userId));
     }
 
     @Override

@@ -1,6 +1,7 @@
 package com.xiaoyao.examination.order.domain.service;
 
 import com.xiaoyao.examination.order.domain.entity.Order;
+import com.xiaoyao.examination.order.domain.enums.OrderStatus;
 
 import java.util.List;
 
@@ -11,7 +12,7 @@ public interface OrderDomainService {
 
     Order findOrderByPaymentCode(String paymentCode);
 
-    boolean updateStatus(long orderId, Integer oldStatus, Integer newStatus);
+    boolean updateStatus(long userId, long orderId, OrderStatus oldStatus, OrderStatus newStatus);
 
     long getOrderIdByPaymentCode(String paymentCode);
 
@@ -28,4 +29,6 @@ public interface OrderDomainService {
     boolean isPaidByStatus(int status);
 
     List<Order> searchOrders(long page, long size, String name, String code, Integer status, long[] total);
+
+    void refund(long userId, long orderId);
 }
