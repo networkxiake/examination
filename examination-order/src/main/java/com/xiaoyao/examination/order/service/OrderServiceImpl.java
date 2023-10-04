@@ -6,10 +6,13 @@ import com.xiaoyao.examination.common.interfaces.goods.DiscountService;
 import com.xiaoyao.examination.common.interfaces.goods.GoodsService;
 import com.xiaoyao.examination.common.interfaces.goods.response.SubmitOrderGoodsInfoResponse;
 import com.xiaoyao.examination.common.interfaces.order.OrderService;
+import com.xiaoyao.examination.common.interfaces.order.request.SearchOrdersRequest;
+import com.xiaoyao.examination.common.interfaces.order.response.SearchOrdersResponse;
 import com.xiaoyao.examination.common.interfaces.order.response.UserOrderSummaryResponse;
 import com.xiaoyao.examination.common.interfaces.payment.PayService;
 import com.xiaoyao.examination.common.interfaces.payment.request.CreatePayOrderRequest;
 import com.xiaoyao.examination.common.interfaces.payment.response.CreatePayOrderResponse;
+import com.xiaoyao.examination.common.interfaces.storage.StorageService;
 import com.xiaoyao.examination.mq.client.MQClient;
 import com.xiaoyao.examination.mq.message.OrderCreatedMessage;
 import com.xiaoyao.examination.order.domain.entity.Order;
@@ -22,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -37,6 +41,8 @@ public class OrderServiceImpl implements OrderService {
     private DiscountService discountService;
     @DubboReference
     private GoodsService goodsService;
+    @DubboReference
+    private StorageService storageService;
 
     public OrderServiceImpl(OrderDomainService orderDomainService, MQClient mqClient, StringRedisTemplate redisTemplate) {
         this.orderDomainService = orderDomainService;
@@ -125,7 +131,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public boolean isPaid(long orderId) {
         // 先去数据库中查询订单是否已支付
-        if (orderDomainService.isPaid(orderId)) {
+        if (orderDomainService.isPaidByStatus(orderDomainService.getStatus(orderId))) {
             return true;
         }
 
@@ -136,5 +142,28 @@ public class OrderServiceImpl implements OrderService {
             tryPayOrder(orderId);
         }
         return paid;
+    }
+
+    @Override
+    public SearchOrdersResponse searchOrders(SearchOrdersRequest request) {
+        long[] total = new long[1];
+        List<SearchOrdersResponse.Order> orders = new ArrayList<>();
+        orderDomainService.searchOrders(request.getPage(), request.getSize(), request.getName(),
+                request.getCode(), request.getStatus(), total).forEach(item -> {
+            SearchOrdersResponse.Order order = new SearchOrdersResponse.Order();
+            order.setName(item.getName());
+            order.setDescription(item.getDescription());
+            order.setImage(storageService.getPathDownloadingUrl(item.getImage()));
+            order.setUnitPrice(item.getUnitPrice().toString());
+            order.setCount(item.getCount());
+            order.setTotal(item.getTotal().toString());
+            order.setStatus(item.getStatus());
+            orders.add(order);
+        });
+
+        SearchOrdersResponse response = new SearchOrdersResponse();
+        response.setTotal(total[0]);
+        response.setOrders(orders);
+        return response;
     }
 }

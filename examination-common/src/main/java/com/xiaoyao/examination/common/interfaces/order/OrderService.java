@@ -1,5 +1,7 @@
 package com.xiaoyao.examination.common.interfaces.order;
 
+import com.xiaoyao.examination.common.interfaces.order.request.SearchOrdersRequest;
+import com.xiaoyao.examination.common.interfaces.order.response.SearchOrdersResponse;
 import com.xiaoyao.examination.common.interfaces.order.response.UserOrderSummaryResponse;
 
 public interface OrderService {
@@ -24,4 +26,9 @@ public interface OrderService {
      * 查看订单是否付款。
      */
     boolean isPaid(long orderId);
+
+    /**
+     * 分页搜索订单。
+     */
+    SearchOrdersResponse searchOrders(SearchOrdersRequest request);
 }

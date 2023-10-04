@@ -57,11 +57,22 @@ public class OrderDomainServiceImpl implements OrderDomainService {
     }
 
     @Override
-    public boolean isPaid(long orderId) {
+    public int getStatus(long orderId) {
         Integer status = orderRepository.getStatus(orderId);
         if (status == null) {
             throw new ExaminationException(ErrorCode.ORDER_NOT_FOUND);
         }
-        return status == OrderStatus.SUBSCRIBE_WAITING.getStatus() || status == OrderStatus.FINISHED.getStatus();
+        return status;
+    }
+
+    @Override
+    public boolean isPaidByStatus(int status) {
+        return status == OrderStatus.SUBSCRIBE_WAITING.getStatus()
+                || status == OrderStatus.FINISHED.getStatus();
+    }
+
+    @Override
+    public List<Order> searchOrders(long page, long size, String name, String code, Integer status, long[] total) {
+        return orderRepository.findOrderListForSearch(page, size, name, code, status, total);
     }
 }

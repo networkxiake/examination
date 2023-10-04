@@ -1,5 +1,7 @@
 package com.xiaoyao.examination.order.domain.repository.impl;
 
+import cn.hutool.core.util.StrUtil;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.xiaoyao.examination.order.domain.entity.Order;
 import com.xiaoyao.examination.order.domain.mapper.OrderMapper;
 import com.xiaoyao.examination.order.domain.repository.OrderRepository;
@@ -24,6 +26,17 @@ public class OrderRepositoryImpl implements OrderRepository {
                 .select(Order::getCount,
                         Order::getTotal)
                 .eq(Order::getUserId, userId));
+    }
+
+    @Override
+    public List<Order> findOrderListForSearch(long page, long size, String name, String code, Integer status, long[] total) {
+        Page<Order> orderPage = orderMapper.selectPage(Page.of(page, size), lambdaQuery(Order.class)
+                .select()
+                .eq(StrUtil.isNotBlank(name), Order::getName, name)
+                .eq(StrUtil.isNotBlank(code), Order::getCount, code)
+                .eq(status != null, Order::getStatus, status));
+        total[0] = orderPage.getTotal();
+        return orderPage.getRecords();
     }
 
     @Override

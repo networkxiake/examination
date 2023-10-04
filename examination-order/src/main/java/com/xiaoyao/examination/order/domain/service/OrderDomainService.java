@@ -17,5 +17,15 @@ public interface OrderDomainService {
 
     String getPaymentCodeByOrderId(long orderId);
 
-    boolean isPaid(long orderId);
+    /**
+     * 获取订单的状态。
+     */
+    int getStatus(long orderId);
+
+    /**
+     * 判断指定的状态是否是已付款的状态。
+     */
+    boolean isPaidByStatus(int status);
+
+    List<Order> searchOrders(long page, long size, String name, String code, Integer status, long[] total);
 }
