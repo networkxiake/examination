@@ -5,11 +5,6 @@ spring:
     username: guest
     password: guest
     virtual-host: /
-mybatis-plus:
-  global-config:
-    banner: false
-  configuration:
-    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
 dubbo:
   application:
     name: examination-payment
