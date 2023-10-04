@@ -10,6 +10,7 @@ public class SubmitOrderGoodsInfoResponse implements Serializable {
     private BigDecimal currentPrice;
     private Long discountId;
     private Long snapshotId;
+    private boolean isUpStatus;
 
     public String getName() {
         return name;
@@ -57,5 +58,13 @@ public class SubmitOrderGoodsInfoResponse implements Serializable {
 
     public void setSnapshotId(Long snapshotId) {
         this.snapshotId = snapshotId;
+    }
+
+    public boolean isUpStatus() {
+        return isUpStatus;
+    }
+
+    public void setUpStatus(boolean upStatus) {
+        isUpStatus = upStatus;
     }
 }

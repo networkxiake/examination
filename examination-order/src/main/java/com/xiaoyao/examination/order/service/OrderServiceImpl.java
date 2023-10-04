@@ -26,6 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -81,6 +82,8 @@ public class OrderServiceImpl implements OrderService {
         SubmitOrderGoodsInfoResponse goods = goodsService.getGoodsInfoInSubmitOrder(goodsId);
         if (goods == null) {
             throw new ExaminationException(ErrorCode.GOODS_NOT_FOUND);
+        } else if (!goods.isUpStatus()) {
+            throw new ExaminationException(ErrorCode.GOODS_NOT_UP);
         }
 
         Order order = new Order();
@@ -152,6 +155,7 @@ public class OrderServiceImpl implements OrderService {
         orderDomainService.searchOrders(request.getPage(), request.getSize(), request.getName(),
                 request.getCode(), request.getStatus(), total).forEach(item -> {
             SearchOrdersResponse.Order order = new SearchOrdersResponse.Order();
+            order.setId(item.getId());
             order.setName(item.getName());
             order.setDescription(item.getDescription());
             order.setImage(storageService.getPathDownloadingUrl(item.getImage()));
@@ -159,6 +163,7 @@ public class OrderServiceImpl implements OrderService {
             order.setCount(item.getCount());
             order.setTotal(item.getTotal().toString());
             order.setStatus(item.getStatus());
+            order.setCreateTime(item.getCreateTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
             orders.add(order);
         });
 
@@ -168,12 +173,18 @@ public class OrderServiceImpl implements OrderService {
         return response;
     }
 
+    @Transactional
     @Override
     public void refund(long userId, long orderId) {
         if (!orderDomainService.updateStatus(userId, orderId, OrderStatus.SUBSCRIBE_WAITING, OrderStatus.REFUNDED)) {
             throw new ExaminationException(ErrorCode.REFUNDED_FAILED);
         }
-        orderDomainService.refund(userId, orderId);
+        orderDomainService.refund(orderId);
+
+        // 扣减销量
+        Order order = orderDomainService.findOrderForRefund(orderId);
+        goodsService.decreaseSalesVolume(order.getGoodsId(), order.getCount());
+
         mqClient.orderRefund(new OrderRefundMessage(orderDomainService.getPaymentCodeByOrderId(orderId)));
     }
 }

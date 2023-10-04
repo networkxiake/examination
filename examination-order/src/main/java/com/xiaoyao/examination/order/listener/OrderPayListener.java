@@ -47,6 +47,6 @@ public class OrderPayListener {
     @RabbitListener(queues = MQClient.PAY_ORDER_CLOSED_QUEUE)
     public void listenOrderClosed(OrderCreatedMessage message) {
         long orderId = orderDomainService.getOrderIdByPaymentCode(message.getPaymentCode());
-        orderDomainService.updateStatus(orderId, OrderStatus.PAY_WAITING.getStatus(), OrderStatus.CANCELED.getStatus());
+        orderDomainService.updateStatus(null, orderId, OrderStatus.PAY_WAITING, OrderStatus.CANCELED);
     }
 }

@@ -52,16 +52,6 @@ public class GoodsDomainServiceImpl implements GoodsDomainService {
     }
 
     @Override
-    public String getGoodsTypeById(int id) {
-        for (GoodsType value : GoodsType.values()) {
-            if (value.getType() == id) {
-                return value.getName();
-            }
-        }
-        throw new ExaminationException(ErrorCode.GOODS_TYPE_NOT_EXIST);
-    }
-
-    @Override
     public void changeStatus(long id, int status) {
         checkGoodsStatus(status);
         goodsRepository.updateStatus(id, status);
@@ -212,5 +202,10 @@ public class GoodsDomainServiceImpl implements GoodsDomainService {
     @Override
     public long countDontDeletedGoods(List<Long> ids) {
         return goodsRepository.countGoodsInIdsAndStatus(ids, GoodsStatus.ON.getStatus());
+    }
+
+    @Override
+    public void decreaseSales(long goodsId, int count) {
+        goodsRepository.updateSalesVolume(goodsId, -count);
     }
 }

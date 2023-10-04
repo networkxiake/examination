@@ -24,6 +24,7 @@ public class SearchOrdersResponse implements Serializable {
     }
 
     public static class Order implements Serializable {
+        private long id;
         private String name;
         private String description;
         private String image;
@@ -31,6 +32,15 @@ public class SearchOrdersResponse implements Serializable {
         private int count;
         private String total;
         private int status;
+        private String createTime;
+
+        public long getId() {
+            return id;
+        }
+
+        public void setId(long id) {
+            this.id = id;
+        }
 
         public String getName() {
             return name;
@@ -86,6 +96,14 @@ public class SearchOrdersResponse implements Serializable {
 
         public void setStatus(int status) {
             this.status = status;
+        }
+
+        public String getCreateTime() {
+            return createTime;
+        }
+
+        public void setCreateTime(String createTime) {
+            this.createTime = createTime;
         }
     }
 }

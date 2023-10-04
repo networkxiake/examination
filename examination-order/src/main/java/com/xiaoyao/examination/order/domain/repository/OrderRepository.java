@@ -13,15 +13,17 @@ public interface OrderRepository {
 
     Order findOrderForPayment(String paymentCode);
 
+    Order findOrderForRefund(long orderId);
+
     long getOrderIdByPaymentCode(String paymentCode);
 
     Integer getStatus(long orderId);
 
     void save(Order order);
 
-    boolean updateStatus(long userId, long orderId, Integer oldStatus, Integer newStatus);
+    boolean updateStatus(Long userId, long orderId, Integer oldStatus, Integer newStatus);
 
-    void updateRefundDateAndRefundTime(long userId, long orderId, LocalDate refundDate, LocalDateTime refundTime);
+    void updateRefundDateAndRefundTime(long orderId, LocalDate refundDate, LocalDateTime refundTime);
 
     String getPaymentCodeByOrderId(long orderId);
 }

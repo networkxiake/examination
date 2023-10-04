@@ -33,7 +33,15 @@ public class OrderRepositoryImpl implements OrderRepository {
     @Override
     public List<Order> findOrderListForSearch(long page, long size, String name, String code, Integer status, long[] total) {
         Page<Order> orderPage = orderMapper.selectPage(Page.of(page, size), lambdaQuery(Order.class)
-                .select()
+                .select(Order::getId,
+                        Order::getName,
+                        Order::getDescription,
+                        Order::getImage,
+                        Order::getUnitPrice,
+                        Order::getCount,
+                        Order::getTotal,
+                        Order::getStatus,
+                        Order::getCreateTime)
                 .eq(StrUtil.isNotBlank(name), Order::getName, name)
                 .eq(StrUtil.isNotBlank(code), Order::getCount, code)
                 .eq(status != null, Order::getStatus, status));
@@ -49,6 +57,14 @@ public class OrderRepositoryImpl implements OrderRepository {
                         Order::getGoodsId,
                         Order::getCount)
                 .eq(Order::getPaymentCode, paymentCode));
+    }
+
+    @Override
+    public Order findOrderForRefund(long orderId) {
+        return orderMapper.selectOne(lambdaQuery(Order.class)
+                .select(Order::getGoodsId,
+                        Order::getCount)
+                .eq(Order::getId, orderId));
     }
 
     @Override
@@ -73,21 +89,20 @@ public class OrderRepositoryImpl implements OrderRepository {
     }
 
     @Override
-    public boolean updateStatus(long userId, long orderId, Integer oldStatus, Integer newStatus) {
+    public boolean updateStatus(Long userId, long orderId, Integer oldStatus, Integer newStatus) {
         return orderMapper.update(null, lambdaUpdate(Order.class)
                 .set(Order::getStatus, newStatus)
                 .eq(Order::getId, orderId)
-                .eq(Order::getUserId, userId)
+                .eq(userId != null, Order::getUserId, userId)
                 .eq(Order::getStatus, oldStatus)) == 1;
     }
 
     @Override
-    public void updateRefundDateAndRefundTime(long userId, long orderId, LocalDate refundDate, LocalDateTime refundTime) {
+    public void updateRefundDateAndRefundTime(long orderId, LocalDate refundDate, LocalDateTime refundTime) {
         orderMapper.update(null, lambdaUpdate(Order.class)
                 .set(Order::getRefundDate, refundDate)
                 .set(Order::getRefundTime, refundTime)
-                .eq(Order::getId, orderId)
-                .eq(Order::getUserId, userId));
+                .eq(Order::getId, orderId));
     }
 
     @Override

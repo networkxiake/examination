@@ -301,12 +301,19 @@ public class GoodsServiceImpl implements GoodsService {
 
     @Override
     public SubmitOrderGoodsInfoResponse getGoodsInfoInSubmitOrder(long goodsId) {
-        return BeanUtil.copyProperties(goodsDomainService.findGoodsForSubmitOrder(goodsId),
-                SubmitOrderGoodsInfoResponse.class);
+        Goods goods = goodsDomainService.findGoodsForSubmitOrder(goodsId);
+        SubmitOrderGoodsInfoResponse response = BeanUtil.copyProperties(goods, SubmitOrderGoodsInfoResponse.class);
+        response.setUpStatus(goods.getStatus() == GoodsStatus.ON.getStatus());
+        return response;
     }
 
     @Override
     public void increaseSalesVolume(long goodsId, int count) {
         goodsDomainService.increaseSales(goodsId, count);
+    }
+
+    @Override
+    public void decreaseSalesVolume(long goodsId, int count) {
+        goodsDomainService.decreaseSales(goodsId, count);
     }
 }

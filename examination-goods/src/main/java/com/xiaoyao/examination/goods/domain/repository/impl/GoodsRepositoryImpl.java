@@ -128,6 +128,7 @@ public class GoodsRepositoryImpl implements GoodsRepository {
                 .select(Goods::getName,
                         Goods::getDescription,
                         Goods::getImage,
+                        Goods::getStatus,
                         Goods::getCurrentPrice,
                         Goods::getDiscountId,
                         Goods::getSnapshotId)

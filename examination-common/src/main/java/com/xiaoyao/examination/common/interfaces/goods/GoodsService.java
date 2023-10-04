@@ -52,4 +52,9 @@ public interface GoodsService {
      * 增加套餐销量。
      */
     void increaseSalesVolume(long goodsId, int count);
+
+    /**
+     * 减少套餐销量。
+     */
+    void decreaseSalesVolume(long goodsId, int count);
 }

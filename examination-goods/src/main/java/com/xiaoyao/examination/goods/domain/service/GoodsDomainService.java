@@ -12,8 +12,6 @@ public interface GoodsDomainService {
 
     Map<Integer, String> getAllGoodsType();
 
-    String getGoodsTypeById(int id);
-
     void changeStatus(long id, int status);
 
     List<Goods> searchGoodsByAdmin(long page, long size,
@@ -48,4 +46,6 @@ public interface GoodsDomainService {
     void increaseSales(long goodsId, int count);
 
     long countDontDeletedGoods(List<Long> ids);
+
+    void decreaseSales(long goodsId, int count);
 }

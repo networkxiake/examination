@@ -26,6 +26,11 @@ public class OrderDomainServiceImpl implements OrderDomainService {
     }
 
     @Override
+    public Order findOrderForRefund(long orderId) {
+        return orderRepository.findOrderForRefund(orderId);
+    }
+
+    @Override
     public void save(Order order) {
         order.setCreateDate(LocalDate.now());
         order.setCreateTime(LocalDateTime.now());
@@ -38,7 +43,7 @@ public class OrderDomainServiceImpl implements OrderDomainService {
     }
 
     @Override
-    public boolean updateStatus(long userId, long orderId, OrderStatus oldStatus, OrderStatus newStatus) {
+    public boolean updateStatus(Long userId, long orderId, OrderStatus oldStatus, OrderStatus newStatus) {
         return orderRepository.updateStatus(userId, orderId, oldStatus.getStatus(), newStatus.getStatus());
     }
 
@@ -77,7 +82,7 @@ public class OrderDomainServiceImpl implements OrderDomainService {
     }
 
     @Override
-    public void refund(long userId, long orderId) {
-        orderRepository.updateRefundDateAndRefundTime(userId, orderId, LocalDate.now(), LocalDateTime.now());
+    public void refund(long orderId) {
+        orderRepository.updateRefundDateAndRefundTime(orderId, LocalDate.now(), LocalDateTime.now());
     }
 }

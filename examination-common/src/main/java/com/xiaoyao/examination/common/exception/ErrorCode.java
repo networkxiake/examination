@@ -32,6 +32,7 @@ public enum ErrorCode {
     ORDER_CREATED(1028, "订单已创建，请刷新！"),
     ORDER_NOT_FOUND(1029, "订单不存在"),
     REFUNDED_FAILED(1030, "退款失败"),
+    GOODS_NOT_UP(1031, "套餐未上架"),
     ;
 
     private final int code;

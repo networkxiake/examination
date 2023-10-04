@@ -8,11 +8,13 @@ import java.util.List;
 public interface OrderDomainService {
     List<Order> findAllOrderCountAndTotalByUserId(long userId);
 
+    Order findOrderForRefund(long orderId);
+
     void save(Order order);
 
     Order findOrderByPaymentCode(String paymentCode);
 
-    boolean updateStatus(long userId, long orderId, OrderStatus oldStatus, OrderStatus newStatus);
+    boolean updateStatus(Long userId, long orderId, OrderStatus oldStatus, OrderStatus newStatus);
 
     long getOrderIdByPaymentCode(String paymentCode);
 
@@ -30,5 +32,5 @@ public interface OrderDomainService {
 
     List<Order> searchOrders(long page, long size, String name, String code, Integer status, long[] total);
 
-    void refund(long userId, long orderId);
+    void refund(long orderId);
 }
