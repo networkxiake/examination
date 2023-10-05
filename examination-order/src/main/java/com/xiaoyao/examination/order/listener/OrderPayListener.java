@@ -29,24 +29,37 @@ public class OrderPayListener {
     }
 
     @RabbitListener(queues = MQClient.PAY_ORDER_PAYED_QUEUE)
-    public void listenOrderPayed(OrderPayedMessage message, @Header(AmqpHeaders.DELIVERY_TAG) long tag, Channel channel) {
+    public void listenOrderPayed(@Header(AmqpHeaders.DELIVERY_TAG) long tag, Channel channel,
+                                 OrderPayedMessage message) {
         try {
             orderService.paySuccess(message.getPaymentCode());
             channel.basicAck(tag, false);
         } catch (Exception e) {
-            log.error("处理订单支付失败，paymentCode={} {}", message.getPaymentCode(), e.getMessage());
+            log.warn("处理订单支付失败，paymentCode={} {}", message.getPaymentCode(), e.getMessage());
             try {
                 channel.basicNack(tag, false, true);
             } catch (IOException ex) {
                 // TODO 支付异常数据处理，将信息存入数据库，之后需要人工介入。
-                log.warn("处理订单支付失败，paymentCode={} {}", message.getPaymentCode(), ex.getMessage());
+                log.error("处理订单支付失败，paymentCode={} {}", message.getPaymentCode(), ex.getMessage());
             }
         }
     }
 
     @RabbitListener(queues = MQClient.PAY_ORDER_CLOSED_QUEUE)
-    public void listenOrderClosed(OrderCreatedMessage message) {
-        long orderId = orderDomainService.getOrderIdByPaymentCode(message.getPaymentCode());
-        orderDomainService.updateStatus(null, orderId, OrderStatus.PAY_WAITING, OrderStatus.CANCELED);
+    public void listenOrderClosed(@Header(AmqpHeaders.DELIVERY_TAG) long tag, Channel channel,
+                                  OrderCreatedMessage message) {
+        try {
+            long orderId = orderDomainService.getOrderIdByPaymentCode(message.getPaymentCode());
+            orderDomainService.updateStatus(null, orderId, OrderStatus.PAY_WAITING, OrderStatus.CANCELED);
+            channel.basicAck(tag, false);
+        } catch (Exception e) {
+            log.warn("处理订单退款失败，paymentCode={} {}", message.getPaymentCode(), e.getMessage());
+            try {
+                channel.basicNack(tag, false, true);
+            } catch (IOException ex) {
+                // TODO 支付异常数据处理，将信息存入数据库，之后需要人工介入。
+                log.error("处理订单退款失败，paymentCode={} {}", message.getPaymentCode(), ex.getMessage());
+            }
+        }
     }
 }

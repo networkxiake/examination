@@ -121,6 +121,7 @@ public class OrderServiceImpl implements OrderService {
         Order order = orderDomainService.findOrderByPaymentCode(paymentCode);
         // 使用CAS思想实现消息的幂等性
         if (tryPayOrder(order.getUserId(), order.getId())) {
+            // 支付成功后，增加套餐的销量。
             goodsService.increaseSalesVolume(order.getGoodsId(), order.getCount());
         }
     }
