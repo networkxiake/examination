@@ -48,7 +48,7 @@ public class OrderDomainServiceImpl implements OrderDomainService {
     }
 
     @Override
-    public long getOrderIdByPaymentCode(String paymentCode) {
+    public Long getOrderIdByPaymentCode(String paymentCode) {
         return orderRepository.getOrderIdByPaymentCode(paymentCode);
     }
 

@@ -68,11 +68,11 @@ public class OrderRepositoryImpl implements OrderRepository {
     }
 
     @Override
-    public long getOrderIdByPaymentCode(String paymentCode) {
-        return orderMapper.selectOne(lambdaQuery(Order.class)
-                        .select(Order::getId)
-                        .eq(Order::getPaymentCode, paymentCode))
-                .getId();
+    public Long getOrderIdByPaymentCode(String paymentCode) {
+        Order order = orderMapper.selectOne(lambdaQuery(Order.class)
+                .select(Order::getId)
+                .eq(Order::getPaymentCode, paymentCode));
+        return order == null ? null : order.getId();
     }
 
     @Override

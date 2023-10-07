@@ -79,28 +79,24 @@ public class OrderServiceImpl implements OrderService {
             throw new ExaminationException(ErrorCode.ORDER_CREATED);
         }
 
-        SubmitOrderGoodsInfoResponse goods = goodsService.getGoodsInfoInSubmitOrder(goodsId);
-        if (goods == null) {
-            throw new ExaminationException(ErrorCode.GOODS_NOT_FOUND);
-        } else if (!goods.isUpStatus()) {
-            throw new ExaminationException(ErrorCode.GOODS_NOT_UP);
-        }
+        SubmitOrderGoodsInfoResponse goodsInfo = goodsService.getGoodsInfoInSubmitOrder(goodsId);
+        checkGoodsInfo(goodsInfo);
 
         Order order = new Order();
         order.setGoodsId(goodsId);
         order.setUserId(userId);
-        order.setName(goods.getName());
-        order.setDescription(goods.getDescription());
-        order.setImage(goods.getImage());
-        order.setUnitPrice(goods.getCurrentPrice());
+        order.setName(goodsInfo.getName());
+        order.setDescription(goodsInfo.getDescription());
+        order.setImage(goodsInfo.getImage());
+        order.setUnitPrice(goodsInfo.getCurrentPrice());
         order.setCount(count);
         // 计算总金额
-        if (goods.getDiscountId() != null) {
-            order.setTotal(discountService.compute(goods.getDiscountId(), goods.getCurrentPrice(), count));
+        if (goodsInfo.getDiscountId() != null) {
+            order.setTotal(discountService.compute(goodsInfo.getDiscountId(), goodsInfo.getCurrentPrice(), count));
         } else {
-            order.setTotal(goods.getCurrentPrice().multiply(new BigDecimal(count)));
+            order.setTotal(goodsInfo.getCurrentPrice().multiply(new BigDecimal(count)));
         }
-        order.setSnapshotId(goods.getSnapshotId());
+        order.setSnapshotId(goodsInfo.getSnapshotId());
         order.setStatus(OrderStatus.PAY_WAITING.getStatus());
         // 创建支付订单
         CreatePayOrderResponse response = payService.createPayOrder(new CreatePayOrderRequest(
@@ -113,6 +109,17 @@ public class OrderServiceImpl implements OrderService {
         mqClient.orderCreated(new OrderCreatedMessage(order.getPaymentCode()), 1000 * 60 * 30);
 
         return response.getPayUrl();
+    }
+
+    private void checkGoodsInfo(SubmitOrderGoodsInfoResponse goodsInfo) {
+        // 套餐不存在
+        if (goodsInfo == null) {
+            throw new ExaminationException(ErrorCode.GOODS_NOT_FOUND);
+        }
+        // 套餐未上架
+        if (!goodsInfo.isUpStatus()) {
+            throw new ExaminationException(ErrorCode.GOODS_NOT_UP);
+        }
     }
 
     @Transactional

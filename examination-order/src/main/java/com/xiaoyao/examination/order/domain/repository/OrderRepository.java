@@ -15,7 +15,7 @@ public interface OrderRepository {
 
     Order findOrderForRefund(long orderId);
 
-    long getOrderIdByPaymentCode(String paymentCode);
+    Long getOrderIdByPaymentCode(String paymentCode);
 
     Integer getStatus(long orderId);
 

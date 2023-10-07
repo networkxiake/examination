@@ -49,8 +49,10 @@ public class OrderPayListener {
     public void listenOrderClosed(@Header(AmqpHeaders.DELIVERY_TAG) long tag, Channel channel,
                                   OrderCreatedMessage message) {
         try {
-            long orderId = orderDomainService.getOrderIdByPaymentCode(message.getPaymentCode());
-            orderDomainService.updateStatus(null, orderId, OrderStatus.PAY_WAITING, OrderStatus.CANCELED);
+            Long orderId = orderDomainService.getOrderIdByPaymentCode(message.getPaymentCode());
+            if (orderId != null) {
+                orderDomainService.updateStatus(null, orderId, OrderStatus.PAY_WAITING, OrderStatus.CANCELED);
+            }
             channel.basicAck(tag, false);
         } catch (Exception e) {
             log.warn("处理订单退款失败，paymentCode={} {}", message.getPaymentCode(), e.getMessage());
