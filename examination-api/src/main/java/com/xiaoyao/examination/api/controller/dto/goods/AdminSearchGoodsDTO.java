@@ -30,7 +30,7 @@ public class AdminSearchGoodsDTO {
         private String currentPrice;
         private String discountId;
         private int salesVolume;
-        private int type;
+        private String type;
         private int status;
         private boolean hasExcel;
 
@@ -90,11 +90,11 @@ public class AdminSearchGoodsDTO {
             this.salesVolume = salesVolume;
         }
 
-        public int getType() {
+        public String getType() {
             return type;
         }
 
-        public void setType(int type) {
+        public void setType(String type) {
             this.type = type;
         }
 

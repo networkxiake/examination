@@ -122,6 +122,7 @@ public class GoodsServiceImpl implements GoodsService {
         long[] total = new long[1];
         List<AdminSearchGoodsResponse.Goods> result = new ArrayList<>();
 
+        Map<Integer, String> goodsType = goodsDomainService.getAllGoodsType();
         goodsDomainService.searchGoodsByAdmin(request.getPage(), request.getSize(),
                 request.getCode(), request.getName(), request.getType(), request.getStatus(), request.getSort(), total).forEach(item -> {
             AdminSearchGoodsResponse.Goods goods = new AdminSearchGoodsResponse.Goods();
@@ -132,7 +133,7 @@ public class GoodsServiceImpl implements GoodsService {
             goods.setCurrentPrice(item.getCurrentPrice().toString());
             goods.setDiscountId(item.getDiscountId() != null ? String.valueOf(item.getDiscountId()) : null);
             goods.setSalesVolume(item.getSalesVolume());
-            goods.setType(item.getType());
+            goods.setType(goodsType.get(item.getType()));
             goods.setStatus(item.getStatus());
             goods.setHasExcel(item.getFormItem() != null);
             result.add(goods);
