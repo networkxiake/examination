@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 @Validated
 @RestController
@@ -37,7 +38,7 @@ public class AdminController {
                                              @NotBlank String password) {
         AdminLoginResponse response = adminService.login(username, password);
         AdminLoginDTO dto = new AdminLoginDTO();
-        dto.setToken(AdminStpUtil.login(response.getId()));
+        dto.setToken(AdminStpUtil.login(response.getId(), Map.of("isInitAdmin", response.isInitAdmin())));
         dto.setName(response.getName());
         dto.setPhoto(response.getPhoto());
         return ResponseBodyBuilder.build(dto);

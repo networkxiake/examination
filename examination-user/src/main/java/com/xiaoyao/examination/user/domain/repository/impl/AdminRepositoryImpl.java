@@ -45,6 +45,7 @@ public class AdminRepositoryImpl implements AdminRepository {
                 .select(Admin::getId,
                         Admin::getSalt,
                         Admin::getPassword,
+                        Admin::getUsername,
                         Admin::getName,
                         Admin::getPhoto)
                 .eq(Admin::getUsername, username));

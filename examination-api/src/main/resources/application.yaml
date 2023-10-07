@@ -1,18 +1,11 @@
 server:
   port: 80
-spring:
-  data:
-    redis:
-      host: 116.205.233.28
-      port: 6379
-      username: default
-      password: YS8OYDtcLFAsQ5Xb
 sa-token:
   is-print: false
   token-name: token
-  is-read-body: false
+  jwt-secret-key: 8T4AkqkzJVFfCnn7uNBvsRsfU5BQ5xnT
   is-read-cookie: false
-  is-concurrent: false
+  is-read-body: false
 dubbo:
   application:
     name: examination-api

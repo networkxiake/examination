@@ -9,8 +9,6 @@ import java.util.List;
 public interface AdminService {
     AdminLoginResponse login(String username, String password);
 
-    boolean isInitAdmin(long id);
-
     void changePassword(long userId, String oldPassword, String newPassword);
 
     ApplyUploadPhotoResponse applyUploadPhoto(String suffix);

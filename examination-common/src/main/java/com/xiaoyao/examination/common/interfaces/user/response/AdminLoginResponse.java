@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 public class AdminLoginResponse implements Serializable {
     private Long id;
+    private boolean isInitAdmin;
     private String name;
     private String photo;
 
@@ -13,6 +14,14 @@ public class AdminLoginResponse implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public boolean isInitAdmin() {
+        return isInitAdmin;
+    }
+
+    public void setInitAdmin(boolean initAdmin) {
+        isInitAdmin = initAdmin;
     }
 
     public String getName() {

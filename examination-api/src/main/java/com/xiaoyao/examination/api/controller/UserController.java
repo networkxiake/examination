@@ -53,7 +53,7 @@ public class UserController {
                                             String phone,
                                             @NotBlank @Size(min = 6, max = 6) String code) {
         UserLoginResponse response = userService.login(phone, code);
-        return ResponseBodyBuilder.build(new UserLoginDTO(UserStpUtil.login(response.getId()),
+        return ResponseBodyBuilder.build(new UserLoginDTO(UserStpUtil.login(response.getId(), null),
                 response.getName(), response.getPhoto()));
     }
 

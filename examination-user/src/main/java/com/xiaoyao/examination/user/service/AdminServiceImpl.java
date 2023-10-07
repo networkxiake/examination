@@ -73,16 +73,12 @@ public class AdminServiceImpl implements AdminService {
 
         AdminLoginResponse response = new AdminLoginResponse();
         response.setId(admin.getId());
+        System.out.println(admin.getUsername());
+        response.setInitAdmin(admin.getUsername().equals(properties.getInitAdminUsername()));
         response.setName(admin.getName());
         response.setPhoto(storageService.getPathDownloadingUrl(admin.getPhoto()));
         return response;
     }
-
-    @Override
-    public boolean isInitAdmin(long id) {
-        return adminDomainService.isInitAdmin(id);
-    }
-
 
     @Override
     public void changePassword(long userId, String oldPassword, String newPassword) {

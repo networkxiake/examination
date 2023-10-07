@@ -1,12 +1,16 @@
 package com.xiaoyao.examination.api.util;
 
+import cn.dev33.satoken.jwt.StpLogicJwtForStateless;
+import cn.dev33.satoken.stp.SaLoginConfig;
 import cn.dev33.satoken.stp.StpLogic;
 
-public class UserStpUtil {
-    private static final StpLogic userStpLogic = new StpLogic("user");
+import java.util.Map;
 
-    public static String login(long id) {
-        userStpLogic.login(id);
+public class UserStpUtil {
+    private static final StpLogic userStpLogic = new StpLogicJwtForStateless("user");
+
+    public static String login(long id, Map<String, Object> extra) {
+        userStpLogic.login(id, SaLoginConfig.setExtraData(extra));
         return userStpLogic.getTokenValue();
     }
 
